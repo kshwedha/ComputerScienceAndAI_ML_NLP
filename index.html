@@ -242,7 +242,7 @@
             font-style: italic;
             font-weight: bold;
             font-size: 28px;
-            color: #e74c3c;
+            color: #667eea;
         }
         
         .equals {
@@ -926,15 +926,6 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                 <div class="formula">
                     ∂L/∂W_in = x_c × (∂L/∂h)ᵀ
                 </div>
-                
-                <div class="softmax-calc">
-∂L/∂W_in = [0]     × [-0.052, 0.226, -0.208]
-           [0]
-           [0]     = Only row 3 (fox index) gets updated:
-           [1]       Row 3: [0, 0, 0, -0.052, 0, 0]
-           [0]               [0, 0, 0,  0.226, 0, 0]  
-           [0]               [0, 0, 0, -0.208, 0, 0]
-                </div>
 
             <div class="matrix-container">
                 <div class="matrix-equation">
@@ -1032,7 +1023,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             </div>
             <div></div>
             <div class="matrix-container">
-                <div class="matrix-title">W_IN_UPDATED</div>
+                <div class="matrix-title"><b>W_IN_UPDATED</b></div>
                 <div class="matrix-equation">
                     <span class="variable">W_in_new</span> 
                     <span class="equals">=</span>
@@ -1258,7 +1249,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             </div>
 
             <div class="matrix-container">
-                <div class="matrix-title">W_OUT_UPDATED</div>
+                <div class="matrix-title"><b>W_OUT_UPDATED</b></div>
                 <div class="matrix-equation">
                     <span class="variable">W_out_new</span> 
                     <span class="equals">=</span>
@@ -1318,6 +1309,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                 </div>
             </div>
 
+            <br>
             <div class="matrix-container">
                 <div class="matrix-equation">
                     <span class="variable">W_out_new</span> 
