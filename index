@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skip-gram Mathematical Computation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .step-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-left: 5px solid #3498db;
+        }
+        .step-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .matrix {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+        }
+        .computation {
+            background: #e8f6ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #74b9ff;
+        }
+        .formula {
+            background: #fff5f5;
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .vocab-table th, .vocab-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .vocab-table th {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            font-weight: bold;
+        }
+        .vocab-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .highlight-center {
+            background: #ffe6e6 !important;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .highlight-context {
+            background: #e6f3ff !important;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .vector-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .vector-element {
+            background: #3498db;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+        .probability-calculation {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #87ceeb;
+        }
+        .gradient-box {
+            background: #fff8dc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #daa520;
+        }
+        .training-pair {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .word-box {
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .center-box {
+            background: #ffebee;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+        }
+        .context-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            color: #2196f3;
+        }
+        .arrow {
+            font-size: 2em;
+            color: #3498db;
+        }
+        .softmax-calc {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .interactive-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .calc-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .result-display {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            display: none;
+            color: #2196f3;
+            font-weight: bold;
+        }
+        #pair-content {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            padding: 5px;
+        }
+        .matrix-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .matrix-equation {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+        
+        .variable {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 28px;
+            color: #e74c3c;
+        }
+        
+        .equals {
+            font-size: 32px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        .matrix {
+            display: inline-block;
+            position: relative;
+            padding: 0 20px;
+        }
+        
+        .matrix::before,
+        .matrix::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #2c3e50, #34495e);
+            border-radius: 2px;
+        }
+        
+        .matrix::before {
+            left: 0;
+        }
+        
+        .matrix::after {
+            right: 0;
+        }
+        
+        .matrix-content {
+            display: grid;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px 0;
+        }
+        
+        .matrix-row {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #2c3e50;
+            min-height: 30px;
+        }
+        
+        .term {
+            margin: 0 2px;
+        }
+        
+        .coefficient {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        .operator {
+            color: #34495e;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        
+        .parentheses {
+            color: #8e44ad;
+            font-weight: bold;
+        }
+        
+        .multiplication {
+            color: #27ae60;
+        }
+        
+        .number {
+            color: #2980b9;
+            font-weight: 600;
+        }
+        
+        .matrix-row:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            padding: 5px;
+            margin: -5px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Skip-gram Mathematical Computation</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #666;">
+            Complete step-by-step mathematical computation for sentence: <strong>"The quick brown fox jumps over"</strong>
+        </p>
+
+        <!-- Step 1: Setup and Vocabulary -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">1</div>
+                Setup: Vocabulary and Parameters
+            </div>
+            
+            <div class="computation">
+                <h4>Sentence:</h4>
+                <p>"The quick brown fox jumps over"</p>
+                
+                <h4>Vocabulary Creation:</h4>
+                <table class="vocab-table">
+                    <tr><th>Word</th><th>Index</th><th>One-hot Position</th></tr>
+                    <tr><td>the</td><td>0</td><td>[1, 0, 0, 0, 0, 0]</td></tr>
+                    <tr><td>quick</td><td>1</td><td>[0, 1, 0, 0, 0, 0]</td></tr>
+                    <tr><td>brown</td><td>2</td><td>[0, 0, 1, 0, 0, 0]</td></tr>
+                    <tr class="highlight-center"><td>fox</td><td>3</td><td>[0, 0, 0, 1, 0, 0]</td></tr>
+                    <tr><td>jumps</td><td>4</td><td>[0, 0, 0, 0, 1, 0]</td></tr>
+                    <tr><td>over</td><td>5</td><td>[0, 0, 0, 0, 0, 1]</td></tr>
+                </table>
+            </div>
+
+            <div class="computation">
+                <h4>Model Parameters:</h4>
+                <ul>
+                    <li><strong>Vocabulary size (|V|):</strong> 6</li>
+                    <li><strong>Embedding dimension (D):</strong> 3</li>
+                    <li><strong>Window size (m):</strong> 2</li>
+                    <li><strong>Learning rate (α):</strong> 0.1</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 2: Weight Matrices Initialization -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">2</div>
+                Weight Matrices Initialization
+            </div>
+            
+            <div class="matrix">
+                <h4>Input Weight Matrix W_in (6 × 3):</h4>
+                <pre>
+W_in = [[ 0.1, -0.2,  0.3]     ← the (index 0)
+        [-0.1,  0.4,  0.2]     ← quick (index 1)  
+        [ 0.3,  0.1, -0.4]     ← brown (index 2)
+        [ 0.2, -0.1,  0.5]     ← fox (index 3)
+        [-0.3,  0.2,  0.1]     ← jumps (index 4)
+        [ 0.4, -0.3,  0.2]]    ← over (index 5)
+                </pre>
+            </div>
+
+            <div class="matrix">
+                <h4>Output Weight Matrix W_out (3 × 6):</h4>
+                <pre>
+W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
+         [-0.3,  0.2, -0.1,  0.4,  0.1, -0.2]
+         [ 0.1,  0.3, -0.2, -0.1,  0.3,  0.2]]
+                </pre>
+            </div>
+        </div>
+
+        <!-- Step 3: Training Pairs Generation -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">3</div>
+                Training Pairs Generation (Window = 2)
+            </div>
+            
+            <div class="computation">
+                <h4>For center word "fox" (index 3):</h4>
+                <p>Context window spans 2 words on each side</p>
+                
+                <div class="training-pair">
+                    <div class="word-box context-box">quick (1)</div>
+                    <div class="word-box context-box">brown (2)</div>
+                    <div class="word-box center-box">FOX (3)</div>
+                    <div class="word-box context-box">jumps (4)</div>
+                    <div class="word-box context-box">over (5)</div>
+                </div>
+                
+                <h4>Training pairs for "fox":</h4>
+                <ul>
+                    <li>(fox, quick) → (center=3, context=1)</li>
+                    <li>(fox, brown) → (center=3, context=2)</li>
+                    <li>(fox, jumps) → (center=3, context=4)</li>
+                    <li>(fox, over) → (center=3, context=5)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 4: Forward Pass -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">4</div>
+                Forward Pass: Processing (fox, quick) pair
+            </div>
+            
+            <div class="computation">
+                <h4>Step 4.1: One-hot encoding of center word "fox"</h4>
+                <div class="formula">
+                    x_c = [0, 0, 0, 1, 0, 0]ᵀ
+                </div>
+            </div>
+
+            <div class="computation">
+                <h4>Step 4.2: Get center word embedding</h4>
+                <div class="formula">
+                    h = W_in^T × x_c
+                </div>
+                
+                <div class="matrix-container">
+                    <div class="matrix-equation">
+                        <span class="variable">h</span>
+                        <span class="equals">=</span>
+                        <div class="matrix">
+                            <div class="matrix-content">
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">−0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">1</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">−0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                </div>
+                                
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">−0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">−0.1</span> <span class="multiplication">×</span> <span class="number">1</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">−0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                </div>
+                                
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">−0.4</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.5</span> <span class="multiplication">×</span> <span class="number">1</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="vector-display">
+                    <span>h = </span>
+                    <div class="vector-element">0.2</div>
+                    <div class="vector-element">-0.1</div>
+                    <div class="vector-element">0.5</div>
+                </div>
+            </div>
+
+            <div class="computation">
+                <h4>Step 4.3: Compute output scores</h4>
+                <div class="formula">
+                    u = W_out^T × h
+                </div>
+
+                <div class="matrix-container">
+                    <div class="matrix-equation">
+                        <span class="variable">u</span>
+                        <span class="equals">=</span>
+                        <div class="matrix">
+                            <div class="matrix-content">
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
+                                        <span class="operator">+</span>
+                                        <span class="term">
+                                            <span class="parentheses">(</span><span class="coefficient">-0.3</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
+                                            <span class="operator">+</span>
+                                            <span class="term">
+                                                <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">-0.1</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
+                                        <span class="operator">+</span>
+                                        <span class="term">
+                                            <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
+                                        </span>
+                                        <span class="operator">+</span>
+                                        <span class="term">
+                                            <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
+                                        <span class="operator">+</span>
+                                        <span class="term">
+                                            <span class="parentheses">(</span><span class="coefficient">-0.1</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
+                                        </span>
+                                        <span class="operator">+</span>
+                                        <span class="term">
+                                            <span class="parentheses">(</span><span class="coefficient">-0.2</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">-0.1</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
+                                    </span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">-0.2</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
+                                    </span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">-0.2</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
+                                    </span>
+                                    <span class="operator">+</span>
+                                    <span class="term">
+                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="vector-display">
+                    <span>u = </span>
+                    <div class="vector-element">0.12</div>
+                    <div class="vector-element">0.11</div>
+                    <div class="vector-element">-0.03</div>
+                    <div class="vector-element">-0.07</div>
+                    <div class="vector-element">0.10</div>
+                    <div class="vector-element">0.20</div>
+                </div>
+            </div>
+
+            <div class="computation">
+                <h4>Step 4.4: Apply Softmax</h4>
+                <div class="formula">
+                    P(w_o | w_c) = exp(u_o) / Σ exp(u_w)
+                </div>
+                
+                <div class="softmax-calc">
+                    <strong>Exponentials:</strong>
+                    <p>exp(0.12) = 1.127</p>
+                    <p>exp(0.11) = 1.116  </p>
+                    <p>exp(-0.03) = 0.970</p>
+                    <p>exp(-0.07) = 0.932</p>
+                    <p>exp(0.10) = 1.105</p>
+                    <p>exp(0.20) = 1.221</p>
+
+                    <br>
+                    <strong>Sum:</strong> Σ exp(u_w) = 1.127 + 1.116 + 0.970 + 0.932 + 1.105 + 1.221 = 6.471
+                    <br>
+                    <br>
+                    <strong>Probabilities:</strong>
+                    <p>P(the|fox) = 1.127 / 6.471 = 0.174</p>
+                    <p>P(quick|fox) = 1.116 / 6.471 = 0.172</p>
+                    <p>P(brown|fox) = 0.970 / 6.471 = 0.150</p>
+                    <p>P(fox|fox) = 0.932 / 6.471 = 0.144</p>
+                    <p>P(jumps|fox) = 1.105 / 6.471 = 0.171</p>
+                    <p>P(over|fox) = 1.221 / 6.471 = 0.189</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Loss Calculation -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">5</div>
+                Loss Calculation for (fox, quick) pair
+            </div>
+            
+            <div class="probability-calculation">
+                <h4>Cross-entropy Loss:</h4>
+                <div class="formula">
+                    L = -log P(quick | fox) = -log(0.172) = 1.760
+                </div>
+                
+                <p><strong>Target:</strong> quick (index 1) should have probability 1.0</p>
+                <p><strong>Predicted:</strong> P(quick|fox) = 0.172</p>
+                <p><strong>Loss:</strong> High loss indicates poor prediction</p>
+            </div>
+        </div>
+
+        <!-- Step 6: Backward Pass -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">6</div>
+                Backward Pass: Gradient Calculation
+            </div>
+            
+            <div class="gradient-box">
+                <h4>Step 6.1: Output layer gradient</h4>
+                <div class="formula">
+                    ∂L/∂u = ŷ - y_true
+                </div>
+                
+                <div class="softmax-calc">
+                    <strong>Target vector y_true for "quick":</strong>
+                    <p><b>y_true</b> = [0, 1, 0, 0, 0, 0]  (one-hot for index 1)</p>
+
+                    <strong>Predicted probabilities ŷ:</strong>
+                    <p><b>ŷ</b> = [0.174, 0.172, 0.150, 0.144, 0.171, 0.189]</p>
+
+                    <strong>Gradient:</strong>
+                    <p><b>∂L/∂u</b> = <b>ŷ - y_true</b> = [0.174, 0.172, 0.150, 0.144, 0.171, 0.189] - [0, 1, 0, 0, 0, 0]
+                                        = [0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</p>
+                </div>
+            </div>
+
+            <div class="gradient-box">
+                <h4>Step 6.2: Output weight gradient</h4>
+                <div class="formula">
+                    ∂L/∂W_out = h × (∂L/∂u)ᵀ
+                </div>
+
+                <div class="matrix-container">
+                    <div class="matrix-equation">
+                        <span class="variable">∂L/∂W_out</span>
+                        <span class="equals">=</span>
+                        <span class="matrix">
+                            <div class="matrix-content">
+                                <div class="matrix-row">
+                                    <span class="term">0.2</span>
+                                    <span class="coefficient">×</span>
+                                    <span class="term">[0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">-0.1</span>
+                                    <span class="coefficient">×</span>
+                                    <span class="term">[0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">0.5</span>
+                                    <span class="coefficient">×</span>
+                                    <span class="term">[0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</span>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="matrix-equation" style="margin-top: 10px; margin-left: 180px;">
+                        <span class="equals">=</span>
+                        <span class="matrix">
+                            <div class="matrix-content">
+                                <div class="matrix-row">
+                                    <span class="term">[ 0.035, -0.166,  0.030,  0.029,  0.034,  0.038]</span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">[-0.017,  0.083, -0.015, -0.014, -0.017, -0.019]</span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">[ 0.087, -0.414,  0.075,  0.072,  0.086,  0.095]</span>
+                                </div>
+                            </div>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gradient-box">
+                <h4>Step 6.3: Hidden layer gradient</h4>
+                <div class="formula">
+                    ∂L/∂h = W_out × (∂L/∂u)
+                </div>
+
+                <div class="matrix-container">  
+                    <div class="matrix-equation">
+                        <span class="variable">∂L/∂h</span>
+                        <span class="equals">=</span>
+                        <span class="matrix">
+                            <div class="matrix-row">
+                                <span class="parentheses">(</span>
+                                <span class="term">0.2</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.174</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.1</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">-0.828</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.3</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.150</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.1</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.144</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.2</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">-0.171</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.4</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.189</span>
+                                <span class="parentheses">)</span>
+                            </div>
+                            <div class="matrix-row">
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.3</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.174</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.2</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.828</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.1</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.150</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.4</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">-0.144</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.1</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.171</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.2</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.189</span>
+                                <span class="parentheses">)</span>
+                            </div>
+                            <div class="matrix-row">
+                                <span class="parentheses">(</span>
+                                <span class="term">0.1</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.174</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.3</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">-0.828</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.2</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.150</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.1</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">-0.144</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">0.3</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.171</span>
+                                <span class="parentheses">)</span>
+                                <span class="operator">+</span>
+                                <span class="parentheses">(</span>
+                                <span class="term">-0.2</span>
+                                <span class="coefficient">×</span>
+                                <span class="term">0.189</span>
+                                <span class="parentheses">)</span>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="matrix-equation">
+                        <span class="variable">∂L/∂h</span>
+                        <span class="equals">=</span>
+                        <span class="matrix">
+                            <div class="matrix-content">
+                                <div class="matrix-row">
+                                    <span class="term">0.2184</span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">-0.1959</span>
+                                </div>
+                                <div class="matrix-row">
+                                    <span class="term">-0.1863</span>
+                                </div>
+                            </div>
+                        </span>
+
+                </div>
+                </div>
+            </div>
+
+            <div class="gradient-box">
+                <h4>Step 6.4: Input weight gradient</h4>
+                <div class="formula">
+                    ∂L/∂W_in = x_c × (∂L/∂h)ᵀ
+                </div>
+                
+                <div class="softmax-calc">
+∂L/∂W_in = [0]     × [-0.052, 0.226, -0.208]
+           [0]
+           [0]     = Only row 3 (fox index) gets updated:
+           [1]       Row 3: [0, 0, 0, -0.052, 0, 0]
+           [0]               [0, 0, 0,  0.226, 0, 0]  
+           [0]               [0, 0, 0, -0.208, 0, 0]
+                </div>
+
+            <div class="matrix-container">
+                <div class="matrix-equation">
+                <span class="variable">∂L/∂W_in</span>
+                    <span class="equals">=</span>
+                <div class="matrix">
+                    <div class="matrix-content">
+                        <div class="matrix-row">
+                            <span class="term">0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">1</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="equals">X</span>
+                <div class="matrix">
+                        <div class="matrix-row">
+                            <span class="term">0.2184</span>
+                            <span class="term">-0.1959</span>
+                            <span class="term">-0.1863</span>
+                        </div>
+                </div>
+            </div>
+            </div>
+
+            <br>
+            <div class="matrix-container">
+                <div class="matrix-equation">
+                <span class="variable">∂L/∂W_in</span>
+                    <span class="equals">=</span>
+                <div class="matrix">
+                    <div class="matrix-content">
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.2184</span>
+                            <span class="term">-0.1959</span>
+                            <span class="term">-0.1863</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Step 7: Weight Update -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">7</div>
+                Weight Update (Learning Rate α = 0.1)
+            </div>
+            
+            <div class="computation">
+                <h4>Update Rule:</h4>
+                <div class="formula">
+                    W_new = W_old - α × ∂L/∂W
+                </div>
+                
+            </div>
+            <div></div>
+            <div class="matrix-container">
+                <div class="matrix-title">W_IN_UPDATED</div>
+                <div class="matrix-equation">
+                    <span class="variable">W_in_new</span> 
+                    <span class="equals">=</span>
+                    <div class="matrix">
+                        <div class="matrix-row">
+                            <span class="term">0.1</span>
+                            <span class="term">-0.2</span>
+                            <span class="term">0.3</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">-0.1</span>
+                            <span class="term">0.4</span>
+                            <span class="term">0.2</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.3</span>
+                            <span class="term">0.1</span>
+                            <span class="term">-0.4</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.2</span>
+                            <span class="term">-0.1</span>
+                            <span class="term">0.5</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">-0.3</span>
+                            <span class="term">0.2</span>
+                            <span class="term">0.1</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.4</span>
+                            <span class="term">-0.3</span>
+                            <span class="term">0.2</span>
+                        </div>
+                    </div>
+                    <span class="equals">-</span>
+                    <div class="matrix">
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.02184</span>
+                            <span class="term">-0.01959</span>
+                            <span class="term">-0.01863</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="matrix-container">
+                <div class="matrix-equation">
+                    <span class="variable">W_in_new</span> 
+                    <span class="equals">=</span>
+                    <div class="matrix">
+                        <div class="matrix-row">
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.1</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">-0.2</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.3</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">-0.1</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.4</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.2</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.3</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.1</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">-0.4</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="parentheses">(</span>
+                            <span class="term">0.2</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.02184</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">(</span>
+                            <span class="term">-0.3</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">(-0.01959)</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">(</span>
+                            <span class="term">0.5</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">(-0.01863)</span>
+                            <span class="parentheses">)</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">-0.3</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.2</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.1</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.4</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">-0.3</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+                            <span class="term">0.2</span>
+                            <span class="operator">-</span>
+                            <span class="coefficient">0.0</span>
+                            <span class="parentheses">)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="matrix-container">
+                <div class="matrix-equation">
+                    <span class="variable">W_in_new</span> 
+                    <span class="equals">=</span>
+                    <div class="matrix">
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.1</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;-0.2</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.3</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;-0.1</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.4</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.2</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.3</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.1</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;-0.4</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.17816</span>
+                            <span class="term">-0.08041</span>
+                            <span class="term">0.51863</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;-0.3</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.2</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.1</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.4</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;-0.3</span>
+                            <span class="term">&nbsp;&nbsp;&nbsp;0.2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="matrix-container">
+                <div class="matrix-title">W_OUT_UPDATED</div>
+                <div class="matrix-equation">
+                    <span class="variable">W_out_new</span> 
+                    <span class="equals">=</span>
+                <div class="matrix">
+                    <div class="matrix-row">
+                        <span class="term">0.2</span>
+                        <span class="term">-0.1</span>
+                        <span class="term">0.3</span>
+                        <span class="term">0.1</span>
+                        <span class="term">-0.2</span>
+                        <span class="term">0.4</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="term">-0.3</span>
+                        <span class="term">0.2</span>
+                        <span class="term">-0.1</span>
+                        <span class="term">0.4</span>
+                        <span class="term">0.1</span>
+                        <span class="term">-0.2</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="term">0.1</span>
+                        <span class="term">0.3</span>
+                        <span class="term">-0.2</span>
+                        <span class="term">-0.1</span>
+                        <span class="term">0.3</span>
+                        <span class="term">0.2</span>
+                    </div>
+                </div>
+                <span class="equals">-</span>
+                <div class="matrix">
+                    <div class="matrix-row">
+                        <span class="term">0.0035</span>
+                        <span class="term">-0.0166</span>
+                        <span class="term">0.003</span>
+                        <span class="term">0.029</span>
+                        <span class="term">0.034</span>
+                        <span class="term">0.038</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="term">-0.0017</span>
+                        <span class="term">0.0083</span>
+                        <span class="term">-0.0015</span>
+                        <span class="term">-0.0014</span>
+                        <span class="term">-0.0017</span>
+                        <span class="term">-0.0019</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="term">0.0087</span>
+                        <span class="term">-0.0414</span>
+                        <span class="term">0.0075</span>
+                        <span class="term">0.0072</span>
+                        <span class="term">0.0086</span>
+                        <span class="term">0.0095</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="matrix-container">
+                <div class="matrix-equation">
+                    <span class="variable">W_out_new</span> 
+                    <span class="equals">=</span>
+                    <div class="matrix">
+                        <div class="matrix-row">
+                            <span class="term">0.19652</span>
+                            <span class="coefficient">&nbsp;-0.08344</span>
+                            <span class="term">&nbsp;0.29700</span>
+                            <span class="coefficient">&nbsp;0.09712</span>
+                            <span class="term">&nbsp;-0.20342</span>
+                            <span class="coefficient">&nbsp;0.39622</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">-0.29826</span>
+                            <span class="coefficient">&nbsp;0.19172</span>
+                            <span class="term">&nbsp;-0.09850</span>
+                            <span class="coefficient">&nbsp;0.40144</span>
+                            <span class="term">&nbsp;0.10171</span>
+                            <span class="coefficient">&nbsp;-0.19811</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="term">0.09130</span>
+                            <span class="coefficient">&nbsp;0.34140</span>
+                            <span class="term">&nbsp;-0.20750</span>
+                            <span class="coefficient">&nbsp;-0.10720</span>
+                            <span class="term">&nbsp;0.29145</span>
+                            <span class="coefficient">&nbsp;0.19055</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Step 8: Complete Training Iteration -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">8</div>
+                Complete Training Process
+            </div>
+            
+            <div class="interactive-section">
+                <h3>Training Summary for "fox"</h3>
+                <p>Process all context pairs for center word "fox":</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div class="calc-button" onclick="showPairCalc(0)">(fox, quick)</div>
+                    <div class="calc-button" onclick="showPairCalc(1)">(fox, brown)</div>
+                    <div class="calc-button" onclick="showPairCalc(2)">(fox, jumps)</div>
+                    <div class="calc-button" onclick="showPairCalc(3)">(fox, over)</div>
+                </div>
+                
+                <div id="pair-results" class="result-display">
+                    <div id="pair-content">
+                    </div>
+                </div>
+                
+                <button class="calc-button" onclick="showFinalEmbeddings()">Show Final Embeddings</button>
+                
+                <div id="final-embeddings" class="result-display">
+                    <h4>After processing all pairs:</h4>
+                    <div class="softmax-calc">
+                        <strong>Updated fox embedding:</strong>
+                        <p>Initial: [0.2, -0.1, 0.5]</p>
+                        <p>After (fox,quick): [0.2052, -0.1226, 0.5208]</p>
+                        <p>After (fox,brown): [0.2089, -0.1334, 0.5187]  </p>
+                        <p>After (fox,jumps): [0.2156, -0.1298, 0.5245]</p>
+                        <p>After (fox,over): [0.2203, -0.1401, 0.5312]</p>
+
+                        <strong>Interpretation:</strong>
+                        - The fox embedding is being adjusted to better predict its context words
+                        - Each training pair contributes to the embedding refinement
+                        - Similar words will eventually have similar embeddings
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Insights -->
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">✓</div>
+                Key Mathematical Insights
+            </div>
+            
+            <div class="computation">
+                <h4>What the algorithm learns:</h4>
+                <ul>
+                    <li><strong>Word embeddings (W_in):</strong> Dense representations capturing semantic similarity</li>
+                    <li><strong>Context mappings (W_out):</strong> How to predict context from embeddings</li>
+                    <li><strong>Distributional hypothesis:</strong> Words in similar contexts get similar embeddings</li>
+                </ul>
+                
+                <h4>Computational complexity per training step:</h4>
+                <ul>
+                    <li><strong>Forward pass:</strong> O(D × |V|) for matrix multiplications</li>
+                    <li><strong>Softmax:</strong> O(|V|) for normalization</li>
+                    <li><strong>Backward pass:</strong> O(D × |V|) for gradients</li>
+                    <li><strong>Total per pair:</strong> O(D × |V|) - expensive for large vocabularies!</li>
+                </ul>
+                
+                <div class="formula">
+                    <strong>This is why optimizations like negative sampling are crucial!</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pairData = [
+            {
+                pair: "(fox, quick)",
+                loss: "1.760",
+                gradUpdate: "W_in[3] += [+0.0052, -0.0226, +0.0208]",
+                prob: "0.172"
+            },
+            {
+                pair: "(fox, brown)", 
+                loss: "1.897",
+                gradUpdate: "W_in[3] += [+0.0037, -0.0108, -0.0021]",
+                prob: "0.150"
+            },
+            {
+                pair: "(fox, jumps)",
+                loss: "1.765", 
+                gradUpdate: "W_in[3] += [+0.0067, +0.0036, +0.0058]",
+                prob: "0.171"
+            },
+            {
+                pair: "(fox, over)",
+                loss: "1.665",
+                gradUpdate: "W_in[3] += [+0.0047, -0.0103, +0.0067]", 
+                prob: "0.189"
+            }
+        ];
+
+        function showPairCalc(index) {
+            const data = pairData[index];
+            const content = `
+                <h4>Training pair: ${data.pair}</h4>
+                <p><strong>Predicted probability:</strong> ${data.prob}</p>
+                <p><strong>Gradient update:</strong> ${data.gradUpdate}</p>
+                <p><strong>Loss:</strong> ${data.loss}</p>
+            `;
+            const pairResults = document.getElementById("pair-results");
+            const pairContent = document.getElementById("pair-content");
+            const finalEmbeddings = document.getElementById("final-embeddings");
+            pairResults.style.display = "block";
+            finalEmbeddings.style.display = "none";
+            pairContent.innerHTML = content;
+        }
+
+        function showFinalEmbeddings() {
+            const finalEmbeddings = document.getElementById("final-embeddings");
+            const pairResults = document.getElementById("pair-results");
+            finalEmbeddings.style.display = "block";
+            pairResults.style.display = "none";
+            console.log("Displayed final embeddings");
+        }
+
+    </script>
+</body>
+</html>
