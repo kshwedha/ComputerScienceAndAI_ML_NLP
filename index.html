@@ -242,7 +242,7 @@
             font-style: italic;
             font-weight: bold;
             font-size: 28px;
-            color: #667eea;
+            color: #6b6c73;
         }
         
         .equals {
@@ -328,6 +328,119 @@
             margin: -5px;
             transition: all 0.3s ease;
         }
+        #embeddings-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            font-family: monospace;
+        }
+        .word-embedding {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .word-embedding .word {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.1em;
+        }
+        .word-embedding .embedding {
+            color: #333;
+            font-size: 0.95em;
+        }
+        .compute-embedding-button {
+            /* Basic Styling */
+                display: inline-flex; /* Allows icon/text alignment */
+                align-items: center;
+                justify-content: center;
+                padding: 12px 28px;
+                border: none;
+                border-radius: 8px; /* Slightly rounded corners */
+                cursor: pointer;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+                font-size: 16px;
+                font-weight: 600; /* Slightly bolder text */
+                text-decoration: none; /* Remove underline for anchor tags */
+                white-space: nowrap; /* Prevent text wrapping */
+
+                /* Colors & Gradient */
+                color: #ffffff; /* White text */
+                background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
+
+                /* Transition for hover/active effects */
+                transition: all 0.3s ease;
+            }
+
+            .compute-embedding-button:hover {
+                background: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%); /* Darker gradient on hover */
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Slightly larger shadow */
+                transform: translateY(-2px); /* Slight lift effect */
+            }
+
+            .compute-embedding-button:active {
+                background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); /* Even darker on click */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Smaller shadow to simulate press */
+                transform: translateY(0); /* Return to original position */
+            }
+
+            /* Optional: Disabled state */
+            .compute-embedding-button:disabled {
+                background: #cccccc;
+                color: #666666;
+                cursor: not-allowed;
+                box-shadow: none;
+                transform: none;
+            }
+            /* Styling for text, email, password, number inputs */
+            .modern-input {
+                width: 75%; /* Occupy full width of parent container */
+                padding: 12px 15px;
+                margin-bottom: 20px; /* Space below the input */
+                border: none;
+                border-bottom: 2px solid rgba(255, 255, 255, 0.4); /* White, semi-transparent bottom border */
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 16px;
+                color: #333; /* Darker text for readability */
+                background-color: #f8f8f8; /* Slightly off-white background */
+
+                backdrop-filter: blur(5px); /* Creates the frosted glass effect */
+                -webkit-backdrop-filter: blur(5px); /* For Safari support */
+                border-radius: 4px; /* Slightly rounded corners */
+                text-indent: 10px; /* Indent text from the left edge */
+
+                transition: all 0.3s ease;
+            }
+
+            .modern-input::placeholder {
+                color: #8e7e7e; /* Placeholder text color */
+                opacity: 1; /* Ensure placeholder is visible across browsers */
+            }
+
+            .modern-input:hover {
+                border-color: #999; /* Slightly darker border on hover */
+            }
+
+            .modern-input:focus {
+                border-color: #00bcd4;
+                /* border-color: #4CAF50;
+                box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* Soft green glow on focus */
+                outline: none; /* Remove default browser outline */
+                background-color: #fff; /* White background when focused */
+            }
+
+            .modern-input:disabled {
+                background-color: #e9e9e9;
+                color: #777;
+                cursor: not-allowed;
+                border-color: #ddd;
+            }
     </style>
 </head>
 <body>
@@ -667,8 +780,8 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                     <p>exp(0.20) = 1.221</p>
 
                     <br>
-                    <strong>Sum:</strong> Σ exp(u_w) = 1.127 + 1.116 + 0.970 + 0.932 + 1.105 + 1.221 = 6.471
-                    <br>
+                    <strong>Sum:</strong>
+                    <p>Σ exp(u_w) = 1.127 + 1.116 + 0.970 + 0.932 + 1.105 + 1.221 = 6.471</p>
                     <br>
                     <strong>Probabilities:</strong>
                     <p>P(the|fox) = 1.127 / 6.471 = 0.174</p>
@@ -1025,7 +1138,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             <div class="matrix-container">
                 <div class="matrix-title"><b>W_IN_UPDATED</b></div>
                 <div class="matrix-equation">
-                    <span class="variable">W_in_new</span> 
+                    <span class="variable">W_in_updated</span> 
                     <span class="equals">=</span>
                     <div class="matrix">
                         <div class="matrix-row">
@@ -1098,7 +1211,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             <br>
             <div class="matrix-container">
                 <div class="matrix-equation">
-                    <span class="variable">W_in_new</span> 
+                    <span class="variable">W_in_updated</span> 
                     <span class="equals">=</span>
                     <div class="matrix">
                         <div class="matrix-row">
@@ -1210,7 +1323,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             <br>
             <div class="matrix-container">
                 <div class="matrix-equation">
-                    <span class="variable">W_in_new</span> 
+                    <span class="variable">W_in_updated</span> 
                     <span class="equals">=</span>
                     <div class="matrix">
                         <div class="matrix-row">
@@ -1251,7 +1364,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             <div class="matrix-container">
                 <div class="matrix-title"><b>W_OUT_UPDATED</b></div>
                 <div class="matrix-equation">
-                    <span class="variable">W_out_new</span> 
+                    <span class="variable">W_out_updated</span> 
                     <span class="equals">=</span>
                 <div class="matrix">
                     <div class="matrix-row">
@@ -1312,7 +1425,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             <br>
             <div class="matrix-container">
                 <div class="matrix-equation">
-                    <span class="variable">W_out_new</span> 
+                    <span class="variable">W_out_updated</span> 
                     <span class="equals">=</span>
                     <div class="matrix">
                         <div class="matrix-row">
@@ -1418,6 +1531,20 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                 </div>
             </div>
         </div>
+
+        <div class="step-section">
+            <div class="step-title">
+                <div class="step-number">9</div>
+                Interactive Skip-gram Model
+            </div>
+    
+            <p>Enter a sentence to compute word embeddings using the skip-gram model.</p>        
+            <div class="interactive-skipgram">
+                <input class="modern-input" type="text" id="sentence-input" placeholder="Enter a sentence">
+                <button class="compute-embedding-button" onclick="runSkipGram()">Compute Embeddings</button>
+                <div id="embeddings-output"></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1472,6 +1599,137 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             console.log("Displayed final embeddings");
         }
 
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <script>
+        async function loadPyodideAndRun() {
+            try {
+                let pyodide = await loadPyodide();
+                await pyodide.loadPackage("numpy");
+                console.log("Pyodide and NumPy loaded successfully");
+                return pyodide;
+            } catch (error) {
+                console.error("Failed to load Pyodide or NumPy:", error);
+                return null;
+            }
+        }
+
+        async function runSkipGram() {
+            console.log("runSkipGram started");
+            const outputDiv = document.getElementById("embeddings-output");
+            if (!outputDiv) {
+                console.error("embeddings-output div not found");
+                return;
+            }
+            outputDiv.innerText = "Loading...";
+
+            let pyodide = await loadPyodideAndRun();
+            if (!pyodide) {
+                outputDiv.innerText = "Error: Failed to initialize Pyodide.";
+                return;
+            }
+
+            let sentence = document.getElementById("sentence-input").value.trim();
+            if (!sentence) {
+                outputDiv.innerText = "Error: Please enter a sentence.";
+                return;
+            }
+
+            let escapedSentence = sentence.replace(/"/g, '\\"');
+            let pythonCode = `
+import numpy as np
+import json
+
+def create_vocabulary(sentence):
+    words = sentence.lower().split()
+    if not words:
+        return [], {}
+    vocab = list(set(words))
+    word_to_idx = {word: idx for idx, word in enumerate(vocab)}
+    return vocab, word_to_idx
+
+def generate_training_pairs(sentence, window_size, word_to_idx):
+    words = sentence.lower().split()
+    pairs = []
+    for i, center_word in enumerate(words):
+        for j in range(max(0, i - window_size), min(len(words), i + window_size + 1)):
+            if i != j and center_word in word_to_idx and words[j] in word_to_idx:
+                pairs.append((word_to_idx[center_word], word_to_idx[words[j]]))
+    return pairs
+
+def softmax(x):
+    if x.size == 0:
+        return np.array([])
+    exp_x = np.exp(x - np.max(x, initial=-np.inf))
+    return exp_x / np.sum(exp_x, where=exp_x > 0)
+
+def skip_gram(sentence, embedding_dim=3, window_size=2, learning_rate=0.1, epochs=1):
+    vocab, word_to_idx = create_vocabulary(sentence)
+    if not vocab:
+        return {}
+    vocab_size = len(vocab)
+    W_in = np.random.uniform(-0.5, 0.5, (vocab_size, embedding_dim))
+    W_out = np.random.uniform(-0.5, 0.5, (embedding_dim, vocab_size))
+    pairs = generate_training_pairs(sentence, window_size, word_to_idx)
+    if not pairs:
+        return {word: W_in[i].tolist() for i, word in enumerate(vocab)}
+    
+    for _ in range(epochs):
+        for center_idx, context_idx in pairs:
+            x_c = np.zeros(vocab_size)
+            x_c[center_idx] = 1
+            h = W_in[center_idx]
+            u = np.dot(W_out.T, h)
+            y_pred = softmax(u)
+            if y_pred.size == 0:
+                continue
+            y_true = np.zeros(vocab_size)
+            y_true[context_idx] = 1
+            error = y_pred - y_true
+            dW_out = np.outer(h, error)
+            dW_in = np.dot(W_out, error)
+            W_out -= learning_rate * dW_out
+            W_in[center_idx] -= learning_rate * dW_in
+    
+    embeddings = {word: W_in[idx].tolist() for word, idx in word_to_idx.items()}
+    return embeddings
+
+sentence = "${escapedSentence}"
+embeddings = skip_gram(sentence)
+json.dumps(embeddings)
+`;
+
+            try {
+                let result = await pyodide.runPythonAsync(pythonCode);
+                console.log("Raw result from Pyodide:", result);
+                let jsResult = JSON.parse(result); // Parse the JSON string returned by Python
+                console.log("Converted to JS:", jsResult);
+                if (jsResult && typeof jsResult === 'object' && Object.keys(jsResult).length > 0) {
+                    outputDiv.innerText = JSON.stringify(jsResult, null, 2);
+                    let outputHtml = '';
+                    for (const [word, embedding] of Object.entries(jsResult)) {
+                        outputHtml = `
+                            <div class="word-embedding">
+                                <div class="word">${word}</div>
+                                <div class="embedding">[${embedding.join(', ')}]</div>
+                            </div>
+                        `+outputHtml;
+                    }
+                    outputDiv.innerHTML = outputHtml;
+                } else {
+                    outputDiv.innerText = "No embeddings computed (possibly due to insufficient data).";
+                }
+            } catch (error) {
+                console.error("Python execution error:", error);
+                const pyError = error.message || error.toString();
+                outputDiv.innerText = `Python execution error: ${pyError}`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM fully loaded");
+        });
     </script>
 </body>
 </html>
