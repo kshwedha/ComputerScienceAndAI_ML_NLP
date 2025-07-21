@@ -1,4 +1,11 @@
 
+# AI-NLP-ML-guide
+
+This page helps you understand the definitions, mathematical, and computation process of the LLM.
+
+
+
+
 ## PROCESS
 
 1. Setup: Vocabulary and Parameters
@@ -42,3 +49,15 @@
 7. Weight Update And Learning Rate
 
         W_new = W_old - α × ∂L/∂W
+
+## Authors
+
+- [@kshwedha](https://www.github.com/kshwedha)
+
+
+## Contributing
+
+Contributions are always welcome!
+
+Please adhere to this project's `code of conduct`.
+
