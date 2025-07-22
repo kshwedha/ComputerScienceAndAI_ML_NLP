@@ -400,7 +400,7 @@
             }
             /* Styling for text, email, password, number inputs */
             .modern-input {
-                width: 75%; /* Occupy full width of parent container */
+                width: 60%; /* Occupy full width of parent container */
                 padding: 12px 15px;
                 margin-bottom: 20px; /* Space below the input */
                 border: none;
@@ -412,7 +412,7 @@
 
                 backdrop-filter: blur(5px); /* Creates the frosted glass effect */
                 -webkit-backdrop-filter: blur(5px); /* For Safari support */
-                border-radius: 4px; /* Slightly rounded corners */
+                border-radius: 8px; /* Slightly rounded corners */
                 text-indent: 10px; /* Indent text from the left edge */
 
                 transition: all 0.3s ease;
@@ -441,6 +441,69 @@
                 cursor: not-allowed;
                 border-color: #ddd;
             }
+            #prediction-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            font-family: monospace;
+        }
+        /* Container for alignment */
+        .number-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between label and input */
+            margin-bottom: 20px;
+        }
+
+        .number-input-container label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            color: #333;
+            white-space: nowrap; /* Prevent label wrapping */
+        }
+
+        /* General styling for the number input */
+        .custom-number-input {
+            width: 10%; /* Fixed width, adjust as needed */
+            padding: 12px 15px;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4); /* White, semi-transparent bottom border */
+            border-radius: 8px; /* Matching previous button/input styles */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            color: #333;
+            background-color: #f8f8f8;
+            text-align: center; /* Center align the number */
+
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-number-input:hover {
+            border-color: #999;
+        }
+
+        .custom-number-input:focus {
+            border-color: #00bcd4; /* Green focus, like previous button */
+            box-shadow: 0 0 0 3px rgba(76, 80, 175, 0.2);
+            outline: none;
+            background-color: #fff;
+        }
+
+        /* Hide the default spinner buttons for Webkit browsers (Chrome, Safari, Edge) */
+        .custom-number-input::-webkit-outer-spin-button,
+        .custom-number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0; /* Important to remove default margin */
+        }
+
+        /* Hide the default spinner buttons for Firefox */
+        .custom-number-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* If you want to show native spinners, remove the above two blocks */
     </style>
 </head>
 <body>
@@ -886,7 +949,6 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                         </span>
                         </div>
                     </div>
-                </div>
             </div>
 
             <div class="gradient-box">
@@ -1116,6 +1178,7 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                         </div>
                         </div>
                 </div>
+            </div>
             </div>
             </div>
         </div>
@@ -1359,7 +1422,6 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                     </div>
                 </div>
             </div>
-            </div>
 
             <div class="matrix-container">
                 <div class="matrix-title"><b>W_OUT_UPDATED</b></div>
@@ -1456,7 +1518,6 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                 </div>
             </div>
 
-
         </div>
 
         <!-- Step 8: Complete Training Iteration -->
@@ -1537,15 +1598,25 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                 <div class="step-number">9</div>
                 Interactive Skip-gram Model
             </div>
-    
+            
+            <p>Interpretation: The Skip-gram model learns to predict context words from word embeddings.</p>
+            <br>
             <p>Enter a sentence to compute word embeddings using the skip-gram model.</p>        
             <div class="interactive-skipgram">
                 <input class="modern-input" type="text" id="sentence-input" placeholder="Enter a sentence">
+                <input type="number" id="epochs-input" class="custom-number-input" min="0" max="1000" step="1" placeholder="Epochs">
                 <button class="compute-embedding-button" onclick="runSkipGram()">Compute Embeddings</button>
                 <div id="embeddings-output"></div>
             </div>
+            <br>
+            <div class="interactive-skipgram">
+                <input class="modern-input" type="text" id="predict-word" placeholder="Enter a word to predict context">
+                <button class="compute-embedding-button" onclick="predictContext()">Predict Context</button>
+                <div id="prediction-output"></div>
+            </div>
+
         </div>
-    </div>
+        </div>
 
     <script>
         const pairData = [
@@ -1603,6 +1674,10 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
     
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
     <script>
+        let globalEmbeddings = null;
+        let globalVocab = null;
+        let globalWOut = null;
+
         async function loadPyodideAndRun() {
             try {
                 let pyodide = await loadPyodide();
@@ -1635,6 +1710,11 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
                 outputDiv.innerText = "Error: Please enter a sentence.";
                 return;
             }
+            let epochs = document.getElementById("epochs-input").value.trim();
+            if (!epochs) {
+                epochs = 10;
+            }
+            console.log("epochs: ", epochs);
 
             let escapedSentence = sentence.replace(/"/g, '\\"');
             let pythonCode = `
@@ -1664,7 +1744,7 @@ def softmax(x):
     exp_x = np.exp(x - np.max(x, initial=-np.inf))
     return exp_x / np.sum(exp_x, where=exp_x > 0)
 
-def skip_gram(sentence, embedding_dim=3, window_size=2, learning_rate=0.1, epochs=1):
+def skip_gram(sentence, embedding_dim=3, window_size=2, learning_rate=0.1, epochs=100):
     vocab, word_to_idx = create_vocabulary(sentence)
     if not vocab:
         return {}
@@ -1693,22 +1773,35 @@ def skip_gram(sentence, embedding_dim=3, window_size=2, learning_rate=0.1, epoch
             W_in[center_idx] -= learning_rate * dW_in
     
     embeddings = {word: W_in[idx].tolist() for word, idx in word_to_idx.items()}
-    return embeddings
+    return embeddings, vocab, W_out.tolist()
 
 sentence = "${escapedSentence}"
-embeddings = skip_gram(sentence)
-json.dumps(embeddings)
+epochs = ${epochs}
+value = None
+try:
+    embeddings, vocab, W_out = skip_gram(sentence=sentence, epochs=epochs)
+    value = {"embeddings": embeddings, "vocab": vocab, "W_out": W_out}
+except Exception as e:
+    value = {"error": str(e)}
+json.dumps(value)
 `;
 
             try {
                 let result = await pyodide.runPythonAsync(pythonCode);
                 console.log("Raw result from Pyodide:", result);
                 let jsResult = JSON.parse(result); // Parse the JSON string returned by Python
-                console.log("Converted to JS:", jsResult);
-                if (jsResult && typeof jsResult === 'object' && Object.keys(jsResult).length > 0) {
+                if (jsResult.error) {
+                    outputDiv.innerText = `Error in Python code: ${jsResult.error}`;
+                    return;
+                }
+                console.log("Converted to JS:", jsResult.embeddings);
+                globalEmbeddings = jsResult.embeddings;
+                globalVocab = jsResult.vocab;
+                globalWOut = jsResult.W_out;
+                if (jsResult && typeof jsResult === 'object' && Object.keys(jsResult.embeddings).length > 0) {
                     outputDiv.innerText = JSON.stringify(jsResult, null, 2);
                     let outputHtml = '';
-                    for (const [word, embedding] of Object.entries(jsResult)) {
+                    for (const [word, embedding] of Object.entries(jsResult.embeddings)) {
                         outputHtml = `
                             <div class="word-embedding">
                                 <div class="word">${word}</div>
@@ -1719,6 +1812,81 @@ json.dumps(embeddings)
                     outputDiv.innerHTML = outputHtml;
                 } else {
                     outputDiv.innerText = "No embeddings computed (possibly due to insufficient data).";
+                }
+            } catch (error) {
+                console.error("Python execution error:", error);
+                const pyError = error.message || error.toString();
+                outputDiv.innerText = `Python execution error: ${pyError}`;
+            }
+        }
+
+        async function predictContext() {
+            const outputDiv = document.getElementById("prediction-output");
+            if (!outputDiv) {
+                console.error("prediction-output div not found");
+                return;
+            }
+            if (!globalEmbeddings || !globalVocab || !globalWOut) {
+                outputDiv.innerText = "Error: Please compute embeddings first.";
+                return;
+            }
+
+            let word = document.getElementById("predict-word").value.trim().toLowerCase();
+            if (!word) {
+                outputDiv.innerText = "Error: Please enter a word to predict.";
+                return;
+            }
+
+            let pyodide = await loadPyodideAndRun();
+            if (!pyodide) {
+                outputDiv.innerText = "Error: Failed to initialize Pyodide.";
+                return;
+            }
+
+            let escapedWord = word.replace(/"/g, '\\"');
+            let pythonCode = `
+import numpy as np
+import json
+
+def softmax(x):
+    if x.size == 0:
+        return np.array([])
+    exp_x = np.exp(x - np.max(x, axis=0, keepdims=True))
+    return exp_x / np.sum(exp_x, axis=0, keepdims=True)
+
+def predict_context(word, embeddings, vocab, W_out):
+    if word not in embeddings:
+        return []
+    h = np.array(embeddings[word], dtype=np.float64)
+    W_out = np.array(W_out, dtype=np.float64)
+    u = np.dot(W_out.T, h)
+    probabilities = softmax(u)
+    context_probs = [(vocab[i], float(probabilities[i])) for i in range(len(vocab)) if probabilities[i] > 0]
+    context_probs.sort(key=lambda x: x[1], reverse=True)
+    return context_probs
+
+word = "${escapedWord}"
+embeddings = ${JSON.stringify(globalEmbeddings)}
+vocab = ${JSON.stringify(globalVocab)}
+W_out = ${JSON.stringify(globalWOut)}
+json.dumps(predict_context(word, embeddings, vocab, W_out))
+`;
+
+            try {
+                let result = await pyodide.runPythonAsync(pythonCode);
+                console.log("Prediction result:", result);
+                let jsResult = JSON.parse(result);
+                console.log("Converted prediction to JS:", jsResult);
+                if (jsResult && jsResult.length > 0) {
+                    let outputHtml = `
+                        <div class="prediction-result">
+                            <div class="context">Predicted context words for <b>${word}</b>:</div>
+                            <div class="context"> ${jsResult.map(([w, p]) => `${w} (${(p * 100).toFixed(2)}%)`).join(', ')}</div>
+                        </div>
+                    `;
+                    outputDiv.innerHTML = outputHtml;
+                } else {
+                    outputDiv.innerText = `No context predictions available for "${word}".`;
                 }
             } catch (error) {
                 console.error("Python execution error:", error);
