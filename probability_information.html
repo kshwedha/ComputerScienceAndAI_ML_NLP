@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skip-gram Probability Explanation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .concept-box {
+            background: linear-gradient(135deg, #e8f5e8, #f0fff0);
+            border: 3px solid #4CAF50;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .misconception-box {
+            background: linear-gradient(135deg, #ffe8e8, #fff5f5);
+            border: 3px solid #f44336;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .explanation-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+        .sentence-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .word {
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        .center-word {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 6px 12px rgba(238, 90, 36, 0.4);
+            border: 3px solid #fff;
+        }
+        .context-word {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            cursor: pointer;
+            border: 3px solid #fff;
+        }
+        .context-word:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(9, 132, 227, 0.4);
+        }
+        .other-word {
+            background: #ddd;
+            color: #666;
+            opacity: 0.6;
+        }
+        .probability-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .formula {
+            background: #f0f8ff;
+            border: 2px solid #4169e1;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .training-objective {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e17055;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+        }
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .highlight-correct {
+            background-color: #e8f5e8 !important;
+            border-left: 4px solid #4CAF50;
+        }
+        .highlight-incorrect {
+            background-color: #ffe8e8 !important;
+            border-left: 4px solid #f44336;
+        }
+        .window-demo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .window-bracket {
+            font-size: 3em;
+            color: #667eea;
+            margin: 0 10px;
+        }
+        .interactive-demo {
+            background: linear-gradient(135deg, #e17055, #d63031);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .demo-button {
+            background: white;
+            color: #d63031;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        .analogy-box {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .step-by-step {
+            counter-reset: step-counter;
+        }
+        .step-item {
+            counter-increment: step-counter;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .probability-bars {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .prob-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .prob-label {
+            width: 80px;
+            font-weight: bold;
+        }
+        .prob-visual {
+            flex: 1;
+            height: 25px;
+            background: #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #74b9ff, #0984e3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+        .target-prob {
+            background: linear-gradient(90deg, #00b894, #00a085) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Why "quick" Should Have High Probability Given "fox"</h1>
+        
+        <div class="misconception-box">
+            <h2>🤔 Common Misconception</h2>
+            <p><strong>"Why should 'quick' have probability 1.0 given 'fox'? They're not directly related!"</strong></p>
+            <p>This confusion arises from misunderstanding what the Skip-gram model is actually learning.</p>
+        </div>
+
+        <div class="concept-box">
+            <h2>✅ The Key Insight</h2>
+            <p><strong>Skip-gram doesn't learn semantic relationships directly. It learns co-occurrence patterns!</strong></p>
+            <p>The model learns: <em>"If I see 'fox', what words am I likely to see nearby in the same sentence?"</em></p>
+        </div>
+
+        <div class="explanation-section">
+            <h3>Understanding the Training Objective</h3>
+            
+            <div class="sentence-visual">
+                <div class="word other-word">The</div>
+                <div class="word context-word">quick</div>
+                <div class="word context-word">brown</div>
+                <div class="word center-word">fox</div>
+                <div class="word context-word">jumps</div>
+                <div class="word context-word">over</div>
+            </div>
+
+            <div class="window-demo">
+                <span style="font-weight: bold; color: #666;">Context Window (size=2):</span>
+                <div class="window-bracket">[</div>
+                <div class="word context-word">quick</div>
+                <div class="word context-word">brown</div>
+                <div class="word center-word">fox</div>
+                <div class="word context-word">jumps</div>
+                <div class="word context-word">over</div>
+                <div class="window-bracket">]</div>
+            </div>
+
+            <div class="training-objective">
+                <h4>Training Objective:</h4>
+                <p>Given center word "fox", the model should predict high probabilities for words that actually appear in its context window:</p>
+                <ul>
+                    <li><strong>P(quick | fox)</strong> should be HIGH because "quick" appears near "fox"</li>
+                    <li><strong>P(brown | fox)</strong> should be HIGH because "brown" appears near "fox"</li>
+                    <li><strong>P(jumps | fox)</strong> should be HIGH because "jumps" appears near "fox"</li>
+                    <li><strong>P(over | fox)</strong> should be HIGH because "over" appears near "fox"</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h3>Step-by-Step Reasoning</h3>
+            
+            <div class="step-by-step">
+                <div class="step-item">
+                    <h4>The Training Data Says:</h4>
+                    <p>In our sentence, "quick" and "fox" co-occur within the context window. This is a <strong>positive training example</strong>.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>The Model's Task:</h4>
+                    <p>Learn to predict: "Given that I see 'fox', what's the probability that 'quick' appears nearby?"</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>The Target Probability:</h4>
+                    <p>For this specific training pair (fox, quick), the target is 1.0 because "quick" <em>actually does</em> appear in fox's context.</p>
+                </div>
+
+                <div class="step-item">
+                    <h4>What the Model Learns:</h4>
+                    <p>After seeing many sentences, the model learns statistical patterns of which words tend to appear together.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="probability-section">
+            <h3>Mathematical Perspective</h3>
+            
+            <div class="formula">
+                Training pair: (center=fox, context=quick)
+                <br><br>
+                Target distribution: y_true = [0, 1, 0, 0, 0, 0]
+                <br>
+                (Only "quick" has probability 1, all others have 0)
+            </div>
+
+            <p><strong>Why this makes sense:</strong></p>
+            <ul>
+                <li>We're training on this specific sentence where "quick" IS in fox's context</li>
+                <li>For this training example, the "ground truth" is that "quick" co-occurs with "fox"</li>
+                <li>The model should learn to predict this co-occurrence pattern</li>
+            </ul>
+        </div>
+
+        <div class="analogy-box">
+            <h3>🎯 Helpful Analogy</h3>
+            <p><strong>Think of it like a "word neighborhood" predictor:</strong></p>
+            <p>Just like you might predict "If I'm in Times Square, I'm likely to see taxis, tourists, and billboards," the Skip-gram model predicts "If I see the word 'fox', I'm likely to see words like 'quick', 'brown', 'jumps' nearby."</p>
+            <p><strong>It's not about logical meaning—it's about statistical co-occurrence!</strong></p>
+        </div>
+
+        <div class="explanation-section">
+            <h3>What Happens With More Training Data</h3>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>Sentence</th>
+                    <th>Context for "fox"</th>
+                    <th>What Model Learns</th>
+                </tr>
+                <tr class="highlight-correct">
+                    <td>"The quick brown fox jumps"</td>
+                    <td>quick, brown, jumps</td>
+                    <td>P(quick|fox) increases</td>
+                </tr>
+                <tr class="highlight-correct">
+                    <td>"A red fox runs quickly"</td>
+                    <td>red, runs, quickly</td>
+                    <td>P(red|fox), P(runs|fox) increase</td>
+                </tr>
+                <tr class="highlight-correct">
+                    <td>"The fox is clever"</td>
+                    <td>the, is, clever</td>
+                    <td>P(clever|fox) increases</td>
+                </tr>
+                <tr class="highlight-incorrect">
+                    <td>"I like pizza very much"</td>
+                    <td>No "fox" present</td>
+                    <td>No effect on fox embeddings</td>
+                </tr>
+            </table>
+
+            <p><strong>Result:</strong> After training on many sentences, P(quick|fox) will be high only if "quick" frequently appears near "fox" across the corpus.</p>
+        </div>
+
+        <div class="interactive-demo">
+            <h3>Interactive Demonstration</h3>
+            <p>See how probabilities change as we train on different sentences:</p>
+            
+            <button class="demo-button" onclick="showTrainingProgress()">Show Training Progress</button>
+            
+            <div id="training-demo" style="display: none; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                <h4>P(quick | fox) during training:</h4>
+                <div class="probability-bars">
+                    <div class="prob-bar">
+                        <div class="prob-label">Initial:</div>
+                        <div class="prob-visual">
+                            <div class="prob-fill" id="prob-initial" style="width: 16.7%;">0.167</div>
+                        </div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label">After 1 epoch:</div>
+                        <div class="prob-visual">
+                            <div class="prob-fill target-prob" id="prob-epoch1" style="width: 25%;">0.25</div>
+                        </div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label">After 10 epochs:</div>
+                        <div class="prob-visual">
+                            <div class="prob-fill target-prob" id="prob-epoch10" style="width: 45%;">0.45</div>
+                        </div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label">After 100 epochs:</div>
+                        <div class="prob-visual">
+                            <div class="prob-fill target-prob" id="prob-epoch100" style="width: 80%;">0.80</div>
+                        </div>
+                    </div>
+                </div>
+                <p><em>Note: Actual final probability depends on how often "quick" and "fox" co-occur across the entire corpus.</em></p>
+            </div>
+        </div>
+
+        <div class="concept-box">
+            <h3>🎓 Key Takeaways</h3>
+            <ol>
+                <li><strong>Context, not semantics:</strong> Skip-gram learns co-occurrence patterns, not logical relationships</li>
+                <li><strong>Training pairs:</strong> Each (center, context) pair from the corpus is a positive example</li>
+                <li><strong>Target probability 1.0:</strong> For each training pair, the context word should have probability 1.0</li>
+                <li><strong>Statistical learning:</strong> Final embeddings reflect corpus-wide co-occurrence statistics</li>
+                <li><strong>Emergent semantics:</strong> Semantic similarity emerges because semantically related words tend to have similar contexts</li>
+            </ol>
+        </div>
+
+        <div class="formula">
+            <strong>Remember:</strong> The model learns "fox appears with quick in this sentence" 
+            <br>→ So P(quick|fox) should be high for this training example!
+        </div>
+    </div>
+
+    <script>
+        function showTrainingProgress() {
+            const demo = document.getElementById('training-demo');
+            demo.style.display = 'block';
+            
+            // Animate the probability bars
+            setTimeout(() => {
+                document.getElementById('prob-initial').style.width = '16.7%';
+            }, 200);
+            setTimeout(() => {
+                document.getElementById('prob-epoch1').style.width = '25%';
+            }, 800);
+            setTimeout(() => {
+                document.getElementById('prob-epoch10').style.width = '45%';
+            }, 1400);
+            setTimeout(() => {
+                document.getElementById('prob-epoch100').style.width = '80%';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
