@@ -30,15 +30,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .step-section > div[style] { /* Targeting the inline style flex container */
+        .step-section > div[style] {
             display: flex;
-            flex-direction: column; /* Stack vertically by default (mobile-first) */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 20px;
             border: 2px solid #3498db;
-            padding: 10px; /* Add padding to the flex container itself */
-            box-sizing: border-box; /* Include padding/border in element's total width/height */
+            padding: 10px;
+            box-sizing: border-box;
         }
         .step-title {
             font-size: 1.5em;
@@ -64,32 +64,32 @@
             background: white;
             border: 2px solid #3498db;
             border-radius: 10px;
-            width: 95%; /* Take up most of the width on small screens */
-            max-width: 500px; /* Set a max-width for larger mobile devices/smaller tablets */
-            padding: 15px; /* Slightly reduce padding for mobile */
-            margin: 0; /* Remove specific margin, let gap handle spacing */
+            width: 95%;
+            max-width: 500px;
+            padding: 15px;
+            margin: 0;
             font-family: 'Courier New', monospace;
             text-align: center;
             box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
-            box-sizing: border-box; /* Include padding/border in element's total width/height */
-            overflow-x: auto; /* Allow horizontal scrolling ONLY if content overflows */
+            box-sizing: border-box; 
+            overflow-x: auto; 
         }
         .matrix h4 {
             text-align: center;
-            width: 100%; /* Ensure h4 takes full width within matrix */
-            white-space: normal; /* Allow title to wrap on multiple lines if needed */
-            word-break: break-word; /* Break long words if necessary */
-            margin-top: 0; /* Remove default top margin */
-            margin-bottom: 10px; /* Space below title */
+            width: 100%; 
+            white-space: normal; 
+            word-break: break-word; 
+            margin-top: 0; 
+            margin-bottom: 10px; 
         }
 
         .matrix pre {   
-            text-align: left; /* Keep matrix content left-aligned within its pre tag */
-            white-space: pre; /* Maintain original pre formatting */
-            word-wrap: normal; /* Prevent word-wrap if not desired */
-            overflow-x: auto; /* Crucial: Allow horizontal scrolling for the matrix content if it's too wide */
-            padding: 0; /* Remove default pre padding */
-            margin: 0; /* Remove default pre margin */
+            text-align: left; 
+            white-space: pre; 
+            word-wrap: normal; 
+            overflow-x: auto; 
+            padding: 0; 
+            margin: 0; 
         }
         .computation {
             background: #e8f6ff;
@@ -248,31 +248,31 @@
             padding: 5px;
         }
         .math-expression {
-            display: inline-flex; /* Use inline-flex to allow it to sit within text flow but control internal layout */
-            flex-direction: column; /* Stack numerator and denominator vertically */
-            align-items: center; /* Center horizontally */
+            display: inline-flex; 
+            flex-direction: column; 
+            align-items: center; 
             justify-content: center;
-            font-family: 'Times New Roman', serif; /* A font that renders math symbols well */
-            font-size: 1.5em; /* Base font size for the expression */
+            font-family: 'Times New Roman', serif; 
+            font-size: 1.5em; 
             margin-top: 20px;
-            text-align: center; /* Center the entire expression block */
+            text-align: center; 
             color: #2c3e50;
             font-weight: bold;
             font-style: italic;
-            vertical-align: middle; /* Align with surrounding text if inline */
+            vertical-align: middle; 
         }
 
         .math-expression .numerator,
         .math-expression .denominator {
-            padding: 0 5px; /* Small horizontal padding for spacing */
-            line-height: 1; /* Compact line height for math */
+            padding: 0 5px; 
+            line-height: 1; 
         }
 
         .math-expression .fraction-line {
-            width: 100%; /* Line spans full width of the expression */
-            height: 2px; /* Thickness of the fraction line */
-            background-color: #2c3e50; /* Color of the line */
-            margin: 2px 0; /* Small vertical margin to separate from numerator/denominator */
+            width: 100%; 
+            height: 2px;
+            background-color: #2c3e50;
+            margin: 2px 0; 
         }
         .matrixn-container {
             background: rgba(255, 255, 255, 0.95);
@@ -289,7 +289,7 @@
             gap: 1rem;
             font-size: .5rem;
             color: #2c3e50;
-            box-sizing: border-box; /* Include padding/border in element's total width/height */
+            box-sizing: border-box;
             overflow-x: auto;
         }
         
@@ -391,21 +391,19 @@
             background: #fff;
             border: 1px solid #ddd;
             font-family: monospace;
-            height: 200px; /* Fixed height */
-            overflow-y: auto; /* Enable vertical scrolling */
-            width: 100%; /* Take full width of its parent */
-            max-width: 500px; /* Limit width on larger screens */
-            border-radius: 8px; /* Rounded corners */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+            height: 200px; 
+            overflow-y: auto; 
+            width: 100%; 
+            max-width: 500px; 
+            border-radius: 8px; 
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); 
             box-sizing: border-box;
             display: none;
         }
-
-        /* Context div for word embeddings */
         #embeddingscontext, #predictionscontext {
             margin-top: 10px;
             padding: 10px;
-            background: #f0f0f0; /* Light background for context */
+            background: #f0f0f0; 
             border-radius: 5px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
@@ -446,28 +444,24 @@
                 text-decoration: none; /* Remove underline for anchor tags */
                 white-space: nowrap; /* Prevent text wrapping */
 
-                /* Colors & Gradient */
-                color: #ffffff; /* White text */
-                background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); /* Green gradient */
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
-
-                /* Transition for hover/active effects */
+                color: #ffffff; 
+                background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); 
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
                 transition: all 0.3s ease;
         }
 
         .compute-embedding-button:hover {
-            background: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%); /* Darker gradient on hover */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Slightly larger shadow */
-            transform: translateY(-2px); /* Slight lift effect */
+            background: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%); 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); 
+            transform: translateY(-2px); 
         }
 
         .compute-embedding-button:active {
-            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); /* Even darker on click */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Smaller shadow to simulate press */
-            transform: translateY(0); /* Return to original position */
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+            transform: translateY(0); 
         }
 
-        /* Optional: Disabled state */
         .compute-embedding-button:disabled {
             background: #cccccc;
             color: #666666;
@@ -475,41 +469,39 @@
             box-shadow: none;
             transform: none;
         }
-        /* Styling for text, email, password, number inputs */
         .modern-input {
-            width: 60%; /* Occupy full width of parent container */
+            width: 60%; 
             padding: 12px 15px;
-            margin-bottom: 20px; /* Space below the input */
+            margin-bottom: 20px; 
             border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4); /* White, semi-transparent bottom border */
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4); 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 16px;
-            color: #333; /* Darker text for readability */
-            background-color: #f8f8f8; /* Slightly off-white background */
+            color: #333; 
+            background-color: #f8f8f8; 
 
-            backdrop-filter: blur(5px); /* Creates the frosted glass effect */
-            -webkit-backdrop-filter: blur(5px); /* For Safari support */
-            border-radius: 8px; /* Slightly rounded corners */
-            text-indent: 10px; /* Indent text from the left edge */
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px); 
+            border-radius: 8px; 
+            text-indent: 10px; 
 
             transition: all 0.3s ease;
         }
 
         .modern-input::placeholder {
-            color: #8e7e7e; /* Placeholder text color */
-            opacity: 1; /* Ensure placeholder is visible across browsers */
+            color: #8e7e7e; 
+            opacity: 1; 
         }
 
         .modern-input:hover {
-            border-color: #999; /* Slightly darker border on hover */
+            border-color: #999; 
         }
 
         .modern-input:focus {
             border-color: #00bcd4;
-            /* border-color: #4CAF50;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* Soft green glow on focus */
-            outline: none; /* Remove default browser outline */
-            background-color: #fff; /* White background when focused */
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); 
+            outline: none; 
+            background-color: #fff; 
         }
 
         .modern-input:disabled {
@@ -518,18 +510,11 @@
             cursor: not-allowed;
             border-color: #ddd;
         }
-        /* #prediction-output {
-            margin-top: 10px;
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #ddd;
-            font-family: monospace;
-        } */
-        /* Container for alignment */
+        
         .number-input-container {
             display: flex;
             align-items: center;
-            gap: 10px; /* Space between label and input */
+            gap: 10px; 
             margin-bottom: 20px;
         }
 
@@ -537,21 +522,20 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 16px;
             color: #333;
-            white-space: nowrap; /* Prevent label wrapping */
+            white-space: nowrap; 
         }
 
-        /* General styling for the number input */
         .custom-number-input {
-            width: 10%; /* Fixed width, adjust as needed */
+            width: 10%; 
             padding: 12px 15px;
             border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4); /* White, semi-transparent bottom border */
-            border-radius: 8px; /* Matching previous button/input styles */
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4); 
+            border-radius: 8px; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 16px;
             color: #333;
             background-color: #f8f8f8;
-            text-align: center; /* Center align the number */
+            text-align: center; 
 
             transition: all 0.3s ease;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -562,47 +546,159 @@
         }
 
         .custom-number-input:focus {
-            border-color: #00bcd4; /* Green focus, like previous button */
+            border-color: #00bcd4; 
             box-shadow: 0 0 0 3px rgba(76, 80, 175, 0.2);
             outline: none;
             background-color: #fff;
         }
 
-        /* Hide the default spinner buttons for Webkit browsers (Chrome, Safari, Edge) */
         .custom-number-input::-webkit-outer-spin-button,
         .custom-number-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
-            margin: 0; /* Important to remove default margin */
+            margin: 0;
         }
 
-        /* Hide the default spinner buttons for Firefox */
         .custom-number-input[type=number] {
             -moz-appearance: textfield;
         }
 
-        @media (min-width: 768px) {
-            .step-section > div[style] {
-                /* No need to change flex-direction as it's already column */
-                /* If you wanted them side-by-side on desktop, you'd change to row here */
-            }
+        .equation {
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: none;
+        }
+        li {
+            margin: 5px 0;
+        }
 
-            .matrix {
-                width: 60%; /* Revert to 60% width on larger screens */
-                max-width: none; /* Remove max-width constraint for larger screens */
-                padding: 20px; /* Restore original padding */
-            }
+        a {
+                text-decoration: none; 
+                color: #1a73e8; 
+                font-weight: 500; 
+                padding: 4px 8px; 
+                border-radius: 4px; 
+                transition: all 0.3s ease; 
+                position: relative; 
+                display: inline-flex; 
+                align-items: center; 
+        }
 
-            .matrix h4 {
-                white-space: nowrap; /* Can restore nowrap for titles on larger screens if they fit */
+        a:hover {
+            color: #135ab6;
+            background-color: rgba(26, 115, 232, 0.1);
+            text-decoration: none; 
+        }
+
+        a:visited {
+            color: #6200ea; 
+        }
+
+        a:active {
+            color: #0d47a1; 
+            background-color: rgba(26, 115, 232, 0.2);
+        }
+
+        a:focus {
+            outline: 2px solid #1a73e8;
+            outline-offset: 2px; 
+        }
+
+        a[disabled] {
+            color: #b0bec5; 
+            cursor: not-allowed; 
+            pointer-events: none; 
+        }
+
+        a:not([disabled]):hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 8px;
+            width: calc(100% - 16px);
+            height: 2px;
+            background-color: #1a73e8;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+
+        a:not([disabled]):hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .fixed-top-right-button {
+            position: fixed;
+            top: 3rem;
+            right: 3rem;
+            z-index: 1000;
+
+            width: 10rem;
+            color: #fff;
+            padding: .6rem .6rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.8rem;
+            font-weight: 1000;
+            font-style: italic;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            background: linear-gradient(to right, #cf7332, #f98c3f);
+            transition: text-transform 0.2s ease-in-out;
+        }
+
+        .fixed-top-right-button:hover {
+            background-color: #f98c3f;
+            /* background-color: #20a58b; */
+            transform: translateY(-2px);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            a {
+                color: #8ab4f8;
             }
-            #embeddings-output {
-                width: auto; /* Adjust width for desktop */
-                flex-basis: 100%; /* Take full row below inputs/button */
-                max-width: 700px; /* Max width for the output area */
+            a:visited {
+                color: #bb86fc;
+            }
+            a:hover {
+                color: #c9d1f9;
+                background-color: rgba(138, 180, 248, 0.2);
+            }
+            a:active {
+                color: #a1c4fd;
+                background-color: rgba(138, 180, 248, 0.3);
+            }
+            a:focus {
+                outline-color: #8ab4f8;
+            }
+            a:not([disabled]):hover::after {
+                background-color: #8ab4f8;
             }
         }
 
-        /* Optional: Even larger screen adjustments if needed */
+        @media (min-width: 768px) {
+            .step-section > div[style] {
+            }
+
+            .matrix {
+                width: 60%;
+                max-width: none;
+                padding: 20px;
+            }
+
+            .matrix h4 {
+                white-space: nowrap;
+            }
+            #embeddings-output {
+                width: auto;
+                flex-basis: 100%;
+                max-width: 700px;
+            }
+        }
+
         @media (min-width: 1024px) {
             .container {
                 padding: 40px;
@@ -615,6 +711,9 @@
     </style>
 </head>
 <body>
+    <button class="fixed-top-right-button" onclick="window.location.href='sandbox.html'">
+        Code
+    </button>
     <div class="container">
         <h1>Skip-gram Mathematical Computation</h1>
         <p style="text-align: center; font-size: 1.2em; color: #666;">
@@ -1766,7 +1865,91 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
             </div>
 
         </div>
+
+        <div id="step-section">
+            <div class="step-title">
+                <div class="step-number">10</div>
+                Neural Network Equations
+            </div>
+
+            <div>
+                <a href="https://colab.research.google.com/drive/1mtfO4mDiKVAfGqxICQ0coTuvi3iOdwZ2#scrollTo=rtFNHvmNoEUD&line=9&uniqifier=1">Google Colab</a>
+            </div>
+            
+            <div class="section">
+                <h2>Declaration</h2>
+                <ol>
+                    <li class="equation">Data size reading: m, n = data.shape</li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>Forward Propagation</h2>
+                <ol>
+                    <li class="equation">First layer computation: \( Z^{[1]} = W^{[1]}X + b^{[1]} \)</li>
+                    <li class="equation">First layer activation (ReLU): \( A^{[1]} = g_{\text{ReLU}}(Z^{[1]}) \)</li>
+                    <li class="equation">Second layer computation: \( Z^{[2]} = W^{[2]}A^{[1]} + b^{[2]} \)</li>
+                    <li class="equation">Second layer activation (Softmax): \( A^{[2]} = g_{\text{softmax}}(Z^{[2]}) \)</li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>Backward Propagation</h2>
+                <ol>
+                    <li class="equation">Gradient of the second layer: \( dZ^{[2]} = A^{[2]} - Y \)</li>
+                    <li class="equation">Gradient of the second layer weights: \( dW^{[2]} = \frac{1}{m} dZ^{[2]} A^{[1]T} \)</li>
+                    <li class="equation">Gradient of the second layer bias: \( dB^{[2]} = \frac{1}{m} \sum dZ^{[2]} \)</li>
+                    <li class="equation">Gradient of the first layer: \( dZ^{[1]} = W^{[2]T} dZ^{[2]} \cdot * g^{[1]'}(Z^{[1]}) \)</li>
+                    <li class="equation">Gradient of the first layer weights: \( dW^{[1]} = \frac{1}{m} dZ^{[1]} A^{[0]T} \)</li>
+                    <li class="equation">Gradient of the first layer bias: \( dB^{[1]} = \frac{1}{m} \sum dZ^{[1]} \)</li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>Parameter Updates</h2>
+                <ol>
+                    <li class="equation">Update second layer weights: \( W^{[2]} := W^{[2]} - \alpha dW^{[2]} \)</li>
+                    <li class="equation">Update second layer bias: \( b^{[2]} := b^{[2]} - \alpha dB^{[2]} \)</li>
+                    <li class="equation">Update first layer weights: \( W^{[1]} := W^{[1]} - \alpha dW^{[1]} \)</li>
+                    <li class="equation">Update first layer bias: \( b^{[1]} := b^{[1]} - \alpha dB^{[1]} \)</li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>Variables and Shapes</h2>
+                <h3>Forward Propagation</h3>
+                <ul>
+                    <li>\( A^{[0]} = X \): \( (784, m) \)</li>
+                    <li>\( Z^{[1]} \sim A^{[1]} \): \( (10, m) \)</li>
+                    <li>\( W^{[1]} \): \( (10, 784) \) (since \( W^{[1]}A^{[0]} \sim Z^{[1]} \))</li>
+                    <li>\( B^{[1]} \): \( (10, 1) \)</li>
+                    <li>\( Z^{[2]} \sim A^{[2]} \): \( (10, m) \)</li>
+                    <li>\( W^{[2]} \): \( (10, 10) \) (since \( W^{[2]}A^{[1]} \sim Z^{[2]} \))</li>
+                    <li>\( B^{[2]} \): \( (10, 1) \)</li>
+                </ul>
+                <h3>Backward Propagation</h3>
+                <ul>
+                    <li>\( dZ^{[2]} \): \( (10, m) \) (same as \( A^{[2]} \))</li>
+                    <li>\( dW^{[2]} \): \( (10, 10) \)</li>
+                    <li>\( dB^{[2]} \): \( (10, 1) \)</li>
+                    <li>\( dZ^{[1]} \): \( (10, m) \) (same as \( A^{[1]} \))</li>
+                    <li>\( dW^{[1]} \): \( (10, 784) \)</li>
+                    <li>\( dB^{[1]} \): \( (10, 1) \)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Notes</h3>
+                <ul>
+                    <li>\( m \): Number of examples in the batch.</li>
+                    <li>\( \alpha \): Learning rate.</li>
+                    <li>\( \cdot * \): Element-wise multiplication.</li>
+                    <li>The shapes ensure compatibility in matrix operations (e.g., \( W^{[1]}A^{[0]} \) produces \( Z^{[1]} \)).</li>
+                    <li>The notation \( \sum dZ^{[i]} \) implies summing over the batch dimension to compute the average gradient for biases.</li>
+                </ul>
+            </div>
         </div>
+    </div>
 
     <script>
         const pairData = [
@@ -1821,6 +2004,8 @@ W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
         }
 
     </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
     <script>

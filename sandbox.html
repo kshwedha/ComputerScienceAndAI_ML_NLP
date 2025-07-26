@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Code Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <!-- Add Prism.js CSS for syntax highlighting (using a dark theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .editor-app-container {
+            background-color: #282c34;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app-header {
+            padding: 15px 25px;
+            background-color: #21252b;
+            border-bottom: 1px solid #3e4451;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #61afef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .pane {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            transition: flex-basis 0.3s ease;
+        }
+
+        .left-pane {
+            flex-basis: 65%;
+            min-width: 200px;
+            background-color: #282c34;
+            border-right: 1px solid #3e4451;
+            position: relative; /* For positioning textarea over code */
+        }
+
+        .right-pane {
+            flex-basis: 35%;
+            min-width: 0;
+            background-color: #1e1e1e;
+            transition: flex-basis 0.3s ease, min-width 0.3s ease;
+        }
+
+        .right-pane.minimized {
+            flex-basis: 0;
+            min-width: 0;
+            padding: 0;
+            opacity: 0;
+            pointer-events: none;
+            border-left: none;
+        }
+
+        .splitter {
+            width: 8px;
+            background-color: #3e4451;
+            cursor: ew-resize;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #21252b;
+            border-bottom: 1px solid #3e4451;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        .pane-header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Container for code editor with highlighting */
+        .code-editor-container {
+            position: relative;
+            flex-grow: 1;
+            overflow: auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 16px;
+            box-sizing: border-box;
+            resize: none;
+            background: transparent; /* Make textarea transparent */
+            color: transparent; /* Hide default text */
+            caret-color: #abb2bf; /* Visible cursor */
+            line-height: 1.5;
+            outline: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2; /* Textarea above highlighted code */
+            overflow: auto;
+        }
+
+        /* Styling for highlighted code */
+        pre.prism-code {
+            margin: 0;
+            padding: 15px;
+            background-color: #282c34;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #abb2bf;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            z-index: 1; /* Behind textarea */
+        }
+
+        #output {
+            flex-grow: 1;
+            padding: 15px;
+            background-color: #1e1e1e;
+            border: none;
+            border-radius: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 15px;
+            white-space: pre-wrap;
+            color: #e0e0e0;
+            overflow: auto;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .control-button {
+            background-color: transparent;
+            border: 1px solid #61afef;
+            color: #61afef;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .control-button:hover {
+            background-color: #61afef;
+            color: #21252b;
+            border-color: #61afef;
+        }
+
+        #runButton {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+        }
+
+        #runButton:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+        .control-button svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .python-label {
+            font-size: 0.9em;
+            color: #61afef;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .editor-app-container {
+                flex-direction: column;
+                height: 98vh;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .left-pane, .right-pane {
+                flex-basis: 50%;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #3e4451;
+            }
+
+            .right-pane.minimized {
+                flex-basis: 0;
+                height: 0;
+                min-height: 0;
+            }
+
+            .splitter {
+                height: 8px;
+                width: 100%;
+                cursor: ns-resize;
+            }
+
+            .app-header {
+                font-size: 1.5em;
+                padding: 10px 15px;
+            }
+
+            .pane-header {
+                padding: 8px 10px;
+                font-size: 1em;
+            }
+
+            textarea, #output {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            pre.prism-code {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .pane-header-controls {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-app-container">
+        <div class="main-content">
+            <!-- Left Pane: Code Editor -->
+            <div class="pane left-pane">
+                <div class="pane-header">
+                    <span>Code Editor</span>
+                    <div class="pane-header-controls">
+                        <span class="python-label">PYTHON</span>
+                        <button id="runButton" class="control-button" onclick="runCode()">
+                            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 5V19L19 12L8 5Z"/>
+                            </svg>
+                            Run
+                        </button>
+                        <button id="clearButton" class="control-button" onclick="clearInput()">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="code-editor-container">
+                    <textarea id="code-editor" spellcheck="false">
+def greet(name):
+    return f"Hello, {name}!"
+
+user_name = "World"
+print(greet(user_name))
+                    </textarea>
+                    <pre class="prism-code language-python"><code id="highlight-code"></code></pre>
+                </div>
+            </div>
+
+            <!-- Splitter for resizing -->
+            <div class="splitter"></div>
+
+            <!-- Right Pane: Output Console -->
+            <div class="pane right-pane" id="outputConsole">
+                <div class="pane-header">
+                    <span>Output Console</span>
+                    <button id="toggleOutputBtn" class="control-button" onclick="toggleOutputConsole()">
+                        <svg id="toggleOutputIcon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 11H19V13H5V11Z"/>
+                        </svg>
+                    </button>
+                </div>
+                <pre id="output"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script type="text/javascript">
+        let pyodide;
+        let isDragging = false;
+        const TAB_SIZE = 4;
+
+        const splitter = document.querySelector('.splitter');
+        const leftPane = document.querySelector('.left-pane');
+        const rightPane = document.querySelector('.right-pane');
+        const outputConsole = document.getElementById('outputConsole');
+        const toggleBtn = document.getElementById('toggleOutputBtn');
+        const toggleIcon = document.getElementById('toggleOutputIcon');
+
+        const codeEditor = document.getElementById('code-editor');
+        const highlightCode = document.getElementById('highlight-code');
+
+        function syncScroll() {
+            highlightCode.parentElement.scrollTop = codeEditor.scrollTop;
+            highlightCode.parentElement.scrollLeft = codeEditor.scrollLeft;
+        }
+
+        function updateHighlighting() {
+            highlightCode.textContent = codeEditor.value;
+            Prism.highlightElement(highlightCode);
+        }
+
+        codeEditor.addEventListener('input', updateHighlighting);
+
+        codeEditor.addEventListener('scroll', () => {
+            highlightCode.parentElement.scrollTop = codeEditor.scrollTop;
+            highlightCode.parentElement.scrollLeft = codeEditor.scrollLeft;
+        });
+
+        async function loadPyodideAndPackages() {
+            console.log("Loading Pyodide and packages...");
+            pyodide = await loadPyodide();
+            await pyodide.loadPackage(["numpy", "pandas"]);
+            runButton.disabled = false;
+            setTimeout(() => { loadingDiv.style.display = "none"; }, 1000);
+        }
+
+        async function runCode() {
+            maximizeOutputConsole();
+            const code = document.getElementById('code-editor').value;
+            const outputElement = document.getElementById('output');
+            outputElement.innerHTML = '';
+            outputElement.classList.remove('error');
+
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    from io import StringIO
+                    sys.stdout = StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                let output = pyodide.runPython("sys.stdout.getvalue()");
+                outputElement.innerText = output || "No output";
+            } catch (err) {
+                outputElement.classList.add("border-red-500", "text-red-600", "dark:text-red-400");
+                outputElement.innerText = "Error: " + err.message;
+            }
+        }
+
+        function clearInput() {
+            const outputElement = document.getElementById('output');
+            outputElement.innerHTML = '';
+            outputElement.classList.remove('error');
+        }
+
+        function minimizeOutputConsole() {
+            leftPane.style.flexBasis = '100%';
+            rightPane.style.flexBasis = '0%';
+            splitter.style.display = 'none';
+            rightPane.style.display = 'none';
+            outputConsole.classList.add('minimized');
+        }
+
+        function maximizeOutputConsole() {
+            outputConsole.classList.remove('minimized');
+            rightPane.style.display = 'block';
+            leftPane.style.flexBasis = '65%';
+            rightPane.style.flexBasis = '35%';
+            rightPane.style.minWidth = '35%';
+            splitter.style.display = 'block';
+        }
+
+        function toggleOutputConsole() {
+            outputConsole.classList.toggle('minimized');
+
+            if (outputConsole.classList.contains('minimized')) {
+                minimizeOutputConsole();
+            } else {
+                maximizeOutputConsole();
+            }
+        }
+
+        splitter.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            document.body.classList.add('no-select');
+        });
+
+        function handleMouseMove(e) {
+            if (!isDragging) return;
+
+            const containerWidth = splitter.parentElement.offsetWidth;
+            const newLeftPaneWidth = e.clientX - leftPane.getBoundingClientRect().left;
+
+            let leftPercentage = (newLeftPaneWidth / containerWidth) * 100;
+            let rightPercentage = 100 - leftPercentage;
+
+            if (leftPercentage < 20) leftPercentage = 20;
+            if (rightPercentage < 20) rightPercentage = 20;
+
+            leftPane.style.flexBasis = `${leftPercentage}%`;
+            rightPane.style.flexBasis = `${rightPercentage}%`;
+            rightPane.style.minWidth = `${rightPercentage}%`;
+        }
+
+        function handleMouseUp() {
+            isDragging = false;
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.body.classList.remove('no-select');
+        }
+
+        function handleKeyDown(event) {
+            const { selectionStart, selectionEnd, value } = codeEditor;
+            const currentLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+            const currentLineEnd = value.indexOf('\n', selectionStart);
+            const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+
+            // --- Tab / Shift+Tab for Indentation ---
+            if (event.key === 'Tab') {
+                event.preventDefault(); // Prevent default tab behavior (losing focus)
+
+                if (event.shiftKey) {
+                    // De-indent (Shift+Tab)
+                    const lines = value.substring(0, selectionStart).split('\n');
+                    const startLineIndex = lines.length - 1;
+                    let newSelectionStart = selectionStart;
+                    let newSelectionEnd = selectionEnd;
+
+                    let modifiedLines = [];
+                    let charsRemoved = 0;
+
+                    const selectedLines = value.substring(currentLineStart, selectionEnd).split('\n');
+
+                    for (let i = 0; i < selectedLines.length; i++) {
+                        let line = selectedLines[i];
+                        if (line.startsWith(' '.repeat(TAB_SIZE))) {
+                            line = line.substring(TAB_SIZE);
+                            charsRemoved += TAB_SIZE;
+                        } else if (line.startsWith('\t')) {
+                            line = line.substring(1);
+                            charsRemoved += 1;
+                        }
+                        modifiedLines.push(line);
+                    }
+
+                    const newContent = value.substring(0, currentLineStart) + modifiedLines.join('\n') + value.substring(selectionEnd);
+                    codeEditor.value = newContent;
+                    codeEditor.selectionStart = selectionStart - charsRemoved;
+                    codeEditor.selectionEnd = selectionEnd - charsRemoved;
+
+                } else {
+                    // Indent (Tab)
+                    const indent = ' '.repeat(TAB_SIZE);
+                    codeEditor.value = value.substring(0, selectionStart) + indent + value.substring(selectionEnd);
+                    codeEditor.selectionStart = codeEditor.selectionEnd = selectionStart + indent.length;
+                }
+                updateHighlighting();
+                return;
+            }
+
+            // --- Enter for Auto-Indentation ---
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default enter behavior
+
+                const prevLine = value.substring(0, selectionStart).split('\n').pop();
+                const leadingSpaces = prevLine.match(/^\s*/)[0];
+                let newIndentation = leadingSpaces;
+
+                // Increase indentation if previous line ends with a colon
+                if (prevLine.trim().endsWith(':')) {
+                    newIndentation += ' '.repeat(TAB_SIZE);
+                }
+
+                const newValue = value.substring(0, selectionStart) + '\n' + newIndentation + value.substring(selectionEnd);
+                codeEditor.value = newValue;
+                codeEditor.selectionStart = codeEditor.selectionEnd = selectionStart + 1 + newIndentation.length;
+                updateHighlighting();
+                return;
+            }
+
+            // --- Ctrl+/ (or Cmd+/) for Commenting ---
+            if ((event.ctrlKey || event.metaKey) && event.key === '/') {
+                event.preventDefault();
+
+                const lines = value.split('\n');
+                let startLineIndex = value.substring(0, selectionStart).split('\n').length - 1;
+                let endLineIndex = value.substring(0, selectionEnd).split('\n').length - 1;
+
+                // Adjust endLineIndex if selection is at the very beginning of a new line
+                if (selectionStart === selectionEnd && selectionStart > 0 && value[selectionStart - 1] === '\n') {
+                    startLineIndex = endLineIndex;
+                }
+
+                let allLinesAreCommented = true;
+                for (let i = startLineIndex; i <= endLineIndex; i++) {
+                    if (!lines[i].trim().startsWith('#')) {
+                        allLinesAreCommented = false;
+                        break;
+                    }
+                }
+
+                let newSelectionStart = selectionStart;
+                let newSelectionEnd = selectionEnd;
+                let charDiff = 0;
+
+                for (let i = startLineIndex; i <= endLineIndex; i++) {
+                    const line = lines[i];
+                    if (allLinesAreCommented) {
+                        // Uncomment: remove '#' and a space if present
+                        if (line.startsWith('# ')) {
+                            lines[i] = line.substring(2);
+                            charDiff -= 2;
+                        } else if (line.startsWith('#')) {
+                            lines[i] = line.substring(1);
+                            charDiff -= 1;
+                        }
+                    } else {
+                        // Comment: add '# '
+                        lines[i] = '# ' + line;
+                        charDiff += 2;
+                    }
+                }
+
+                codeEditor.value = lines.join('\n');
+
+                // Adjust selection after modification
+                if (selectionStart <= currentLineStart) { // If selection starts at or before the current line's start
+                    newSelectionStart = selectionStart + charDiff;
+                } else {
+                    newSelectionStart = selectionStart; // Selection start within the line, don't move it
+                }
+                newSelectionEnd = selectionEnd + charDiff;
+
+                codeEditor.selectionStart = Math.max(0, newSelectionStart);
+                codeEditor.selectionEnd = Math.max(0, newSelectionEnd);
+
+                updateHighlighting();
+                return;
+            }
+        }
+
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                .no-select {
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                }
+            </style>
+        `);
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            try {
+                loadPyodideAndPackages();
+                updateHighlighting();
+                codeEditor.addEventListener('input', updateHighlighting); // Update highlighting on every input
+                codeEditor.addEventListener('scroll', syncScroll); // Sync scrolling of textarea and pre
+                codeEditor.addEventListener('keydown', handleKeyDown);
+            } catch (e) {
+                console.error("Error loading Pyodide and packages:", e);
+                const outputElement = document.getElementById('output');
+                if (outputElement) {
+                    outputElement.textContent = "Error: Failed to load Pyodide and packages. Please check your internet connection and try refreshing the page.";
+                    outputElement.classList.add('error');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
