@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Foundational Concepts - Text Preprocessing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.8em;
+        }
+        .navbar {
+            background-color: #34495e;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: inline-block; /* For centering */
+        }
+        .navbar li {
+            display: inline-block;
+            margin: 0 20px;
+        }
+        .navbar li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        .navbar li a:hover {
+            color: #1abc9c;
+        }
+        .content {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-size: 2em;
+        }
+        h3 {
+            color: #27ae60;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        h4 {
+            color: #e67e22;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap; /* Ensures code wraps */
+        }
+        .note {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #388e3c;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-size: 0.9em;
+            border-top: 1px solid #34495e;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Natural Language Processing (NLP): Foundational Concepts</h1>
+        <p>Text Preprocessing, Vectorization, and Core Techniques</p>
+    </div>
+
+    <div class="navbar">
+        <ul>
+            <li><a href="AI.html" onclick="loadPage('AI.html'); return false;">AI</a></li>
+            <li><a href="ML.html" onclick="loadPage('ML.html'); return false;">ML</a></li>
+            <li><a href="NLP.html" onclick="loadPage('NLP.html'); return false;">NLP (Overview)</a></li>
+            <li><a href="NLP_Foundations.html" onclick="loadPage('NLP_Foundations.html'); return false;">NLP (Foundations)</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h2>Introduction to NLP Foundational Concepts</h2>
+        <p>
+            Natural Language Processing (NLP) is a dynamic field that enables computers to understand, interpret, and generate human language. Before any advanced analysis or machine learning can be applied to text data, it must undergo a series of preprocessing steps. These foundational techniques transform raw, unstructured text into a clean, numerical format that algorithms can process. This section delves into these crucial initial steps.
+        </p>
+
+        <h3>1. Tokenization</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Tokenization is the process of breaking down a text into smaller units called "tokens." These tokens can be words, subwords, characters, or even sentences, depending on the granularity required for the task. It's a fundamental step because most NLP tasks operate on these discrete units rather than the raw string.
+        </p>
+        <ul>
+            <li><strong>Word Tokenization:</strong> Divides text into individual words. This is the most common form. Challenges include handling punctuation, contractions (e.g., "don't"), hyphenated words, and special characters.</li>
+            <li><strong>Sentence Tokenization:</strong> Divides a larger text into individual sentences. This is important for tasks like summarization, question answering, and sentiment analysis where context within a sentence is crucial. Punctuation like periods, exclamation marks, and question marks typically mark sentence boundaries, but ambiguities exist (e.g., "Mr. Smith").</li>
+            <li><strong>Subword Tokenization:</strong> A more recent development (especially with deep learning models like BERT, GPT) where words are broken into smaller, meaningful units (subwords) if they are rare or unknown. This helps handle out-of-vocabulary (OOV) words and reduces vocabulary size while preserving morphological information. Examples include Byte Pair Encoding (BPE) and WordPiece.</li>
+        </ul>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Foundation for Analysis:</strong> Enables almost all subsequent NLP tasks (e.g., counting words, finding patterns, building vocabularies).</li>
+            <li><strong>Reduced Complexity:</strong> By breaking down text, it simplifies the input for algorithms.</li>
+            <li><strong>Improved Efficiency:</strong> Working with tokens is computationally more efficient than raw strings for many operations.</li>
+            <li><strong>Handling OOV (Subword Tokenization):</strong> Revolutionized how deep learning models handle rare words, leading to more robust language understanding.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <ul>
+            <li><strong>Rule-based:</strong> Historically, tokenization relied on regular expressions and handcrafted rules to identify word boundaries, punctuation, and other separators. This can be brittle and language-specific.</li>
+            <li><strong>Statistical/Probabilistic:</strong> Modern approaches, especially for sentence tokenization and handling difficult cases, often use statistical models trained on large corpora to predict token boundaries. NLTK's <code>Punkt</code> tokenizer is an example, which is an unsupervised algorithm that learns to tokenize based on patterns in the text.</li>
+            <li><strong>Neural (for Subword):</strong> Algorithms like BPE (Byte Pair Encoding) and WordPiece iteratively merge the most frequent character sequences to form subword tokens. This is often an integral part of the tokenizer component within large language models.</li>
+        </ul>
+
+        <h4>Code Example (Python - NLTK & SpaCy):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+import spacy
+
+# --- NLTK Data Downloads (Run these once if you encounter a LookupError) ---
+# nltk.download('punkt')
+
+# --- SpaCy Model Download (Run this once if you encounter an OSError) ---
+# python -m spacy download en_core_web_sm
+# Then restart your Python environment if running interactively.
+
+# Load SpaCy English model
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    print("SpaCy model 'en_core_web_sm' not found. Please run 'python -m spacy download en_core_web_sm' in your terminal.")
+    print("Then restart your Python environment and try again.")
+    # Exit or handle gracefully if model is essential for further execution
+    exit() 
+
+text = "Natural Language Processing (NLP) is a fascinating field. It helps computers understand human language. Don't you agree? Mr. Smith works at Google Inc."
+
+print("--- Tokenization ---")
+
+# 1. Word Tokenization (NLTK)
+print("\nNLTK Word Tokenization:")
+word_tokens_nltk = word_tokenize(text)
+print(word_tokens_nltk)
+
+# 2. Sentence Tokenization (NLTK)
+print("\nNLTK Sentence Tokenization:")
+sent_tokens_nltk = sent_tokenize(text)
+print(sent_tokens_nltk)
+
+# 3. Tokenization with SpaCy (more sophisticated, includes POS, etc.)
+# SpaCy processes the text and creates a Doc object, from which tokens can be accessed.
+print("\nSpaCy Tokenization:")
+doc = nlp(text)
+word_tokens_spacy = [token.text for token in doc]
+print(word_tokens_spacy)
+
+# SpaCy also handles sentences automatically via doc.sents
+print("\nSpaCy Sentence Tokenization:")
+sent_tokens_spacy = [sent.text for sent in doc.sents]
+print(sent_tokens_spacy)
+
+# Conceptual example of subword tokenization (requires 'transformers' library)
+# from transformers import AutoTokenizer
+# tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+# subword_tokens = tokenizer.tokenize("unbelievable")
+# print(f"\nSubword Tokenization (BERT concept): {subword_tokens}")
+            </code></pre>
+        </div>
+
+        <h3>2. Stemming and Lemmatization</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Words can appear in different inflected forms (e.g., "run," "running," "runs," "ran"). Normalizing these forms to a common base is crucial for many NLP tasks to avoid treating them as entirely different words.
+        </p>
+        <ul>
+            <li><strong>Stemming:</strong> A crude heuristic process that chops off suffixes from words to reduce them to their "stem" or root form. The stem may not be a grammatically correct word (e.g., "beautiful" -> "beauti", "history" -> "histori"). Popular algorithms include Porter Stemmer, Snowball Stemmer (Porter2).</li>
+            <li><strong>Lemmatization:</strong> A more sophisticated process that reduces words to their base or dictionary form, known as a "lemma." Unlike stemming, lemmatization considers the word's morphological analysis and often requires knowing the word's part-of-speech (POS) to return a valid word. For example, "better" (adjective) lemmas to "good," while "running" (verb) lemmas to "run." This process often uses a lexical database like WordNet.</li>
+        </ul>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Vocabulary Reduction:</strong> Significantly reduces the number of unique words (vocabulary size) in a corpus, which is beneficial for sparse data representations and computational efficiency.</li>
+            <li><strong>Improved Recall:</strong> Helps in information retrieval and search engines by matching queries to documents that use different inflected forms of a word.</li>
+            <li><strong>Better Feature Representation:</strong> Creates more robust features for machine learning models by grouping related words.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <ul>
+            <li><strong>Stemming:</strong> Primarily rule-based. Algorithms consist of a series of rules that look for common suffixes and remove them under certain conditions. For example, a rule might be "if a word ends in 'ing', remove it."</li>
+            <li><strong>Lemmatization:</strong> Typically relies on morphological dictionaries and algorithms that understand the grammatical structure of words. It often involves:
+                <ol>
+                    <li><strong>Part-of-Speech (POS) Tagging:</strong> Determining if a word is a noun, verb, adjective, etc.</li>
+                    <li><strong>Lexical Lookup:</strong> Using a dictionary (like WordNet) to find the base form of the word given its POS.</li>
+                </ol>
+            </li>
+        </ul>
+
+        <h4>Code Example (Python - NLTK & SpaCy):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import nltk
+from nltk.stem import PorterStemmer, SnowballStemmer
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet # for WordNetLemmatizer POS tagging
+import spacy
+
+# --- NLTK Data Downloads (Run these once if you encounter a LookupError) ---
+# nltk.download('wordnet')
+# nltk.download('omw-1.4') # Open Multilingual WordNet, often needed with wordnet
+# nltk.download('averaged_perceptron_tagger') # For nltk.pos_tag
+
+# --- SpaCy Model Download (already handled above if you ran it) ---
+# nlp = spacy.load("en_core_web_sm") # Assuming nlp object is already loaded from Tokenization section
+
+words_to_process = ["running", "runs", "ran", "runner", "easily", "fairly", "better", "good", "geese", "cacti", "studies", "studying"]
+
+print("\n--- Stemming and Lemmatization ---")
+
+# 1. Stemming (Porter Stemmer)
+porter_stemmer = PorterStemmer()
+print("\nPorter Stemming:")
+for word in words_to_process:
+    print(f"  {word} -> {porter_stemmer.stem(word)}")
+
+# 2. Stemming (Snowball Stemmer - often more aggressive/accurate than Porter)
+snowball_stemmer = SnowballStemmer("english")
+print("\nSnowball Stemming:")
+for word in words_to_process:
+    print(f"  {word} -> {snowball_stemmer.stem(word)}")
+
+# 3. Lemmatization (NLTK WordNetLemmatizer)
+# WordNetLemmatizer works best when provided with a part-of-speech (POS) tag.
+# If no POS is provided, it defaults to 'n' (noun).
+wordnet_lemmatizer = WordNetLemmatizer()
+
+# Helper function to convert NLTK POS tag to WordNet POS tag
+def get_wordnet_pos(treebank_tag):
+    if treebank_tag.startswith('J'):
+        return wordnet.ADJ
+    elif treebank_tag.startswith('V'):
+        return wordnet.VERB
+    elif treebank_tag.startswith('N'):
+        return wordnet.NOUN
+    elif treebank_tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return wordnet.NOUN # Default to noun if not found
+
+print("\nNLTK Lemmatization (with POS tagging):")
+text_for_lemmatization = "The cats were running quickly, and they had better results from their studies."
+tokens = nltk.word_tokenize(text_for_lemmatization)
+pos_tags = nltk.pos_tag(tokens)
+
+lemmatized_words_nltk = []
+for word, tag in pos_tags:
+    wntag = get_wordnet_pos(tag)
+    lemma = wordnet_lemmatizer.lemmatize(word, wntag)
+    lemmatized_words_nltk.append(lemma)
+print(f"  Original: {text_for_lemmatization}")
+print(f"  Lemmatized (NLTK): {' '.join(lemmatized_words_nltk)}")
+
+
+# 4. Lemmatization (SpaCy) - simpler and often more accurate as it includes POS tagging
+print("\nSpaCy Lemmatization:")
+doc_spacy = nlp(text_for_lemmatization)
+lemmas_spacy = [token.lemma_ for token in doc_spacy]
+print(f"  Original: {text_for_lemmatization}")
+print(f"  Lemmatized (SpaCy): {' '.join(lemmas_spacy)}")
+
+print("\nComparison for specific words (SpaCy):")
+for word in words_to_process:
+    doc_word = nlp(word)
+    lemma_spacy = doc_word[0].lemma_
+    print(f"  SpaCy: {word} -> {lemma_spacy}")
+            </code></pre>
+        </div>
+
+        <h3>3. Stop Word Removal</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Stop words are common words in a language (like "the," "is," "and," "a") that carry little semantic meaning and often don't contribute significantly to the core content or sentiment of a text. Removing them can help reduce noise and focus on more meaningful terms.
+        </p>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Reduced Dimensionality:</strong> Decreases the number of features (words) in a dataset, which can improve computational efficiency and reduce memory usage, especially for traditional machine learning models.</li>
+            <li><strong>Improved Signal-to-Noise Ratio:</strong> Helps downstream models focus on important words, potentially leading to better performance in tasks like text classification and topic modeling.</li>
+            <li><strong>Pre-computation for Efficiency:</strong> Pre-defined lists of stop words make this a fast and straightforward preprocessing step.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <ul>
+            <li>The process is typically a simple lookup: iterate through the tokens of a text and remove any that appear in a pre-defined list of stop words.</li>
+            <li>These lists are language-specific and can be augmented or customized based on the specific application (e.g., removing domain-specific common terms that are not informative).</li>
+        </ul>
+
+        <h4>Code Example (Python - NLTK & SpaCy):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize # From previous section
+import spacy
+
+# --- NLTK Data Downloads (Run these once if you encounter a LookupError) ---
+# nltk.download('stopwords')
+
+# --- SpaCy Model (already loaded if run previously) ---
+# nlp = spacy.load("en_core_web_sm") # Assuming nlp object is already loaded
+
+text_for_stopwords = "This is a very important sentence demonstrating stop word removal and it is quite useful."
+
+print("\n--- Stop Word Removal ---")
+
+# NLTK Stop words
+nltk_stop_words = set(stopwords.words('english'))
+print(f"Sample NLTK Stop words: {list(nltk_stop_words)[:10]}...")
+
+# 1. Stop Word Removal (NLTK)
+word_tokens_sw = word_tokenize(text_for_stopwords)
+filtered_words_nltk_sw = [word for word in word_tokens_sw if word.lower() not in nltk_stop_words]
+print(f"  Original (NLTK): {word_tokens_sw}")
+print(f"  Filtered (NLTK): {filtered_words_nltk_sw}")
+
+# SpaCy Stop words
+spacy_stop_words = nlp.Defaults.stop_words
+print(f"\nSample SpaCy Stop words: {list(spacy_stop_words)[:10]}...")
+
+# 2. Stop Word Removal (SpaCy) - SpaCy tokens have an `is_stop` attribute
+doc_sw = nlp(text_for_stopwords)
+filtered_words_spacy_sw = [token.text for token in doc_sw if not token.is_stop]
+print(f"  Original (SpaCy): {[token.text for token in doc_sw]}")
+print(f"  Filtered (SpaCy): {filtered_words_spacy_sw}")
+            </code></pre>
+        </div>
+
+        <h3>4. Bag-of-Words (BoW) and TF-IDF</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Once text is preprocessed (tokenized, normalized), it needs to be converted into a numerical format that machine learning models can understand. BoW and TF-IDF are classic vectorization techniques for this purpose.
+        </p>
+        <ul>
+            <li><strong>Bag-of-Words (BoW):</strong> A simple and widely used representation where text (like a document or sentence) is represented as a "bag" (multiset) of its words, disregarding grammar and even word order, but keeping track of word frequencies.
+                <ul>
+                    <li><strong>Process:</strong>
+                        <ol>
+                            <li>Create a vocabulary of all unique words in the entire corpus.</li>
+                            <li>For each document, create a vector where each dimension corresponds to a unique word in the vocabulary, and the value in that dimension is the count of how many times that word appears in the document.</li>
+                        </ol>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>Term Frequency-Inverse Document Frequency (TF-IDF):</strong> An improvement over simple word counts that accounts for the importance of a word in a document relative to the entire corpus.
+                <ul>
+                    <li><strong>Term Frequency (TF):</strong> Measures how frequently a term appears in a document.
+                        <ul>
+                            <li>$TF(t, d) = \frac{\text{Number of times term } t \text{ appears in document } d}{\text{Total number of terms in document } d}$</li>
+                        </ul>
+                    </li>
+                    <li><strong>Inverse Document Frequency (IDF):</strong> Measures how important a term is across the whole corpus. It down-weights common words (like "the," "a") that appear in many documents and up-weights rare words that are specific to a few documents.
+                        <ul>
+                            <li>$IDF(t, D) = \log \left( \frac{\text{Total number of documents } N}{\text{Number of documents containing term } t} \right)$</li>
+                            <li>(Note: Variations exist, often adding 1 to the numerator/denominator to prevent division by zero or log(0) issues, e.g., $IDF(t, D) = \log \left( \frac{N}{1 + \text{count}(d \in D : t \in d)} \right) + 1$)</li>
+                        </ul>
+                    </li>
+                    <li><strong>TF-IDF Score:</strong> The product of TF and IDF.
+                        <ul>
+                            <li>$TF-IDF(t, d, D) = TF(t, d) \times IDF(t, D)$</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Feature Engineering for ML:</strong> Provided a powerful way to convert unstructured text into numerical features for traditional machine learning algorithms (e.g., Naive Bayes, SVMs, Logistic Regression) for tasks like text classification, sentiment analysis, and topic modeling.</li>
+            <li><strong>Simplicity and Interpretability (BoW):</strong> Easy to understand and implement, provides a direct view of word counts.</li>
+            <li><strong>Highlighting Importance (TF-IDF):</strong> Effectively captures the salience of words within specific documents, improving performance over simple frequency counts for many tasks.</li>
+            <li><strong>Baseline Models:</strong> Still serve as strong baselines in many NLP applications, especially when deep learning models might be overkill or computational resources are limited.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <ul>
+            <li><strong>BoW:</strong> Requires building a vocabulary (a set of all unique words) and then counting word occurrences for each document. This often results in high-dimensional, sparse vectors (many zero values).</li>
+            <li><strong>TF-IDF:</strong> Involves two passes:
+                <ol>
+                    <li>Calculate TF for all terms in all documents.</li>
+                    <li>Calculate IDF for all terms across the entire document collection.</li>
+                    <li>Multiply TF and IDF for each term in each document.</li>
+                </ol>
+                Libraries like <code>scikit-learn</code> efficiently handle the creation of these matrices, often using sparse matrix representations to save memory.
+            </li>
+        </ul>
+
+        <h4>Code Example (Python - scikit-learn):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+import pandas as pd
+
+documents = [
+    "The quick brown fox jumps over the lazy dog.",
+    "The dog barks loudly, and the fox runs fast.",
+    "A lazy cat sleeps on the mat.",
+    "The brown fox is a quick hunter."
+]
+
+print("\n--- Bag-of-Words (BoW) ---")
+
+# 1. Bag-of-Words Vectorization
+# CountVectorizer handles tokenization, lowercasing, and building vocabulary.
+# You can also pass pre-processed tokens to it.
+vectorizer_bow = CountVectorizer()
+X_bow = vectorizer_bow.fit_transform(documents)
+
+# Get the vocabulary (features)
+vocabulary_bow = vectorizer_bow.get_feature_names_out()
+print(f"Vocabulary (BoW): {vocabulary_bow}")
+
+# Convert to array for better viewing (sparse matrix is more memory efficient for large datasets)
+bow_matrix = X_bow.toarray()
+print("\nBoW Matrix (Document-Term Matrix):")
+print(pd.DataFrame(bow_matrix, columns=vocabulary_bow))
+# Each row represents a document, and each column represents a word from the vocabulary.
+# Values are term counts.
+
+print("\n--- TF-IDF ---")
+
+# 2. TF-IDF Vectorization
+# TfidfVectorizer also handles tokenization, lowercasing, etc.
+tfidf_vectorizer = TfidfVectorizer()
+X_tfidf = tfidf_vectorizer.fit_transform(documents)
+
+# Get the vocabulary (features)
+vocabulary_tfidf = tfidf_vectorizer.get_feature_names_out()
+print(f"Vocabulary (TF-IDF): {vocabulary_tfidf}")
+
+# Convert to array for better viewing
+tfidf_matrix = X_tfidf.toarray()
+print("\nTF-IDF Matrix (Document-Term Matrix):")
+print(pd.DataFrame(tfidf_matrix, columns=vocabulary_tfidf))
+# Values are TF-IDF scores. Notice how common words like "the" have lower scores
+# compared to more specific words like "jumps" or "barks".
+            </code></pre>
+        </div>
+
+        <h2>Learning Resources and Attachments</h2>
+        <h3>Online Courses:</h3>
+        <ul>
+            <li><a href="https://www.coursera.org/specializations/natural-language-processing" target="_blank">Natural Language Processing Specialization (DeepLearning.AI / Andrew Ng, Coursera)</a> - Covers foundational to advanced topics.</li>
+            <li><a href="https://huggingface.co/course/" target="_blank">Hugging Face Course</a> - Excellent practical guide to modern NLP with Transformers.</li>
+        </ul>
+        <h3>Key Textbooks:</h3>
+        <ul>
+            <li>Speech and Language Processing by Daniel Jurafsky and James H. Martin. (The "bible" of NLP, covers foundational algorithms in depth).</li>
+            <li>Natural Language Processing with Python by Steven Bird, Ewan Klein, and Edward Loper (NLTK Book).</li>
+        </ul>
+        <h3>Simulated Attachments (Downloadable Resources):</h3>
+        <div class="note">
+            These are placeholder links. You would replace `your-server.com/path/to/file.pdf` with the actual URL where you host these files.
+        </div>
+        <ul>
+            <li><a href="https://your-server.com/nlp_preprocessing_flowchart.pdf" download>NLP Preprocessing Flowchart (PDF)</a></li>
+            <li><a href="https://your-server.com/bag_of_words_tf_idf_explained.pdf" download>Bag-of-Words & TF-IDF Deep Dive (PDF)</a></li>
+            <li><a href="https://your-server.com/python_nlp_setup_guide.pdf" download>Python NLP Environment Setup Guide (PDF)</a></li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 NLP Learning Guide. Data current as of July 28, 2025. Designed for Computer Students & Scientists.</p>
+    </div>
+
+    <script>
+        function loadPage(pageName) {
+            window.location.href = pageName;
+        }
+    </script>
+</body>
+</html>

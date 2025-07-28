@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fault Tolerance & Auto-Recovery</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .scenario {
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .scenario-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .scenario-title h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: #3498db;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 120px;
+            position: relative;
+        }
+        
+        .timeline-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .timeline-icon.normal {
+            background: #27ae60;
+        }
+        
+        .timeline-icon.failure {
+            background: #e74c3c;
+            animation: shake 0.5s infinite;
+        }
+        
+        .timeline-icon.recovery {
+            background: #f39c12;
+            animation: pulse 1s infinite;
+        }
+        
+        .timeline-icon.restored {
+            background: #27ae60;
+            animation: bounce 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .timeline-label {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .timeline-time {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .component {
+            width: 100px;
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .component.healthy {
+            background: #27ae60;
+        }
+        
+        .component.degraded {
+            background: #f39c12;
+        }
+        
+        .component.failed {
+            background: #e74c3c;
+        }
+        
+        .component.isolated {
+            background: #95a5a6;
+            border: 3px dashed #7f8c8d;
+        }
+        
+        .system-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .recovery-strategies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .strategy {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+        }
+        
+        .strategy h4 {
+            color: #2c3e50;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .strategy-icon {
+            font-size: 1.5em;
+        }
+        
+        .degradation-levels {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .degradation-level {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 150px;
+        }
+        
+        .degradation-level.full {
+            background: #d5f4e6;
+            border: 2px solid #27ae60;
+        }
+        
+        .degradation-level.partial {
+            background: #fef9e7;
+            border: 2px solid #f39c12;
+        }
+        
+        .degradation-level.minimal {
+            background: #fadbd8;
+            border: 2px solid #e74c3c;
+        }
+        
+        .degradation-arrow {
+            font-size: 2em;
+            color: #7f8c8d;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .benefit {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .benefit-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .benefit h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+        
+        .benefit p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .alert-box::before {
+            content: '⚠️';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #f39c12;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 1.2em;
+        }
+        
+        .alert-box h4 {
+            color: #d68910;
+            margin-top: 0;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Fault Tolerance & Auto-Recovery</h1>
+            <p>How systems automatically isolate failures and maintain service continuity</p>
+        </div>
+        
+        <div class="content">
+            <div class="scenario">
+                <div class="scenario-title">
+                    <h2>Failure Detection & Auto-Recovery Timeline</h2>
+                    <p style="color: #7f8c8d; margin-top: 10px;">Real-time response to component failure with automatic isolation and recovery</p>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon normal">✅</div>
+                        <div class="timeline-label">Normal Operation</div>
+                        <div class="timeline-time">T+0s</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon failure">❌</div>
+                        <div class="timeline-label">Component Fails</div>
+                        <div class="timeline-time">T+1s</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon recovery">🔍</div>
+                        <div class="timeline-label">Failure Detected</div>
+                        <div class="timeline-time">T+2s</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon recovery">🚫</div>
+                        <div class="timeline-label">Component Isolated</div>
+                        <div class="timeline-time">T+3s</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon recovery">🔄</div>
+                        <div class="timeline-label">Traffic Rerouted</div>
+                        <div class="timeline-time">T+4s</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon restored">✅</div>
+                        <div class="timeline-label">Service Restored</div>
+                        <div class="timeline-time">T+5s</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scenario">
+                <div class="scenario-title">
+                    <h2>Circuit Breaker Pattern</h2>
+                    <p style="color: #7f8c8d; margin-top: 10px;">Automatic isolation of failing components to prevent cascade failures</p>
+                </div>
+                
+                <div class="system-diagram">
+                    <div class="component healthy">Service A</div>
+                    <div style="font-size: 2em; color: #27ae60;">→</div>
+                    <div class="component failed">Service B</div>
+                    <div style="font-size: 2em; color: #e74c3c;">⚡</div>
+                    <div class="component isolated">Circuit Breaker</div>
+                    <div style="font-size: 2em; color: #f39c12;">↷</div>
+                    <div class="component healthy">Fallback Service</div>
+                </div>
+                
+                <div class="recovery-strategies">
+                    <div class="strategy">
+                        <h4><span class="strategy-icon">🔄</span>Retry Logic</h4>
+                        <p>Automatic retry with exponential backoff for transient failures</p>
+                        <ul style="color: #555; font-size: 0.9em;">
+                            <li>Immediate retry (1st attempt)</li>
+                            <li>2-second delay (2nd attempt)</li>
+                            <li>4-second delay (3rd attempt)</li>
+                            <li>Circuit breaker opens after 3 failures</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="strategy">
+                        <h4><span class="strategy-icon">🛡️</span>Bulkhead Pattern</h4>
+                        <p>Isolate resources to prevent failure propagation</p>
+                        <ul style="color: #555; font-size: 0.9em;">
+                            <li>Separate thread pools per service</li>
+                            <li>Independent connection pools</li>
+                            <li>Resource quotas and limits</li>
+                            <li>Failure containment boundaries</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="strategy">
+                        <h4><span class="strategy-icon">⏱️</span>Timeout Handling</h4>
+                        <p>Prevent resource exhaustion from hanging requests</p>
+                        <ul style="color: #555; font-size: 0.9em;">
+                            <li>Connection timeouts (5s)</li>
+                            <li>Read timeouts (30s)</li>
+                            <li>Circuit breaker timeouts (60s)</li>
+                            <li>Graceful degradation on timeout</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="strategy">
+                        <h4><span class="strategy-icon">🔄</span>Health Checks</h4>
+                        <p>Continuous monitoring and automatic recovery</p>
+                        <ul style="color: #555; font-size: 0.9em;">
+                            <li>Heartbeat monitoring (every 10s)</li>
+                            <li>Deep health checks (every 60s)</li>
+                            <li>Auto-restart on failure</li>
+                            <li>Gradual traffic restoration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scenario">
+                <div class="scenario-title">
+                    <h2>Graceful Degradation Levels</h2>
+                    <p style="color: #7f8c8d; margin-top: 10px;">How systems maintain partial functionality during component failures</p>
+                </div>
+                
+                <div class="degradation-levels">
+                    <div class="degradation-level full">
+                        <h4 style="color: #27ae60; margin-top: 0;">Full Service</h4>
+                        <div style="font-size: 2em; margin: 10px 0;">🟢</div>
+                        <p style="color: #155724; margin: 0;">All features available<br>100% functionality</p>
+                    </div>
+                    
+                    <div class="degradation-arrow">→</div>
+                    
+                    <div class="degradation-level partial">
+                        <h4 style="color: #f39c12; margin-top: 0;">Partial Service</h4>
+                        <div style="font-size: 2em; margin: 10px 0;">🟡</div>
+                        <p style="color: #856404; margin: 0;">Core features only<br>70% functionality</p>
+                    </div>
+                    
+                    <div class="degradation-arrow">→</div>
+                    
+                    <div class="degradation-level minimal">
+                        <h4 style="color: #e74c3c; margin-top: 0;">Minimal Service</h4>
+                        <div style="font-size: 2em; margin: 10px 0;">🔴</div>
+                        <p style="color: #721c24; margin: 0;">Essential only<br>30% functionality</p>
+                    </div>
+                </div>
+                
+                <div class="alert-box">
+                    <h4>Graceful Degradation Examples</h4>
+                    <ul style="color: #856404; margin-bottom: 0;">
+                        <li><strong>E-commerce:</strong> Show cached product info when inventory service fails</li>
+                        <li><strong>Social Media:</strong> Disable posting but keep reading functionality</li>
+                        <li><strong>Banking:</strong> Allow balance checks but disable transfers during outages</li>
+                        <li><strong>Video Streaming:</strong> Reduce quality instead of stopping playback</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <div class="benefit-icon">🛡️</div>
+                    <h4>Self-Healing</h4>
+                    <p>Systems automatically detect, isolate, and recover from failures without human intervention</p>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">⚡</div>
+                    <h4>Fast Recovery</h4>
+                    <p>Automated processes reduce recovery time from hours to seconds or minutes</p>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🎯</div>
+                    <h4>Failure Isolation</h4>
+                    <p>Prevent cascade failures by containing problems to specific components</p>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">📊</div>
+                    <h4>Continuous Service</h4>
+                    <p>Maintain partial functionality even during component failures for better user experience</p>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🔄</div>
+                    <h4>Adaptive Response</h4>
+                    <p>Dynamic adjustment of behavior based on current system health and load conditions</p>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">📈</div>
+                    <h4>Improved Reliability</h4>
+                    <p>Achieve higher uptime through proactive failure management and automatic recovery</p>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 30px; border-radius: 15px; margin-top: 30px;">
+                <h3 style="margin-top: 0; text-align: center;">Fault Tolerance Best Practices</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4 style="color: #f39c12;">🔍 Monitor Everything</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Comprehensive monitoring of all system components and dependencies</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #f39c12;">⚡ Fail Fast</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Quick failure detection prevents resource waste and cascade effects</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #f39c12;">🛡️ Design for Failure</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Assume components will fail and build resilience from the ground up</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #f39c12;">🔄 Test Recovery</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Regular chaos engineering and disaster recovery testing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

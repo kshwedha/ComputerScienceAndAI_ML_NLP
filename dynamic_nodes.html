@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Graph Editor</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script> <!-- Using D3.js v7 for modern features -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden; /* Prevent body scrollbars */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #controls {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #controls button {
+            padding: 8px 15px;
+            border: none;
+            background-color: steelblue;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        #controls button:hover {
+            background-color: #4682b4;
+        }
+        #controls select {
+            padding: 7px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        #controls #message {
+            margin-left: auto;
+            color: #555;
+            font-style: italic;
+        }
+        #graph-container {
+            flex-grow: 1; /* Allows it to take remaining space */
+            position: relative;
+            background-color: #f9f9f9; /* Added background for visibility */
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block; /* Remove extra space below SVG */
+        }
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+            cursor: grab;
+        }
+        .node.selected circle {
+            fill: lightcoral; /* Highlight selected node */
+            stroke: darkred;
+        }
+        .node text {
+            font: 12px sans-serif;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none; /* Allows click-through to circle */
+            user-select: none;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+            pointer-events: none; /* Allows click-through to nodes */
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="addNodeBtn">Add Node</button>
+        <button id="addEdgeBtn">Connect Nodes</button>
+        <select id="node1Select"></select>
+        <select id="node2Select"></select>
+        <span id="message">Click 'Add Node' to start or 'Connect Nodes' after selecting two nodes.</span>
+    </div>
+    <div id="graph-container">
+        <svg id="graph-svg"></svg>
+    </div>
+
+    <script src="graph.js"></script>
+    <script>
+        // Data for nodes and links
+let nodes = [];
+let links = [];
+let nextNodeId = 1;
+let selectedNode = null; // To track a node selected for connection
+
+// Selectors for DOM elements
+const graphContainer = d3.select("#graph-container");
+const svg = d3.select("#graph-svg");
+const addNodeBtn = d3.select("#addNodeBtn");
+const addEdgeBtn = d3.select("#addEdgeBtn");
+const node1Select = d3.select("#node1Select");
+const node2Select = d3.select("#node2Select");
+const messageSpan = d3.select("#message");
+
+// Get dimensions of the container for responsive SVG
+// Initialize width and height here, and let ResizeObserver update them later
+let width = parseInt(graphContainer.style("width")) || window.innerWidth;
+let height = parseInt(graphContainer.style("height")) || window.innerHeight;
+
+// Set up zoom behavior
+const zoom = d3.zoom()
+    .scaleExtent([0.1, 10]) // Allow zoom from 0.1x to 10x
+    .on("zoom", zoomed);
+
+// Apply zoom behavior to the entire SVG content group
+const g = svg.append("g");
+// Set initial SVG dimensions explicitly
+svg.attr("width", width).attr("height", height);
+svg.call(zoom);
+
+function zoomed(event) {
+    g.attr("transform", event.transform);
+}
+
+// Set up force simulation for node positioning
+const simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+    .force("charge", d3.forceManyBody().strength(-300))
+    .force("center", d3.forceCenter(width / 2, height / 2)) // Use initial width/height
+    .on("tick", ticked);
+
+// --- Graph Rendering Functions ---
+
+let linkElements;
+let nodeElements;
+
+function updateGraph() {
+    console.log("Updating graph. Current nodes:", nodes.length);
+
+    // Update links
+    linkElements = g.selectAll(".link")
+        .data(links, d => d.source.id + "-" + d.target.id)
+        .join("line")
+        .attr("class", "link");
+
+    // Update nodes
+    nodeElements = g.selectAll(".node")
+        .data(nodes, d => d.id)
+        .join(
+            enter => enter.append("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended))
+                .call(enter => {
+                    enter.append("circle")
+                        .attr("r", 20)
+                        .on("click", clickNode); // Add click listener for selection
+                    enter.append("text")
+                        .text(d => d.id)
+                        .attr("dy", "0.35em"); // Vertically center text
+                }),
+            update => update,
+            exit => exit.remove()
+        );
+
+    // Update dropdowns for connecting nodes
+    updateNodeSelectors();
+
+    // Restart the simulation with updated data
+    simulation.nodes(nodes);
+    simulation.force("link").links(links);
+    simulation.alpha(1).restart();
+}
+
+function ticked() {
+    linkElements
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+    nodeElements
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+}
+
+// --- Event Handlers ---
+
+function addNode() {
+    console.log("Add Node button clicked!");
+    const newNode = {
+        id: nextNodeId++,
+        x: width / 2 + (Math.random() - 0.5) * 100, // Slightly randomize initial position
+        y: height / 2 + (Math.random() - 0.5) * 100
+    };
+    nodes.push(newNode);
+    console.log("Nodes array after adding:", nodes);
+    updateGraph();
+    messageSpan.text(`Node ${newNode.id} added.`);
+}
+
+function addEdge() {
+    const sourceNodeId = parseInt(node1Select.property("value"));
+    const targetNodeId = parseInt(node2Select.property("value"));
+
+    if (isNaN(sourceNodeId) || isNaN(targetNodeId) || sourceNodeId === targetNodeId) {
+        messageSpan.text("Please select two different nodes to connect.");
+        return;
+    }
+
+    const sourceNode = nodes.find(n => n.id === sourceNodeId);
+    const targetNode = nodes.find(n => n.id === targetNodeId);
+
+    if (sourceNode && targetNode) {
+        // Check if link already exists (optional, but good practice)
+        const linkExists = links.some(l =>
+            (l.source.id === sourceNode.id && l.target.id === targetNode.id) ||
+            (l.source.id === targetNode.id && l.target.id === sourceNode.id)
+        );
+
+        if (!linkExists) {
+            links.push({ source: sourceNode, target: targetNode });
+            updateGraph();
+            messageSpan.text(`Connected node ${sourceNode.id} to node ${targetNode.id}.`);
+        } else {
+            messageSpan.text("Edge already exists between these nodes.");
+        }
+    } else {
+        messageSpan.text("Selected nodes not found. This should not happen.");
+    }
+}
+
+function clickNode(event, d) {
+    // Deselect previously selected node
+    if (selectedNode && selectedNode.id !== d.id) {
+        nodeElements.filter(n => n.id === selectedNode.id).classed("selected", false);
+    }
+
+    // Toggle selection state
+    if (selectedNode && selectedNode.id === d.id) {
+        selectedNode = null;
+        d3.select(this.parentNode).classed("selected", false);
+        messageSpan.text("Node deselected.");
+    } else {
+        selectedNode = d;
+        d3.select(this.parentNode).classed("selected", true);
+        messageSpan.text(`Node ${d.id} selected. Select another to connect or click 'Connect Nodes'.`);
+        
+        // Auto-populate the connection dropdowns if a node is selected
+        if (selectedNode) {
+            node1Select.property("value", selectedNode.id);
+        }
+    }
+}
+
+
+// --- Drag functionality for nodes ---
+function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+    messageSpan.text(`Dragging node ${d.id}.`);
+}
+
+function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+    messageSpan.text(`Dragging node ${d.id}.`);
+}
+
+function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null; // Release fixed position
+    d.fy = null;
+    messageSpan.text(`Node ${d.id} drag ended.`);
+}
+
+// --- Utility Functions ---
+
+function updateNodeSelectors() {
+    node1Select.selectAll("option")
+        .data(nodes)
+        .join("option")
+        .attr("value", d => d.id)
+        .text(d => `Node ${d.id}`);
+
+    node2Select.selectAll("option")
+        .data(nodes)
+        .join("option")
+        .attr("value", d => d.id)
+        .text(d => `Node ${d.id}`);
+
+    // Set default selected options if nodes exist
+    if (nodes.length >= 1) {
+        node1Select.property("value", nodes[0].id);
+    }
+    if (nodes.length >= 2) {
+        node2Select.property("value", nodes[1].id);
+    } else if (nodes.length === 1) {
+        // If only one node, set both dropdowns to it, or clear the second one
+        node2Select.property("value", nodes[0].id);
+    } else {
+        // No nodes, clear dropdowns
+        node1Select.property("value", "");
+        node2Select.property("value", "");
+    }
+}
+
+
+// Initial setup and event listeners
+addNodeBtn.on("click", addNode);
+addEdgeBtn.on("click", addEdge);
+
+// Resize observer to update SVG dimensions and recenter simulation
+const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+        if (entry.target.id === 'graph-container') {
+            width = entry.contentRect.width;
+            height = entry.contentRect.height;
+            // Update the force center with new dimensions
+            simulation.force("center", d3.forceCenter(width / 2, height / 2));
+            simulation.alpha(1).restart(); // Restart simulation to apply new center
+            svg.attr("width", width).attr("height", height); // Ensure SVG matches container
+        }
+    }
+});
+resizeObserver.observe(graphContainer.node());
+
+// Initial call to update selectors and graph
+updateNodeSelectors();
+updateGraph(); // Call updateGraph once initially to set up empty graph
+    </script>
+</body>
+</html>

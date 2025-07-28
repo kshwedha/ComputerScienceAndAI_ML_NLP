@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Patterns Explained</title>
+    <style>
+        /* Basic Reset & Body Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        /* Header */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Section Styling for Each Pattern */
+        .pattern-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            padding: 25px 35px;
+            border-left: 5px solid #3498db;
+        }
+
+        .pattern-section h2 {
+            color: #2980b9;
+            margin-top: 0;
+            font-size: 2em;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pattern-section h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .pattern-section p {
+            margin-bottom: 15px;
+        }
+
+        /* Code Block Styling */
+        pre {
+            background-color: #2d2d2d; /* Dark background for code */
+            color: #f8f8f2; /* Light text for readability */
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto; /* Enable horizontal scroll for long lines */
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            line-height: 1.4;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        /* Language Specific Headers for Code */
+        pre .lang-header {
+            color: #bbb;
+            font-size: 0.85em;
+            text-align: right;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #444;
+            display: block;
+        }
+
+        /* List Styling */
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        ul li {
+            margin-bottom: 8px;
+        }
+
+        /* Horizontal Rule for separation */
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #eee;
+            margin: 40px 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .pattern-section {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .pattern-section h2 {
+                font-size: 1.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Design Patterns with Code</h1>
+
+    <div class="pattern-section">
+        <h2>1. Singleton</h2>
+        <p><strong>Concept:</strong> The Singleton pattern ensures that a class has only one instance and provides a global point of access to that instance. It's often used for logging, configuration management, or managing a single database connection.</p>
+        <p><strong>Use Case:</strong> A configuration manager that needs to be accessed globally and consistently across an application.</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+class ConfigurationManager:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ConfigurationManager, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not self._initialized:
+            self.settings = {}
+            print("ConfigurationManager: Initializing settings...")
+            # Simulate loading settings from a file or environment
+            self.settings['log_level'] = 'INFO'
+            self.settings['database_url'] = 'sqlite:///app.db'
+            self._initialized = True
+        else:
+            print("ConfigurationManager: Already initialized.")
+
+    def get_setting(self, key):
+        return self.settings.get(key)
+
+    def set_setting(self, key, value):
+        self.settings[key] = value
+        print(f"ConfigurationManager: Set '{key}' to '{value}'")
+
+# Usage
+config1 = ConfigurationManager()
+print(f"Log Level: {config1.get_setting('log_level')}")
+
+config2 = ConfigurationManager()
+print(f"Database URL: {config2.get_setting('database_url')}")
+
+# Verify both variables point to the same instance
+print(f"Are config1 and config2 the same instance? {config1 is config2}")
+
+config1.set_setting('log_level', 'DEBUG')
+print(f"Updated Log Level (via config2): {config2.get_setting('log_level')}")</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+// ConfigurationManager represents the singleton configuration manager.
+type ConfigurationManager struct {
+	settings map[string]string
+	mu       sync.Mutex // Mutex to ensure thread-safe initialization
+}
+
+var (
+	instance *ConfigurationManager
+	once     sync.Once
+)
+
+// GetConfigurationManager returns the singleton instance of ConfigurationManager.
+func GetConfigurationManager() *ConfigurationManager {
+	once.Do(func() {
+		instance = &ConfigurationManager{
+			settings: make(map[string]string),
+		}
+		fmt.Println("ConfigurationManager: Initializing settings...")
+		// Simulate loading settings from a file or environment
+		instance.settings["log_level"] = "INFO"
+		instance.settings["database_url"] = "postgres://user:pass@host:port/db"
+	})
+	return instance
+}
+
+// GetSetting retrieves a setting by key.
+func (cm *ConfigurationManager) GetSetting(key string) string {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+	return cm.settings[key]
+}
+
+// SetSetting sets a setting by key and value.
+func (cm *ConfigurationManager) SetSetting(key, value string) {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+	cm.settings[key] = value
+	fmt.Printf("ConfigurationManager: Set '%s' to '%s'\n", key, value)
+}
+
+func main() {
+	config1 := GetConfigurationManager()
+	fmt.Printf("Log Level: %s\n", config1.GetSetting("log_level"))
+
+	config2 := GetConfigurationManager()
+	fmt.Printf("Database URL: %s\n", config2.GetSetting("database_url"))
+
+	// Verify both variables point to the same instance
+	fmt.Printf("Are config1 and config2 the same instance? %v\n", config1 == config2)
+
+	config1.SetSetting("log_level", "DEBUG")
+	fmt.Printf("Updated Log Level (via config2): %s\n", config2.GetSetting("log_level"))
+}</pre>
+    </div>
+
+    <hr>
+
+    <div class="pattern-section">
+        <h2>2. Builder</h2>
+        <p><strong>Concept:</strong> The Builder pattern separates the construction of a complex object from its representation. This allows the same construction process to create different representations. It's useful when an object has many parameters, and some are optional.</p>
+        <p><strong>Use Case:</strong> Constructing a complex <code>Pizza</code> object with various toppings, crust types, and sizes.</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+class Pizza:
+    def __init__(self):
+        self.crust = None
+        self.sauce = None
+        self.toppings = []
+        self.size = None
+
+    def __str__(self):
+        return (f"Pizza Details:\n"
+                f"  Crust: {self.crust}\n"
+                f"  Sauce: {self.sauce}\n"
+                f"  Toppings: {', '.join(self.toppings)}\n"
+                f"  Size: {self.size}")
+
+class PizzaBuilder:
+    def __init__(self):
+        self.pizza = Pizza()
+
+    def set_crust(self, crust_type):
+        self.pizza.crust = crust_type
+        return self # Return self for method chaining
+
+    def set_sauce(self, sauce_type):
+        self.pizza.sauce = sauce_type
+        return self
+
+    def add_topping(self, topping):
+        self.pizza.toppings.append(topping)
+        return self
+
+    def set_size(self, size):
+        self.pizza.size = size
+        return self
+
+    def build(self):
+        return self.pizza
+
+# Usage
+builder = PizzaBuilder()
+my_pizza = builder.set_crust("Thin Crust") \
+                  .set_sauce("Tomato") \
+                  .add_topping("Pepperoni") \
+                  .add_topping("Mushrooms") \
+                  .set_size("Large") \
+                  .build()
+
+print(my_pizza)
+
+print("\n--- Another Pizza ---")
+another_pizza = PizzaBuilder().set_crust("Thick Crust") \
+                              .set_sauce("Pesto") \
+                              .add_topping("Spinach") \
+                              .build() # Size is not set, will be None
+print(another_pizza)</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import "fmt"
+
+// Pizza represents the complex object to be built.
+type Pizza struct {
+	Crust    string
+	Sauce    string
+	Toppings []string
+	Size     string
+}
+
+func (p *Pizza) String() string {
+	return fmt.Sprintf("Pizza Details:\n  Crust: %s\n  Sauce: %s\n  Toppings: %v\n  Size: %s",
+		p.Crust, p.Sauce, p.Toppings, p.Size)
+}
+
+// PizzaBuilder is the builder interface.
+type PizzaBuilder interface {
+	SetCrust(crustType string) PizzaBuilder
+	SetSauce(sauceType string) PizzaBuilder
+	AddTopping(topping string) PizzaBuilder
+	SetSize(size string) PizzaBuilder
+	Build() *Pizza
+}
+
+// ConcretePizzaBuilder implements the PizzaBuilder interface.
+type ConcretePizzaBuilder struct {
+	pizza *Pizza
+}
+
+// NewPizzaBuilder creates a new ConcretePizzaBuilder.
+func NewPizzaBuilder() *ConcretePizzaBuilder {
+	return &ConcretePizzaBuilder{
+		pizza: &Pizza{
+			Toppings: []string{}, // Initialize slice
+		},
+	}
+}
+
+func (b *ConcretePizzaBuilder) SetCrust(crustType string) PizzaBuilder {
+	b.pizza.Crust = crustType
+	return b
+}
+
+func (b *ConcretePizzaBuilder) SetSauce(sauceType string) PizzaBuilder {
+	b.pizza.Sauce = sauceType
+	return b
+}
+
+func (b *ConcretePizzaBuilder) AddTopping(topping string) PizzaBuilder {
+	b.pizza.Toppings = append(b.pizza.Toppings, topping)
+	return b
+}
+
+func (b *ConcretePizzaBuilder) SetSize(size string) PizzaBuilder {
+	b.pizza.Size = size
+	return b
+}
+
+func (b *ConcretePizzaBuilder) Build() *Pizza {
+	return b.pizza
+}
+
+func main() {
+	builder := NewPizzaBuilder()
+	myPizza := builder.SetCrust("Thin Crust").
+		SetSauce("Tomato").
+		AddTopping("Pepperoni").
+		AddTopping("Mushrooms").
+		SetSize("Large").
+		Build()
+
+	fmt.Println(myPizza)
+
+	fmt.Println("\n--- Another Pizza ---")
+	anotherPizza := NewPizzaBuilder().SetCrust("Thick Crust").
+		SetSauce("Pesto").
+		AddTopping("Spinach").
+		Build() // Size is not set, will be zero value for string ("")
+	fmt.Println(anotherPizza)
+}</pre>
+    </div>
+
+    <hr>
+
+    <div class="pattern-section">
+        <h2>3. Factory Method</h2>
+        <p><strong>Concept:</strong> The Factory Method pattern defines an interface for creating an object, but lets subclasses decide which class to instantiate. This allows a class to defer instantiation to subclasses.</p>
+        <p><strong>Use Case:</strong> Creating different types of <code>Vehicle</code> objects (Car, Motorcycle) based on a given type, without explicitly knowing the concrete class.</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+from abc import ABC, abstractmethod
+
+# Product Interface
+class Vehicle(ABC):
+    @abstractmethod
+    def drive(self):
+        pass
+
+# Concrete Products
+class Car(Vehicle):
+    def drive(self):
+        return "Driving a Car."
+
+class Motorcycle(Vehicle):
+    def drive(self):
+        return "Riding a Motorcycle."
+
+# Creator Interface (Factory)
+class VehicleFactory(ABC):
+    @abstractmethod
+    def create_vehicle(self):
+        pass
+
+# Concrete Creators
+class CarFactory(VehicleFactory):
+    def create_vehicle(self):
+        return Car()
+
+class MotorcycleFactory(VehicleFactory):
+    def create_vehicle(self):
+        return Motorcycle()
+
+# Usage
+def client_code(factory: VehicleFactory):
+    vehicle = factory.create_vehicle()
+    print(vehicle.drive())
+
+print("Creating a Car:")
+car_factory = CarFactory()
+client_code(car_factory)
+
+print("\nCreating a Motorcycle:")
+motorcycle_factory = MotorcycleFactory()
+client_code(motorcycle_factory)
+
+# You can also have a simple factory function if the creation logic is not too complex
+def simple_vehicle_factory(vehicle_type: str):
+    if vehicle_type == "car":
+        return Car()
+    elif vehicle_type == "motorcycle":
+        return Motorcycle()
+    else:
+        raise ValueError("Unknown vehicle type")
+
+print("\nUsing a simple factory function:")
+simple_car = simple_vehicle_factory("car")
+print(simple_car.drive())
+
+simple_motorcycle = simple_vehicle_factory("motorcycle")
+print(simple_motorcycle.drive())</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import "fmt"
+
+// Vehicle interface (Product)
+type Vehicle interface {
+	Drive() string
+}
+
+// Car concrete product
+type Car struct{}
+
+func (c *Car) Drive() string {
+	return "Driving a Car."
+}
+
+// Motorcycle concrete product
+type Motorcycle struct{}
+
+func (m *Motorcycle) Drive() string {
+	return "Riding a Motorcycle."
+}
+
+// VehicleFactory interface (Creator)
+type VehicleFactory interface {
+	CreateVehicle() Vehicle
+}
+
+// CarFactory concrete creator
+type CarFactory struct{}
+
+func (cf *CarFactory) CreateVehicle() Vehicle {
+	return &Car{}
+}
+
+// MotorcycleFactory concrete creator
+type MotorcycleFactory struct{}
+
+func (mf *MotorcycleFactory) CreateVehicle() Vehicle {
+	return &Motorcycle{}
+}
+
+// Client code using the factory
+func clientCode(factory VehicleFactory) {
+	vehicle := factory.CreateVehicle()
+	fmt.Println(vehicle.Drive())
+}
+
+func main() {
+	fmt.Println("Creating a Car:")
+	carFactory := &CarFactory{}
+	clientCode(carFactory)
+
+	fmt.Println("\nCreating a Motorcycle:")
+	motorcycleFactory := &MotorcycleFactory{}
+	clientCode(motorcycleFactory)
+
+	// A simple factory function approach (can be used if creation logic is less complex)
+	fmt.Println("\nUsing a simple factory function:")
+	simpleVehicleFactory := func(vehicleType string) (Vehicle, error) {
+		switch vehicleType {
+		case "car":
+			return &Car{}, nil
+		case "motorcycle":
+			return &Motorcycle{}, nil
+		default:
+			return nil, fmt.Errorf("unknown vehicle type: %s", vehicleType)
+		}
+	}
+
+	if simpleCar, err := simpleVehicleFactory("car"); err == nil {
+		fmt.Println(simpleCar.Drive())
+	}
+
+	if simpleMotorcycle, err := simpleVehicleFactory("motorcycle"); err == nil {
+		fmt.Println(simpleMotorcycle.Drive())
+	}
+}</pre>
+    </div>
+
+    <hr>
+
+    <div class="pattern-section">
+        <h2>4. Facade</h2>
+        <p><strong>Concept:</strong> The Facade pattern provides a simplified, unified interface to a complex subsystem. It defines a higher-level interface that makes the subsystem easier to use, without exposing its intricate details.</p>
+        <p><strong>Use Case:</strong> A <code>HomeTheater</code> system that involves multiple complex components (TV, Amplifier, DVD Player, Lights) that need to be orchestrated for actions like "watch movie" or "listen to music."</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+# Subsystem components (complex parts)
+class TV:
+    def turn_on(self):
+        print("TV: Turning on")
+    def turn_off(self):
+        print("TV: Turning off")
+    def set_input(self, source):
+        print(f"TV: Setting input to {source}")
+
+class Amplifier:
+    def turn_on(self):
+        print("Amplifier: Turning on")
+    def turn_off(self):
+        print("Amplifier: Turning off")
+    def set_volume(self, volume):
+        print(f"Amplifier: Setting volume to {volume}")
+    def set_source(self, source):
+        print(f"Amplifier: Setting source to {source}")
+
+class DVDPlayer:
+    def turn_on(self):
+        print("DVD Player: Turning on")
+    def turn_off(self):
+        print("DVD Player: Turning off")
+    def play_movie(self, movie_title):
+        print(f"DVD Player: Playing '{movie_title}'")
+    def stop(self):
+        print("DVD Player: Stopping playback")
+
+class Lights:
+    def dim(self, level):
+        print(f"Lights: Dimming to {level}%")
+    def brighten(self):
+        print("Lights: Brightening")
+
+# Facade
+class HomeTheaterFacade:
+    def __init__(self):
+        self.tv = TV()
+        self.amplifier = Amplifier()
+        self.dvd_player = DVDPlayer()
+        self.lights = Lights()
+
+    def watch_movie(self, movie_title):
+        print("\n--- Get ready to watch a movie ---")
+        self.lights.dim(10)
+        self.tv.turn_on()
+        self.tv.set_input("DVD")
+        self.amplifier.turn_on()
+        self.amplifier.set_source("DVD")
+        self.amplifier.set_volume(5)
+        self.dvd_player.turn_on()
+        self.dvd_player.play_movie(movie_title)
+
+    def end_movie(self):
+        print("\n--- Shutting down home theater ---")
+        self.dvd_player.stop()
+        self.dvd_player.turn_off()
+        self.amplifier.turn_off()
+        self.tv.turn_off()
+        self.lights.brighten()
+
+# Usage
+home_theater = HomeTheaterFacade()
+home_theater.watch_movie("The Matrix")
+home_theater.end_movie()</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import "fmt"
+
+// Subsystem components
+type TV struct{}
+
+func (t *TV) TurnOn() {
+	fmt.Println("TV: Turning on")
+}
+func (t *TV) TurnOff() {
+	fmt.Println("TV: Turning off")
+}
+func (t *TV) SetInput(source string) {
+	fmt.Printf("TV: Setting input to %s\n", source)
+}
+
+type Amplifier struct{}
+
+func (a *Amplifier) TurnOn() {
+	fmt.Println("Amplifier: Turning on")
+}
+func (a *Amplifier) TurnOff() {
+	fmt.Println("Amplifier: Turning off")
+}
+func (a *Amplifier) SetVolume(volume int) {
+	fmt.Printf("Amplifier: Setting volume to %d\n", volume)
+}
+func (a *Amplifier) SetSource(source string) {
+	fmt.Printf("Amplifier: Setting source to %s\n", source)
+}
+
+type DVDPlayer struct{}
+
+func (d *DVDPlayer) TurnOn() {
+	fmt.Println("DVD Player: Turning on")
+}
+func (d *DVDPlayer) TurnOff() {
+	fmt.Println("DVD Player: Turning off")
+}
+func (d *DVDPlayer) PlayMovie(movieTitle string) {
+	fmt.Printf("DVD Player: Playing '%s'\n", movieTitle)
+}
+func (d *DVDPlayer) Stop() {
+	fmt.Println("DVD Player: Stopping playback")
+}
+
+type Lights struct{}
+
+func (l *Lights) Dim(level int) {
+	fmt.Printf("Lights: Dimming to %d%%\n", level)
+}
+func (l *Lights) Brighten() {
+	fmt.Println("Lights: Brightening")
+}
+
+// HomeTheaterFacade (Facade)
+type HomeTheaterFacade struct {
+	tv        *TV
+	amplifier *Amplifier
+	dvdPlayer *DVDPlayer
+	lights    *Lights
+}
+
+// NewHomeTheaterFacade creates a new HomeTheaterFacade.
+func NewHomeTheaterFacade() *HomeTheaterFacade {
+	return &HomeTheaterFacade{
+		tv:        &TV{},
+		amplifier: &Amplifier{},
+		dvdPlayer: &DVDPlayer{},
+		lights:    &Lights{},
+	}
+}
+
+func (htf *HomeTheaterFacade) WatchMovie(movieTitle string) {
+	fmt.Println("\n--- Get ready to watch a movie ---")
+	htf.lights.Dim(10)
+	htf.tv.TurnOn()
+	htf.tv.SetInput("DVD")
+	htf.amplifier.TurnOn()
+	htf.amplifier.SetSource("DVD")
+	htf.amplifier.SetVolume(5)
+	htf.dvdPlayer.TurnOn()
+	htf.dvdPlayer.PlayMovie(movieTitle)
+}
+
+func (htf *HomeTheaterFacade) EndMovie() {
+	fmt.Println("\n--- Shutting down home theater ---")
+	htf.dvdPlayer.Stop()
+	htf.dvdPlayer.TurnOff()
+	htf.amplifier.TurnOff()
+	htf.tv.TurnOff()
+	htf.lights.Brighten()
+}
+
+func main() {
+	homeTheater := NewHomeTheaterFacade()
+	homeTheater.WatchMovie("The Matrix")
+	homeTheater.EndMovie()
+}</pre>
+    </div>
+
+    <hr>
+
+    <div class="pattern-section">
+        <h2>5. Adapter</h2>
+        <p><strong>Concept:</strong> The Adapter pattern converts the interface of a class into another interface clients expect. Adapter lets classes work together that couldn't otherwise because of incompatible interfaces. It acts as a bridge between two incompatible interfaces.</p>
+        <p><strong>Use Case:</strong> Integrating an old, incompatible <code>LegacyPrinter</code> (which prints directly to console) with a new <code>PrintService</code> that expects a <code>ModernPrinter</code> interface.</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+# Target Interface (what the client expects)
+class ModernPrinter:
+    def print_document(self, document: str):
+        raise NotImplementedError
+
+# Adaptee (the existing incompatible class)
+class LegacyPrinter:
+    def print_to_console(self, text: str):
+        print(f"Legacy Printer Output: {text}")
+
+# Adapter
+class LegacyPrinterAdapter(ModernPrinter):
+    def __init__(self, legacy_printer: LegacyPrinter):
+        self.legacy_printer = legacy_printer
+
+    def print_document(self, document: str):
+        print("Adapter: Converting document for legacy printer...")
+        # Simulate some conversion or formatting if needed
+        formatted_doc = f"--- Document Start ---\n{document}\n--- Document End ---"
+        self.legacy_printer.print_to_console(formatted_doc)
+
+# Client code
+class PrintService:
+    def print_using_modern_printer(self, printer: ModernPrinter, data: str):
+        print("PrintService: Sending document to printer...")
+        printer.print_document(data)
+        print("PrintService: Document sent.")
+
+# Usage
+service = PrintService()
+
+# Using a modern printer directly (if one existed)
+# class ConcreteModernPrinter(ModernPrinter):
+#     def print_document(self, document: str):
+#         print(f"Modern Printer: {document}")
+# modern_printer = ConcreteModernPrinter()
+# service.print_using_modern_printer(modern_printer, "This is a modern document.")
+
+print("\n--- Using the Legacy Printer via Adapter ---")
+legacy_printer = LegacyPrinter()
+adapter = LegacyPrinterAdapter(legacy_printer)
+service.print_using_modern_printer(adapter, "This is a document for the legacy printer.")</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import "fmt"
+
+// ModernPrinter interface (Target)
+type ModernPrinter interface {
+	PrintDocument(document string)
+}
+
+// LegacyPrinter (Adaptee)
+type LegacyPrinter struct{}
+
+func (lp *LegacyPrinter) PrintToConsole(text string) {
+	fmt.Printf("Legacy Printer Output: %s\n", text)
+}
+
+// LegacyPrinterAdapter (Adapter)
+type LegacyPrinterAdapter struct {
+	legacyPrinter *LegacyPrinter
+}
+
+// NewLegacyPrinterAdapter creates a new adapter.
+func NewLegacyPrinterAdapter(lp *LegacyPrinter) *LegacyPrinterAdapter {
+	return &LegacyPrinterAdapter{
+		legacyPrinter: lp,
+	}
+}
+
+func (lpa *LegacyPrinterAdapter) PrintDocument(document string) {
+	fmt.Println("Adapter: Converting document for legacy printer...")
+	// Simulate some conversion or formatting if needed
+	formattedDoc := fmt.Sprintf("--- Document Start ---\n%s\n--- Document End ---", document)
+	lpa.legacyPrinter.PrintToConsole(formattedDoc)
+}
+
+// PrintService (Client)
+type PrintService struct{}
+
+func (ps *PrintService) PrintUsingModernPrinter(printer ModernPrinter, data string) {
+	fmt.Println("PrintService: Sending document to printer...")
+	printer.PrintDocument(data)
+	fmt.Println("PrintService: Document sent.")
+}
+
+func main() {
+	service := &PrintService{}
+
+	// Using a modern printer directly (if one existed)
+	// type ConcreteModernPrinter struct{}
+	// func (cmp *ConcreteModernPrinter) PrintDocument(document string) {
+	// 	fmt.Printf("Modern Printer: %s\n", document)
+	// }
+	// modernPrinter := &ConcreteModernPrinter{}
+	// service.PrintUsingModernPrinter(modernPrinter, "This is a modern document.")
+
+	fmt.Println("\n--- Using the Legacy Printer via Adapter ---")
+	legacyPrinter := &LegacyPrinter{}
+	adapter := NewLegacyPrinterAdapter(legacyPrinter)
+	service.PrintUsingModernPrinter(adapter, "This is a document for the legacy printer.")
+}</pre>
+    </div>
+
+    <hr>
+
+    <div class="pattern-section">
+        <h2>6. Strategy</h2>
+        <p><strong>Concept:</strong> The Strategy pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.</p>
+        <p><strong>Use Case:</strong> An e-commerce application needs to calculate shipping costs using different algorithms (e.g., standard, express, international) based on the customer's choice.</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+from abc import ABC, abstractmethod
+
+# Strategy Interface
+class ShippingStrategy(ABC):
+    @abstractmethod
+    def calculate_cost(self, weight: float) -> float:
+        pass
+
+# Concrete Strategies
+class StandardShipping(ShippingStrategy):
+    def calculate_cost(self, weight: float) -> float:
+        print("Calculating Standard Shipping cost...")
+        return 5.0 + (weight * 0.5)  # Base fee + per kg
+
+class ExpressShipping(ShippingStrategy):
+    def calculate_cost(self, weight: float) -> float:
+        print("Calculating Express Shipping cost...")
+        return 15.0 + (weight * 1.5) # Higher base fee and per kg
+
+class InternationalShipping(ShippingStrategy):
+    def calculate_cost(self, weight: float) -> float:
+        print("Calculating International Shipping cost...")
+        return 30.0 + (weight * 2.0) # Even higher base fee and per kg
+
+# Context
+class Order:
+    def __init__(self, weight: float, strategy: ShippingStrategy):
+        self._weight = weight
+        self._shipping_strategy = strategy
+
+    def set_shipping_strategy(self, strategy: ShippingStrategy):
+        self._shipping_strategy = strategy
+
+    def get_shipping_cost(self) -> float:
+        return self._shipping_strategy.calculate_cost(self._weight)
+
+# Usage
+order_weight = 10.0 # kg
+
+# Standard shipping
+order1 = Order(order_weight, StandardShipping())
+cost1 = order1.get_shipping_cost()
+print(f"Order 1 (Standard Shipping) cost: ${cost1:.2f}")
+
+# Express shipping
+order2 = Order(order_weight, ExpressShipping())
+cost2 = order2.get_shipping_cost()
+print(f"Order 2 (Express Shipping) cost: ${cost2:.2f}")
+
+# International shipping for the same order
+order3 = Order(order_weight, InternationalShipping())
+cost3 = order3.get_shipping_cost()
+print(f"Order 3 (International Shipping) cost: ${cost3:.2f}")
+
+# Change strategy for an existing order
+print("\nChanging strategy for an existing order:")
+order1.set_shipping_strategy(ExpressShipping())
+cost_changed = order1.get_shipping_cost()
+print(f"Order 1 (now Express Shipping) cost: ${cost_changed:.2f}")</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import "fmt"
+
+// ShippingStrategy interface (Strategy)
+type ShippingStrategy interface {
+	CalculateCost(weight float64) float64
+}
+
+// StandardShipping concrete strategy
+type StandardShipping struct{}
+
+func (ss *StandardShipping) CalculateCost(weight float64) float64 {
+	fmt.Println("Calculating Standard Shipping cost...")
+	return 5.0 + (weight * 0.5) // Base fee + per kg
+}
+
+// ExpressShipping concrete strategy
+type ExpressShipping struct{}
+
+func (es *ExpressShipping) CalculateCost(weight float64) float64 {
+	fmt.Println("Calculating Express Shipping cost...")
+	return 15.0 + (weight * 1.5) // Higher base fee and per kg
+}
+
+// InternationalShipping concrete strategy
+type InternationalShipping struct{}
+
+func (is *InternationalShipping) CalculateCost(weight float64) float64 {
+	fmt.Println("Calculating International Shipping cost...")
+	return 30.0 + (weight * 2.0) // Even higher base fee and per kg
+}
+
+// Order (Context)
+type Order struct {
+	weight          float64
+	shippingStrategy ShippingStrategy
+}
+
+// NewOrder creates a new Order with a given strategy.
+func NewOrder(weight float64, strategy ShippingStrategy) *Order {
+	return &Order{
+		weight:          weight,
+		shippingStrategy: strategy,
+	}
+}
+
+func (o *Order) SetShippingStrategy(strategy ShippingStrategy) {
+	o.shippingStrategy = strategy
+}
+
+func (o *Order) GetShippingCost() float64 {
+	return o.shippingStrategy.CalculateCost(o.weight)
+}
+
+func main() {
+	orderWeight := 10.0 // kg
+
+	// Standard shipping
+	order1 := NewOrder(orderWeight, &StandardShipping{})
+	cost1 := order1.GetShippingCost()
+	fmt.Printf("Order 1 (Standard Shipping) cost: $%.2f\n", cost1)
+
+	// Express shipping
+	order2 := NewOrder(orderWeight, &ExpressShipping{})
+	cost2 := order2.GetShippingCost()
+	fmt.Printf("Order 2 (Express Shipping) cost: $%.2f\n", cost2)
+
+	// International shipping for the same order
+	order3 := NewOrder(orderWeight, &InternationalShipping{})
+	cost3 := order3.GetShippingCost()
+	fmt.Printf("Order 3 (International Shipping) cost: $%.2f\n", cost3)
+
+	// Change strategy for an existing order
+	fmt.Println("\nChanging strategy for an existing order:")
+	order1.SetShippingStrategy(&ExpressShipping{})
+	costChanged := order1.GetShippingCost()
+	fmt.Printf("Order 1 (now Express Shipping) cost: $%.2f\n", costChanged)
+}</pre>
+    </div>
+
+    <hr>
+
+    <div class="pattern-section">
+        <h2>7. Observer</h2>
+        <p><strong>Concept:</strong> The Observer pattern defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically. It's often used in event handling systems.</p>
+        <p><strong>Use Case:</strong> A weather station (<code>Subject</code>) notifies multiple displays (<code>Observers</code>) whenever the weather data changes.</p>
+
+        <h3>Python Example</h3>
+        <pre><span class="lang-header">Python</span>
+from abc import ABC, abstractmethod
+
+# Subject Interface
+class Subject(ABC):
+    @abstractmethod
+    def attach(self, observer):
+        pass
+
+    @abstractmethod
+    def detach(self, observer):
+        pass
+
+    @abstractmethod
+    def notify(self):
+        pass
+
+# Observer Interface
+class Observer(ABC):
+    @abstractmethod
+    def update(self, temperature: float, humidity: float):
+        pass
+
+# Concrete Subject
+class WeatherStation(Subject):
+    def __init__(self):
+        self._observers = []
+        self._temperature = 0.0
+        self._humidity = 0.0
+        print("WeatherStation: Ready.")
+
+    def attach(self, observer: Observer):
+        if observer not in self._observers:
+            self._observers.append(observer)
+            print(f"WeatherStation: Attached observer {type(observer).__name__}")
+
+    def detach(self, observer: Observer):
+        try:
+            self._observers.remove(observer)
+            print(f"WeatherStation: Detached observer {type(observer).__name__}")
+        except ValueError:
+            print(f"WeatherStation: Observer {type(observer).__name__} not found.")
+
+    def notify(self):
+        print("WeatherStation: Notifying observers...")
+        for observer in self._observers:
+            observer.update(self._temperature, self._humidity)
+
+    def set_measurements(self, temperature: float, humidity: float):
+        self._temperature = temperature
+        self._humidity = humidity
+        print(f"\nWeatherStation: New measurements - Temp: {temperature}°C, Humidity: {humidity}%")
+        self.notify()
+
+# Concrete Observers
+class CurrentConditionsDisplay(Observer):
+    def update(self, temperature: float, humidity: float):
+        print(f"CurrentConditionsDisplay: Current conditions: {temperature}°C and {humidity}% humidity.")
+
+class StatisticsDisplay(Observer):
+    def __init__(self):
+        self._temperatures = []
+        self._humidities = []
+
+    def update(self, temperature: float, humidity: float):
+        self._temperatures.append(temperature)
+        self._humidities.append(humidity)
+        avg_temp = sum(self._temperatures) / len(self._temperatures) if self._temperatures else 0
+        avg_humidity = sum(self._humidities) / len(self._humidities) if self._humidities else 0
+        print(f"StatisticsDisplay: Avg Temp: {avg_temp:.1f}°C, Avg Humidity: {avg_humidity:.1f}%.")
+
+# Usage
+weather_station = WeatherStation()
+
+current_display = CurrentConditionsDisplay()
+statistics_display = StatisticsDisplay()
+
+weather_station.attach(current_display)
+weather_station.attach(statistics_display)
+
+weather_station.set_measurements(25.5, 65.2)
+weather_station.set_measurements(26.1, 68.5)
+
+weather_station.detach(current_display)
+weather_station.set_measurements(24.9, 62.1)</pre>
+
+        <h3>Go Example</h3>
+        <pre><span class="lang-header">Go</span>
+package main
+
+import "fmt"
+
+// Observer interface
+type Observer interface {
+	Update(temperature, humidity float64)
+}
+
+// Subject interface
+type Subject interface {
+	Attach(observer Observer)
+	Detach(observer Observer)
+	Notify()
+}
+
+// WeatherStation (Concrete Subject)
+type WeatherStation struct {
+	observers   []Observer
+	temperature float64
+	humidity    float64
+}
+
+// NewWeatherStation creates a new WeatherStation.
+func NewWeatherStation() *WeatherStation {
+	fmt.Println("WeatherStation: Ready.")
+	return &WeatherStation{
+		observers: make([]Observer, 0),
+	}
+}
+
+func (ws *WeatherStation) Attach(observer Observer) {
+	ws.observers = append(ws.observers, observer)
+	fmt.Printf("WeatherStation: Attached observer %T\n", observer)
+}
+
+func (ws *WeatherStation) Detach(observer Observer) {
+	for i, obs := range ws.observers {
+		// Compare by address to find the exact observer instance
+		if obs == observer {
+			ws.observers = append(ws.observers[:i], ws.observers[i+1:]...)
+			fmt.Printf("WeatherStation: Detached observer %T\n", observer)
+			return
+		}
+	}
+	fmt.Printf("WeatherStation: Observer %T not found.\n", observer)
+}
+
+func (ws *WeatherStation) Notify() {
+	fmt.Println("WeatherStation: Notifying observers...")
+	for _, obs := range ws.observers {
+		obs.Update(ws.temperature, ws.humidity)
+	}
+}
+
+func (ws *WeatherStation) SetMeasurements(temperature, humidity float64) {
+	ws.temperature = temperature
+	ws.humidity = humidity
+	fmt.Printf("\nWeatherStation: New measurements - Temp: %.1f°C, Humidity: %.1f%%\n", temperature, humidity)
+	ws.Notify()
+}
+
+// CurrentConditionsDisplay (Concrete Observer)
+type CurrentConditionsDisplay struct{}
+
+func (ccd *CurrentConditionsDisplay) Update(temperature, humidity float64) {
+	fmt.Printf("CurrentConditionsDisplay: Current conditions: %.1f°C and %.1f%% humidity.\n", temperature, humidity)
+}
+
+// StatisticsDisplay (Concrete Observer)
+type StatisticsDisplay struct {
+	temperatures []float64
+	humidities   []float64
+}
+
+func (sd *StatisticsDisplay) Update(temperature, humidity float64) {
+	sd.temperatures = append(sd.temperatures, temperature)
+	sd.humidities = append(sd.humidities, humidity)
+
+	var sumTemp, sumHum float64
+	for _, t := range sd.temperatures {
+		sumTemp += t
+	}
+	for _, h := range sd.humidities {
+		sumHum += h
+	}
+
+	avgTemp := 0.0
+	if len(sd.temperatures) > 0 {
+		avgTemp = sumTemp / float64(len(sd.temperatures))
+	}
+
+	avgHumidity := 0.0
+	if len(sd.humidities) > 0 {
+		avgHumidity = sumHum / float64(len(sd.humidities))
+	}
+	fmt.Printf("StatisticsDisplay: Avg Temp: %.1f°C, Avg Humidity: %.1f%%.\n", avgTemp, avgHumidity)
+}
+
+func main() {
+	weatherStation := NewWeatherStation()
+
+	currentDisplay := &CurrentConditionsDisplay{}
+	statisticsDisplay := &StatisticsDisplay{}
+
+	weatherStation.Attach(currentDisplay)
+	weatherStation.Attach(statisticsDisplay)
+
+	weatherStation.SetMeasurements(25.5, 65.2)
+	weatherStation.SetMeasurements(26.1, 68.5)
+
+	weatherStation.Detach(currentDisplay)
+	weatherStation.SetMeasurements(24.9, 62.1)
+}</pre>
+    </div>
+
+</body>
+</html>

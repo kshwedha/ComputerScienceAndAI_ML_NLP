@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Intelligence (AI) - For Students & Scientists</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.8em;
+        }
+        .navbar {
+            background-color: #34495e;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: inline-block; /* For centering */
+        }
+        .navbar li {
+            display: inline-block;
+            margin: 0 20px;
+        }
+        .navbar li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        .navbar li a:hover {
+            color: #1abc9c;
+        }
+        .content {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-size: 2em;
+        }
+        h3 {
+            color: #27ae60;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .note {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #388e3c;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-size: 0.9em;
+            border-top: 1px solid #34495e;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Artificial Intelligence (AI)</h1>
+        <p>Exploring the Frontier of Machine Intelligence</p>
+    </div>
+
+    <div class="navbar">
+        <ul>
+            <li><a href="AI.html" onclick="loadPage('AI.html'); return false;">AI</a></li>
+            <li><a href="ML.html" onclick="loadPage('ML.html'); return false;">ML</a></li>
+            <li><a href="NLP.html" onclick="loadPage('NLP.html'); return false;">NLP</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h2>Introduction to Artificial Intelligence</h2>
+        <p>
+            Artificial Intelligence (AI) is a broad field of computer science dedicated to building intelligent machines capable of performing tasks that typically require human intelligence. This includes learning, problem-solving, decision-making, perception, and understanding language. AI aims to enable computers to think, reason, and act like humans, or to create intelligent systems that can learn and adapt independently.
+        </p>
+        <p>
+            The pursuit of AI has led to significant advancements across various domains, revolutionizing industries and changing how we interact with technology. As a computer student or scientist, understanding AI is crucial for contributing to the next generation of technological innovation.
+        </p>
+
+        <h2>Core Pillars and Concepts of AI</h2>
+        <h3>1. Search Algorithms and Problem Solving</h3>
+        <p>
+            Traditional AI often relies on search algorithms to explore possible solutions to a problem. These algorithms systematically examine states in a search space to find a path to a goal state.
+        </p>
+        <ul>
+            <li><strong>Uninformed Search:</strong> Breadth-First Search (BFS), Depth-First Search (DFS), Uniform-Cost Search.</li>
+            <li><strong>Informed Search (Heuristic Search):</strong> A* Search, Greedy Best-First Search, Hill Climbing. These use heuristic functions to guide the search towards more promising states.</li>
+            <li><strong>Adversarial Search:</strong> Minimax, Alpha-Beta Pruning. Used in game playing (e.g., Chess, Go) where agents must consider an opponent's moves.</li>
+            <li><strong>Constraint Satisfaction Problems (CSPs):</strong> Solving problems by finding a state that satisfies a set of constraints (e.g., Sudoku, N-Queens).</li>
+        </ul>
+        <p><strong>Further Reading:</strong> <a href="https://aima.cs.berkeley.edu/" target="_blank">Artificial Intelligence: A Modern Approach (AIMA)</a> - Chapter 3 & 5.</p>
+
+        <h3>2. Knowledge Representation and Reasoning (KRR)</h3>
+        <p>
+            KRR is about how knowledge is encoded and how an intelligent agent can reason with that knowledge to make decisions.
+        </p>
+        <ul>
+            <li><strong>Logic:</strong> Propositional Logic, First-Order Logic (FOL) for formal reasoning.</li>
+            <li><strong>Ontologies:</strong> Structured representations of knowledge (e.g., using OWL).</li>
+            <li><strong>Semantic Networks & Frames:</strong> Representing relationships between concepts.</li>
+            <li><strong>Rule-Based Systems:</strong> Expert systems that use if-then rules for reasoning.</li>
+            <li><strong>Uncertainty Reasoning:</strong> Bayesian Networks, Fuzzy Logic for dealing with incomplete or uncertain information.</li>
+        </ul>
+
+        <h3>3. Machine Learning (ML)</h3>
+        <p>
+            A sub-field of AI that focuses on building systems that learn from data, without being explicitly programmed. ML has become the dominant paradigm in modern AI.
+            For a deep dive, please refer to the <a href="ML.html" onclick="loadPage('ML.html'); return false;">Machine Learning (ML)</a> page.
+        </p>
+
+        <h3>4. Natural Language Processing (NLP)</h3>
+        <p>
+            Enabling computers to understand, interpret, and generate human language.
+            For a deep dive, please refer to the <a href="NLP.html" onclick="loadPage('NLP.html'); return false;">Natural Language Processing (NLP)</a> page.
+        </p>
+
+        <h3>5. Computer Vision (CV)</h3>
+        <p>
+            Enabling computers to "see" and interpret visual information from the world. This involves tasks like image recognition, object detection, image segmentation, and facial recognition.
+        </p>
+        <ul>
+            <li><strong>Image Processing:</strong> Filtering, edge detection, feature extraction.</li>
+            <li><strong>Object Recognition:</strong> Identifying objects within images/videos.</li>
+            <li><strong>Image Segmentation:</strong> Partitioning an image into multiple segments (e.g., separating foreground from background).</li>
+            <li><strong>Deep Learning in CV:</strong> Convolutional Neural Networks (CNNs) are the backbone of modern computer vision.</li>
+        </ul>
+        <p><strong>Key Library:</strong> <a href="https://opencv.org/" target="_blank">OpenCV</a>, <a href="https://pytorch.org/" target="_blank">PyTorch</a>, <a href="https://www.tensorflow.org/" target="_blank">TensorFlow</a></p>
+
+        <h3>6. Robotics</h3>
+        <p>
+            The intersection of AI, engineering, and computer science that deals with the design, construction, operation, and use of robots. AI provides the "brain" for robots to perceive, decide, and act.
+        </p>
+        <ul>
+            <li><strong>Path Planning:</strong> Algorithms for a robot to navigate from one point to another while avoiding obstacles.</li>
+            <li><strong>Robot Locomotion:</strong> How robots move (wheeled, legged, aerial).</li>
+            <li><strong>Human-Robot Interaction (HRI):</strong> Designing robots that can effectively and intuitively interact with humans.</li>
+        </ul>
+
+        <h2>Applications of AI</h2>
+        <ul>
+            <li><strong>Healthcare:</strong> Disease diagnosis, drug discovery, personalized medicine.</li>
+            <li><strong>Finance:</strong> Fraud detection, algorithmic trading, credit scoring.</li>
+            <li><strong>Automotive:</strong> Self-driving cars, traffic management.</li>
+            <li><strong>Customer Service:</strong> Chatbots, virtual assistants.</li>
+            <li><strong>Entertainment:</strong> Recommendation systems (Netflix, Spotify), game AI.</li>
+            <li><strong>Manufacturing:</strong> Predictive maintenance, quality control.</li>
+            <li><strong>Cybersecurity:</strong> Anomaly detection, threat intelligence.</li>
+        </ul>
+
+        <h2>Essential Tools and Libraries for AI</h2>
+        <ul>
+            <li><strong>Python:</strong> The most popular language for AI development.</li>
+            <li><strong>TensorFlow & Keras:</strong> Google's open-source machine learning framework.</li>
+            <li><strong>PyTorch:</strong> Facebook's open-source machine learning framework, popular in research.</li>
+            <li><strong>Scikit-learn:</strong> A comprehensive library for traditional machine learning algorithms.</li>
+            <li><strong>OpenCV:</strong> Library for computer vision tasks.</li>
+            <li><strong>NLTK & SpaCy:</strong> Libraries for natural language processing.</li>
+            <li><strong>NumPy & Pandas:</strong> Fundamental libraries for numerical computing and data manipulation.</li>
+        </ul>
+
+        <h2>Learning Resources and Attachments</h2>
+        <h3>Online Courses:</h3>
+        <ul>
+            <li><a href="https://www.coursera.org/specializations/ai-for-everyone" target="_blank">AI For Everyone (Andrew Ng, Coursera)</a> - Great for a high-level overview.</li>
+            <li><a href="https://www.edx.org/course/artificial-intelligence-cs50s-ai" target="_blank">CS50's Introduction to Artificial Intelligence with Python (Harvard, edX)</a> - Hands-on practical introduction.</li>
+            <li><a href="https://see.stanford.edu/Course/CS221" target="_blank">Stanford CS221: Artificial Intelligence: Principles and Techniques</a> - Advanced university course materials.</li>
+        </ul>
+        <h3>Key Textbooks:</h3>
+        <ul>
+            <li>Artificial Intelligence: A Modern Approach (AIMA) by Stuart Russell and Peter Norvig.</li>
+            <li>Deep Learning by Ian Goodfellow, Yoshua Bengio, and Aaron Courville.</li>
+        </ul>
+        <h3>Research Repositories:</h3>
+        <ul>
+            <li><a href="https://arxiv.org/" target="_blank">arXiv</a> - Open-access papers for physics, mathematics, computer science, etc.</li>
+            <li><a href="https://paperswithcode.com/" target="_blank">Papers With Code</a> - Connects research papers with their implementations.</li>
+        </ul>
+        <h3>Simulated Attachments (Downloadable Resources):</h3>
+        <div class="note">
+            These are placeholder links. You would replace `your-server.com/path/to/file.pdf` with the actual URL where you host these files.
+        </div>
+        <ul>
+            <li><a href="https://your-server.com/ai_roadmap.pdf" download>AI Roadmap for Students (PDF)</a></li>
+            <li><a href="https://your-server.com/krr_cheat_sheet.pdf" download>Knowledge Representation & Reasoning Cheat Sheet (PDF)</a></li>
+            <li><a href="https://your-server.com/ai_ethics_guidelines.pdf" download>AI Ethics Guidelines (PDF)</a></li>
+        </ul>
+
+        <h2>Future Trends and Challenges</h2>
+        <p>
+            AI continues to evolve rapidly. Key future trends include:
+        </p>
+        <ul>
+            <li><strong>Explainable AI (XAI):</strong> Making AI models more transparent and understandable.</li>
+            <li><strong>Ethical AI and Governance:</strong> Addressing bias, fairness, privacy, and accountability.</li>
+            <li><strong>Reinforcement Learning from Human Feedback (RLHF):</strong> Enhancing AI alignment with human values.</li>
+            <li><strong>Generative AI:</strong> Advancements in creating new content (text, images, code, etc.).</li>
+            <li><strong>Edge AI:</strong> Deploying AI models directly on devices for real-time processing and privacy.</li>
+            <li><strong>Quantum AI:</strong> Exploring the potential of quantum computing for AI.</li>
+        </ul>
+        <p>
+            Challenges include data scarcity for certain tasks, energy consumption of large models, ensuring robustness and safety, and managing the societal impact of AI.
+        </p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 AI Learning Guide. Data current as of July 28, 2025. Designed for Computer Students & Scientists.</p>
+    </div>
+
+    <script>
+        function loadPage(pageName) {
+            // This function simulates loading content for a Single Page Application (SPA).
+            // For a simple multi-page website, you would just use standard <a> tags with href.
+            // Since your original request implied `onclick="loadPage('AI.html')` which typically
+            // means loading content without a full page refresh, this is a placeholder.
+            // In a real SPA, you'd fetch content via AJAX/Fetch API and update a div.
+            // For this setup, it will just navigate to the page.
+            window.location.href = pageName;
+        }
+    </script>
+</body>
+</html>

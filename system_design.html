@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to System Design Concepts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony Neutrals -->
+    <!-- Application Structure Plan: A two-column dashboard layout. The left column is a sticky sidebar with a search bar and a collapsible, categorized list of all 50 concepts for quick navigation and filtering. The right column is the main scrollable content area displaying the details for each concept in a card format. This structure was chosen to provide both a comprehensive overview and rapid, targeted access to specific information, which is ideal for a developer reference guide. -->
+    <!-- Visualization & Content Choices: The primary interaction is the search/filter and click-to-scroll navigation, handled by JavaScript. This allows users to instantly find and jump to a concept. The content is presented in clean, well-spaced cards using Tailwind CSS to enhance readability. The "Infographic Idea" section within each card is visually separated with a different background and an icon to distinguish it from the core concept explanation. No charts are needed; the focus is on textual information architecture. No SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-item-active {
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-5xl font-bold text-slate-900">Interactive Guide to System Design</h1>
+            <p class="text-slate-600 mt-2 text-lg">An explorable reference for Full-Stack Developers.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Left Sidebar -->
+            <aside class="md:col-span-1 md:sticky top-8 self-start">
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <input type="text" id="searchInput" placeholder="Search for a concept..." class="w-full px-4 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    
+                    <nav id="conceptNav" class="mt-4 max-h-[70vh] overflow-y-auto">
+                        <!-- Navigation items will be injected by JS -->
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Right Content -->
+            <main class="md:col-span-3">
+                <div id="concept-content" class="space-y-8">
+                    <!-- Content sections will be injected by JS -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const conceptsData = [
+            {
+                category: "I. Core Principles & Fundamentals",
+                items: [
+                    { id: "scalability", title: "1. Scalability", content: "The ability of a system to handle a growing amount of work or its potential to be enlarged to accommodate that growth.", types: "Vertical (scaling up, e.g., more RAM/CPU) vs. Horizontal (scaling out, e.g., more servers).", infographic: "scaling_strategies.html" },
+                    { id: "reliability", title: "2. Reliability (High Availability)", content: "The ability of a system to remain operational for a long period, even in the face of failures. Often measured by 'Nines' (e.g., 99.9% uptime).", infographic: "system_reliability_and_redundancy.html" },
+                    { id: "fault-tolerance", title: "3. Fault Tolerance", content: "The ability of a system to continue operating without interruption when one or more of its components fail.", infographic: "fault-tolerance_and_auto_recovery.html" },
+                    { id: "performance", title: "4. Performance/Latency", content: "How quickly a system responds to a request. Latency is the delay before a transfer of data begins following an instruction.", infographic: "system_latency_andperformance.html" },
+                    { id: "durability", title: "5. Durability", content: "The guarantee that data will persist over time, even in the event of system failures.", infographic: "durability.html" },
+                    { id: "maintainability", title: "6. Maintainability", content: "How easy it is to modify, understand, and extend the system.", infographic: "system_maintainability.html" },
+                    { id: "efficiency", title: "7. Efficiency", content: "How well the system utilizes its resources (CPU, memory, network, disk) to perform its functions.", infographic: "system_efficiency.html" },
+                ]
+            },
+            {
+                category: "II. Core Components & Architecture Patterns",
+                items: [
+                    { id: "client-server", title: "8. Client-Server Architecture", content: "A distributed application structure that partitions tasks between providers of a resource or service (servers) and service requesters (clients).", infographic: "client-server_architecture.html" },
+                    { id: "load-balancers", title: "9. Load Balancers", content: "Distributes incoming network traffic across multiple servers to ensure no single server is overloaded, improving responsiveness and availability.", infographic: "load_balancers.html" },
+                    { id: "databases", title: "10. Databases (SQL vs. NoSQL)", content: "<strong>SQL (Relational):</strong> Structured, table-based, strong schema, ACID properties. Good for complex queries.<br><strong>NoSQL (Non-relational):</strong> Flexible schema, various models (document, key-value, etc.). Good for large, unstructured data and horizontal scalability.", infographic: "Two distinct sections. SQL: tables with rows/columns, 'ACID' label. NoSQL: icons for different types (document, key-value), 'Schema-less,' 'Scalable.'" },
+                    { id: "caching", title: "11. Caching", content: "Storing frequently accessed data in a faster-access tier (e.g., RAM) to reduce latency and database load.", infographic: "Client -> Cache -> Database flow. Show a path where data is found in cache (fast, direct) and another where it's a cache miss (slower, goes to DB then populates cache)." },
+                    { id: "cdn", title: "12. Content Delivery Networks (CDNs)", content: "A geographically distributed network of proxy servers used to serve static content (images, videos, JS/CSS) closer to users, reducing latency.", infographic: "A world map with user icons in different continents. A central origin server, and CDN edge nodes scattered closer to users. Arrows showing content delivered from the nearest CDN node." },
+                    { id: "message-queues", title: "13. Message Queues/Brokers", content: "A system that allows independent applications to communicate asynchronously by sending messages to a queue. Decouples services (e.g., Kafka, RabbitMQ, SQS).", infographic: "Producer service -> Queue -> Consumer service. Show messages being put into the queue and consumed asynchronously. Emphasize decoupling." },
+                    { id: "apis", title: "14. APIs (REST, GraphQL, gRPC)", content: "<strong>REST:</strong> Stateless, resource-based, uses standard HTTP methods.<br><strong>GraphQL:</strong> Query language for APIs; allows clients to request exactly the data they need.<br><strong>gRPC:</strong> High-performance, uses Protocol Buffers for serialization, efficient for microservices.", infographic: "A 'Client' icon making a request to an 'API Gateway' icon. Then show branches for each type, with small icons representing their key features." },
+                    { id: "microservices", title: "15. Microservices Architecture", content: "An architectural style that structures an application as a collection of loosely coupled, independently deployable services.", infographic: "A large application broken down into many small, distinct service bubbles (e.g., 'User Service,' 'Order Service') communicating via APIs. Contrast with a single large 'Monolith' block." },
+                    { id: "monolithic", title: "16. Monolithic Architecture", content: "All components of an application are contained in a single, tightly coupled unit.", infographic: "A single large box representing the application, with many internal modules interconnected, perhaps showing a 'spaghetti' effect for complexity." },
+                    { id: "serverless", title: "17. Serverless Architecture (FaaS)", content: "Cloud providers manage servers, dynamically allocating resources. Developers only write and deploy code (functions) that run in response to events.", infographic: "An event trigger (e.g., user click) pointing to a 'Cloud Function' icon, which then performs a task. Emphasize 'No Server Management.'" },
+                    { id: "service-mesh", title: "18. Service Mesh", content: "A dedicated infrastructure layer for handling service-to-service communication, often used in microservices. Provides traffic management, security, and observability (e.g., Istio, Linkerd).", infographic: "Multiple microservice bubbles, with a transparent 'mesh' layer surrounding them. Show traffic flowing through it and providing features like 'Load Balancing,' 'Retries,' 'Observability.'" },
+                    { id: "distributed-systems", title: "19. Distributed Systems", content: "A system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages.", infographic: "A network of several computer nodes, each with a different role, connected by arrows showing data and message flow." },
+                ]
+            },
+            {
+                category: "III. Data Management & Storage",
+                items: [
+                    { id: "sharding", title: "20. Database Sharding", content: "Dividing a large database into smaller, more manageable pieces (shards) across multiple servers.", infographic: "A large database cylinder splitting into multiple smaller cylinders, each residing on a different server. Show data being routed to specific shards." },
+                    { id: "replication", title: "21. Database Replication", content: "Creating and maintaining multiple copies of data across different nodes for redundancy, high availability, and read scalability.", infographic: "A 'Master' database sending data to multiple 'Replica' databases. Show read requests going to replicas and write requests going to the master." },
+                    { id: "indexes", title: "22. Indexes", content: "Data structures that improve the speed of data retrieval operations on a database table at the cost of additional writes and storage space.", infographic: "A book with an index. Show a quick lookup in the index vs. scanning every page to find information. Relate to database rows." },
+                    { id: "cap-theorem", title: "23. CAP Theorem", content: "A distributed database system can only guarantee two out of three properties: <strong>C</strong>onsistency, <strong>A</strong>vailability, <strong>P</strong>artition Tolerance.", infographic: "A triangle with C, A, P at its vertices. Show different database types (e.g., RDBMS vs. NoSQL) favoring different sides of the triangle." },
+                    { id: "acid-base", title: "24. ACID vs. BASE", content: "<strong>ACID (Atomic, Consistent, Isolated, Durable):</strong> Properties guaranteeing reliable transactions (typical for SQL).<br><strong>BASE (Basically Available, Soft state, Eventually consistent):</strong> Properties for NoSQL databases, prioritizing availability.", infographic: "Two distinct bubbles: one labeled 'ACID' with four icons/words, connected to SQL. Another labeled 'BASE' with three icons/words, connected to NoSQL." },
+                    { id: "data-lake-warehouse", title: "25. Data Lake vs. Data Warehouse", content: "<strong>Data Lake:</strong> Stores raw, unstructured data in its native format.<br><strong>Data Warehouse:</strong> Stores structured, processed data for reporting and business intelligence.", infographic: "Data Lake: A large, murky lake with various types of raw data flowing in. Data Warehouse: A structured building with shelves of neatly organized, categorized data." },
+                ]
+            },
+            {
+                category: "IV. Security & Reliability",
+                items: [
+                    { id: "auth-authz", title: "26. Authentication vs. Authorization", content: "<strong>Authentication:</strong> Verifying who a user is (e.g., username/password, MFA).<br><strong>Authorization:</strong> Determining what a user is allowed to do (e.g., roles, permissions).", infographic: "Authentication: A user with a key trying to open a lock. Authorization: A user badge showing access levels to different rooms/features." },
+                    { id: "rate-limiting", title: "27. Rate Limiting", content: "Controls the rate at which an API or service can be called, preventing abuse and ensuring fair usage.", infographic: "A funnel or a gate with a counter. Show incoming requests, and the gate only allowing a certain number per time unit, with excess requests being blocked or delayed." },
+                    { id: "circuit-breakers", title: "28. Circuit Breakers", content: "A pattern to prevent cascading failures in a distributed system by stopping repeated attempts to an unresponsive service.", infographic: "A request flow from Service A to Service B. If Service B fails, the circuit breaker opens, preventing further requests from A to B for a period. Then it closes to retry." },
+                    { id: "idempotency", title: "29. Idempotency", content: "An operation is idempotent if applying it multiple times produces the same result as applying it once. Crucial for reliable distributed systems (e.g., payment retries).", infographic: "An arrow with 'Operation X' repeated multiple times, but the 'Result' box only shows one final state." },
+                    { id: "distributed-transactions", title: "30. Distributed Transactions", content: "Transactions that involve multiple independent participants (e.g., databases, services) and need to maintain atomicity across them (e.g., using Two-Phase Commit).", infographic: "Multiple database icons. A central 'Transaction Coordinator' sending 'Prepare' messages and then 'Commit/Rollback' messages to all participants." },
+                ]
+            },
+            {
+                category: "V. Operational & Deployment",
+                items: [
+                    { id: "monitoring-logging", title: "31. Monitoring & Logging", content: "<strong>Monitoring:</strong> Collecting and analyzing metrics (CPU, memory, etc.) to observe system health.<br><strong>Logging:</strong> Recording events and messages generated by the system for debugging and auditing.", infographic: "Monitoring: A dashboard with gauges and graphs for system metrics. Logging: A stream of text messages flowing into a central log management system." },
+                    { id: "alerting", title: "32. Alerting", content: "Notifying relevant personnel when specific conditions or thresholds are met (e.g., error rates exceed a limit, disk space is low).", infographic: "A dashboard with a 'red' indicator, triggering notifications to phone, email, or a Slack channel." },
+                    { id: "ci-cd", title: "33. CI/CD", content: "Automating the stages of software delivery (building, testing, deploying) to enable rapid and reliable releases.", infographic: "An infinite loop icon. Stages: 'Code' -> 'Build' -> 'Test' -> 'Deploy' -> 'Monitor' -> 'Feedback' -> 'Code' again." },
+                    { id: "containerization", title: "34. Containerization (Docker)", content: "Packaging an application and its dependencies into a self-contained, portable unit (container) that can run consistently across different environments.", infographic: "A ship carrying multiple identical containers. Each container labeled as an 'App' with its 'Dependencies.'" },
+                    { id: "orchestration", title: "35. Orchestration (Kubernetes)", content: "Automating the deployment, scaling, and management of containerized applications.", infographic: "A conductor directing an orchestra of multiple container ships (Docker icons). Show features like 'Auto-scaling,' 'Self-healing,' 'Load Balancing'." },
+                    { id: "iac", title: "36. Infrastructure as Code (IaC)", content: "Managing and provisioning infrastructure through machine-readable definition files, rather than manual configuration (e.g., Terraform, Ansible).", infographic: "A code editor showing configuration files (e.g., YAML/JSON) with an arrow pointing to infrastructure resources (servers, databases) being automatically provisioned." },
+                    { id: "blue-green", title: "37. Blue/Green Deployment", content: "A deployment strategy with two identical production environments (Blue and Green). New release is deployed to the inactive one, and traffic is switched.", infographic: "Two identical cloud environments (one blue, one green). Traffic goes to blue. New version deployed to green. Then an arrow showing traffic switching to green." },
+                    { id: "canary", title: "38. Canary Deployment", content: "Rolling out a new version to a small subset of users first, monitoring for issues, then gradually expanding to all users.", infographic: "A large user group. A small percentage of traffic is diverted to a new version, then gradually increases." },
+                ]
+            },
+            {
+                category: "VI. System Design Approaches & Methodologies",
+                items: [
+                    { id: "ddd", title: "39. Domain-Driven Design (DDD)", content: "An approach to software development that centers on defining a rich and expressive model of the business domain.", infographic: "A central 'Core Domain' bubble surrounded by 'Bounded Contexts,' each with its own model and language, showing clear communication lines." },
+                    { id: "event-driven", title: "40. Event-Driven Architecture", content: "A software architecture paradigm that promotes the production, detection, consumption of, and reaction to events.", infographic: "An 'Event Source' -> 'Event Bus' -> multiple 'Event Consumers' reacting to specific events." },
+                    { id: "api-gateway", title: "41. API Gateway", content: "A single entry point for all client requests to a backend, often used in microservices. Handles routing, authentication, rate limiting, etc.", infographic: "Multiple client types (web, mobile) pointing to a central 'API Gateway,' which then routes requests to various backend services." },
+                    { id: "bff", title: "42. Backend for Frontend (BFF)", content: "A pattern where a separate backend service is created for each specific frontend application (e.g., one for web, one for mobile).", infographic: "A 'Web Client' connected to 'Web BFF,' and a 'Mobile Client' connected to 'Mobile BFF.' Both BFFs then connect to shared backend microservices." },
+                    { id: "graceful-degradation", title: "43. Graceful Degradation / Feature Flags", content: "Designing a system to continue operating in a limited capacity when some components fail. Feature flags allow enabling/disabling features without code deployment.", infographic: "A system diagram where a component fails, but the overall system still works with reduced functionality. A switch icon next to a feature shows it can be toggled." },
+                    { id: "observability", title: "44. Observability", content: "The ability to understand the internal state of a system by examining the data it generates (logs, metrics, traces).", infographic: "Three overlapping circles: Metrics (quantifiable data), Logs (event records), Tracing (request flow). All feeding into a 'Monitoring Platform.'" },
+                    { id: "chaos-engineering", title: "45. Chaos Engineering", content: "The discipline of experimenting on a system in production in order to build confidence in its ability to withstand turbulent conditions.", infographic: "A controlled environment with a 'Chaos Monkey' injecting failures (e.g., 'Network Latency,' 'Server Crash') into a system to see how it reacts." },
+                ]
+            },
+            {
+                category: "VII. Advanced Concepts & Considerations",
+                items: [
+                    { id: "websockets", title: "46. WebSockets", content: "A full-duplex communication protocol over a single TCP connection, allowing for real-time, bidirectional data transfer between client and server.", infographic: "Client and Server icons, with a single continuous double-headed arrow representing a persistent connection, showing data flowing both ways." },
+                    { id: "sse", title: "47. Server-Sent Events (SSE)", content: "A standard for unidirectional server-to-client event streaming over HTTP. Allows server to push updates to the browser.", infographic: "Server icon with an arrow pushing updates to a Client icon, emphasizing one-way flow." },
+                    { id: "graphql-subscriptions", title: "48. GraphQL Subscriptions", content: "A GraphQL feature that allows clients to receive real-time updates from a server when data changes, typically implemented over WebSockets.", infographic: "Similar to WebSockets, but specifically showing a 'GraphQL Client' subscribing to 'Events' from a 'GraphQL Server,' receiving live updates." },
+                    { id: "event-sourcing", title: "49. Event Sourcing", content: "A pattern where all changes to application state are stored as a sequence of immutable events. The current state is derived by replaying these events.", infographic: "A timeline of 'Events' (e.g., 'Order Created,' 'Item Added'). An arrow pointing from the event stream to a 'Current State' icon, implying derivation." },
+                    { id: "cqrs", title: "50. CQRS", content: "Command Query Responsibility Segregation. Separating the read (query) and write (command) operations of a data store. Often used with Event Sourcing.", infographic: "Two distinct paths: 'Commands' go to a 'Write Model' (e.g., database) and 'Queries' go to a separate 'Read Model' (e.g., optimized view)." },
+                ]
+            }
+        ];
+
+        const navContainer = document.getElementById('conceptNav');
+        const contentContainer = document.getElementById('concept-content');
+        const searchInput = document.getElementById('searchInput');
+
+        // Populate Navigation and Content
+        conceptsData.forEach(category => {
+            // Create nav category
+            const categoryNavDiv = document.createElement('div');
+            categoryNavDiv.className = 'nav-category-group';
+            const categoryNavHeader = document.createElement('h3');
+            categoryNavHeader.className = 'text-lg font-semibold text-slate-800 mt-4 mb-2 p-2 cursor-pointer flex justify-between items-center';
+            categoryNavHeader.innerHTML = `${category.category} <span class="transform transition-transform duration-200">▼</span>`;
+            
+            const navList = document.createElement('ul');
+            navList.className = 'space-y-1 pl-2 border-l-2 border-slate-200';
+
+            // Create content category section
+            const categoryContentHeader = document.createElement('h2');
+            categoryContentHeader.className = 'text-2xl md:text-3xl font-bold text-slate-900 mb-6 pb-2 border-b-2 border-blue-200';
+            categoryContentHeader.textContent = category.category;
+            contentContainer.appendChild(categoryContentHeader);
+
+            category.items.forEach(item => {
+                // Populate nav item
+                const navItem = document.createElement('li');
+                navItem.innerHTML = `<a href="#${item.id}" class="block px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors duration-200 sidebar-item">${item.title}</a>`;
+                navList.appendChild(navItem);
+
+                // Populate content item
+                const contentItem = document.createElement('div');
+                contentItem.id = item.id;
+                contentItem.className = 'bg-white p-6 rounded-lg shadow-md scroll-mt-24';
+                
+                let contentHTML = `
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-3">${item.title}</h3>
+                    <br>
+                    <p class="text-slate-700">${item.content}</p>
+                    <br>
+                `;
+
+                if (item.types) {
+                    contentHTML += `<p class="mt-2"><strong>Types:</strong> ${item.types}</p><br>`;
+                }
+
+                let page = "hld/" + (item.infographic || "fault-tolerance_and_auto_recovery.html");
+                contentHTML += `
+                    <div><a href="${page}" target="_blank" class="text-blue-600 hover:underline cursor-pointer text-sm font-semibold margin-left-2">View Infographic full display</a></div>
+                    <div>
+                        <iframe src="${page}" width="100%" height="600px"></iframe>
+                    </div>
+                `;
+                
+                contentItem.innerHTML = contentHTML;
+                contentContainer.appendChild(contentItem);
+            });
+            
+            categoryNavDiv.appendChild(categoryNavHeader);
+            categoryNavDiv.appendChild(navList);
+            navContainer.appendChild(categoryNavDiv);
+
+            // Accordion Logic
+            categoryNavHeader.addEventListener('click', () => {
+                navList.classList.toggle('hidden');
+                categoryNavHeader.querySelector('span').classList.toggle('rotate-180');
+            });
+        });
+
+        // Search Functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.nav-category-group').forEach(group => {
+                let visibleItems = 0;
+                group.querySelectorAll('ul li').forEach(li => {
+                    const text = li.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        li.style.display = 'list-item';
+                        visibleItems++;
+                    } else {
+                        li.style.display = 'none';
+                    }
+                });
+
+                if (visibleItems > 0) {
+                    group.style.display = 'block';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+        });
+
+        // Active state on scroll
+        const navLinks = document.querySelectorAll('.sidebar-item');
+        const contentSections = document.querySelectorAll('[id^="scalability"], [id^="reliability"], [id^="fault-tolerance"], [id^="performance"], [id^="durability"], [id^="maintainability"], [id^="efficiency"], [id^="client-server"], [id^="load-balancers"], [id^="databases"], [id^="caching"], [id^="cdn"], [id^="message-queues"], [id^="apis"], [id^="microservices"], [id^="monolithic"], [id^="serverless"], [id^="service-mesh"], [id^="distributed-systems"], [id^="sharding"], [id^="replication"], [id^="indexes"], [id^="cap-theorem"], [id^="acid-base"], [id^="data-lake-warehouse"], [id^="auth-authz"], [id^="rate-limiting"], [id^="circuit-breakers"], [id^="idempotency"], [id^="distributed-transactions"], [id^="monitoring-logging"], [id^="alerting"], [id^="ci-cd"], [id^="containerization"], [id^="orchestration"], [id^="iac"], [id^="blue-green"], [id^="canary"], [id^="ddd"], [id^="event-driven"], [id^="api-gateway"], [id^="bff"], [id^="graceful-degradation"], [id^="observability"], [id^="chaos-engineering"], [id^="websockets"], [id^="sse"], [id^="graphql-subscriptions"], [id^="event-sourcing"], [id^="cqrs"]');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.parentElement.classList.remove('sidebar-item-active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.parentElement.classList.add('sidebar-item-active');
+                        }
+                    });
+                }
+            });
+        }, { rootMargin: "-50% 0px -50% 0px" });
+
+        contentSections.forEach(section => {
+            observer.observe(section);
+        });
+
+    </script>
+
+</body>
+</html>

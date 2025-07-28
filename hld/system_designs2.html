@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design Concepts</title>
+<style>
+body {
+font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+margin: 0;
+padding: 20px;
+background-color: #f8f9fa;
+color: #343a40;
+}
+
+h1 {
+        text-align: center;
+        color: #0056b3;
+        margin-bottom: 40px;
+        font-size: 2.8em;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 15px;
+        display: block;
+        width: 90%;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+        border-radius: 5px;
+    }
+
+    /* Main Content Container */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* Category Section Styling */
+    .category-section {
+        background-color: #e9ecef;
+        border-radius: 10px;
+        padding: 25px 35px;
+        margin-bottom: 40px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+        border-top: 5px solid #007bff;
+    }
+
+    .category-section h2 {
+        color: #004085;
+        font-size: 2.2em;
+        margin-top: 0;
+        margin-bottom: 30px;
+        text-align: center;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed #a7d9ff;
+    }
+
+    /* Individual Concept Styling */
+    .concept-item {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        padding: 20px 25px;
+        border-left: 4px solid #6c757d;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .concept-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .concept-item h3 {
+        color: #343a40;
+        font-size: 1.6em;
+        margin-top: 0;
+        margin-bottom: 10px;
+        border-bottom: 1px dotted #dee2e6;
+        padding-bottom: 8px;
+    }
+
+    .concept-item h4 {
+        color: #495057;
+        font-size: 1.2em;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .concept-item p {
+        margin-bottom: 10px;
+    }
+
+    .concept-item ul {
+        list-style-type: disc;
+        margin-left: 25px;
+        padding-left: 0;
+    }
+
+    .concept-item ul li {
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        h1 {
+            font-size: 2em;
+            width: 100%;
+        }
+        .category-section {
+            padding: 20px;
+        }
+        .category-section h2 {
+            font-size: 1.8em;
+        }
+        .concept-item {
+            padding: 15px;
+        }
+        .concept-item h3 {
+            font-size: 1.4em;
+        }
+        .concept-item h4 {
+            font-size: 1.1em;
+        }
+    }
+</style>
+
+</head>
+<body>
+<div class="container">
+<h1>System Design Concepts</h1>
+
+    <div class="category-section">
+        <h2>I. Core Principles & Fundamentals</h2>
+
+        <div class="concept-item">
+            <h3>1. Scalability</h3>
+            <p><strong>Concept:</strong> The ability of a system to handle a growing amount of work or its potential to be enlarged to accommodate that growth.</p>
+            <p><strong>Types:</strong> Vertical (scaling up, e.g., more RAM/CPU) vs. Horizontal (scaling out, e.g., more servers).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Two contrasting diagrams.</li>
+                <li>One showing a single server with arrows pointing up for resources (Vertical Scaling).</li>
+                <li>The other showing multiple servers behind a load balancer, with arrows pointing horizontally to new servers being added (Horizontal Scaling).</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>2. Reliability (High Availability)</h3>
+            <p><strong>Concept:</strong> The ability of a system to remain operational for a long period, even in the face of failures. Often measured by "Nines" (e.g., 99.9% uptime).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A diagram of redundant components (e.g., two servers, two databases) with a failover mechanism.</li>
+                <li>Show a server failing and traffic automatically routing to the healthy one.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>3. Fault Tolerance</h3>
+            <p><strong>Concept:</strong> The ability of a system to continue operating without interruption when one or more of its components fail.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Similar to reliability, but emphasizing the <em>automatic recovery</em> or graceful degradation.</li>
+                <li>Show a component breaking and the system automatically isolating it or switching to a backup without downtime.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>4. Performance/Latency</h3>
+            <p><strong>Concept:</strong> How quickly a system responds to a request. Latency is the delay before a transfer of data begins following an instruction.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A timeline showing different stages of a request (client request, network latency, server processing, database query, server response, network latency, client render).</li>
+                <li>Highlight points where delays can occur.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>5. Durability</h3>
+            <p><strong>Concept:</strong> The guarantee that data will persist over time, even in the event of system failures.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A database icon with arrows pointing to multiple backup locations (disk, remote server, cloud storage).</li>
+                <li>Show data being replicated.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>6. Maintainability</h3>
+            <p><strong>Concept:</strong> How easy it is to modify, understand, and extend the system.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A flowchart showing clear, modular components and well-defined interfaces.</li>
+                <li>Contrast with a tangled "spaghetti code" diagram.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>7. Efficiency</h3>
+            <p><strong>Concept:</strong> How well the system utilizes its resources (CPU, memory, network, disk) to perform its functions.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A bar chart comparing resource usage for an inefficient vs. efficient system.</li>
+                <li>Alternatively, a diagram showing optimized data flow.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <h2>II. Core Components & Architecture Patterns</h2>
+
+        <div class="concept-item">
+            <h3>8. Client-Server Architecture</h3>
+            <p><strong>Concept:</strong> A distributed application structure that partitions tasks between providers of a resource or service (servers) and service requesters (clients).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A client device (browser/mobile app) on one side, connected via a cloud/internet icon to a server on the other side.</li>
+                <li>Arrows showing request-response flow.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>9. Load Balancers</h3>
+            <p><strong>Concept:</strong> Distributes incoming network traffic across multiple servers to ensure no single server is overloaded, improving responsiveness and availability.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>An internet cloud icon pointing to a load balancer.</li>
+                <li>The load balancer then has arrows splitting traffic evenly to multiple identical web servers.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>10. Databases (SQL vs. NoSQL)</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>SQL (Relational):</strong> Structured, table-based, strong schema, ACID properties (Atomicity, Consistency, Isolation, Durability). Good for complex queries, defined relationships.</li>
+                <li><strong>NoSQL (Non-relational):</strong> Flexible schema, various models (document, key-value, graph, column-family). Good for large, unstructured data, horizontal scalability.</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Two distinct sections.</li>
+                <li>SQL: tables with rows/columns, "ACID" label.</li>
+                <li>NoSQL: icons for different types (document, key-value), "Schema-less," "Scalable."</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>11. Caching</h3>
+            <p><strong>Concept:</strong> Storing frequently accessed data in a faster-access tier (e.g., RAM) to reduce latency and database load.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Client -> Cache -> Database flow.</li>
+                <li>Show a path where data is found in cache (fast, direct) and another where it's a cache miss (slower, goes to DB then populates cache).</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>12. Content Delivery Networks (CDNs)</h3>
+            <p><strong>Concept:</strong> A geographically distributed network of proxy servers and their data centers. Used to serve static content (images, videos, JS/CSS) closer to users, reducing latency.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A world map with user icons in different continents.</li>
+                <li>A central origin server, and CDN edge nodes scattered closer to users.</li>
+                <li>Arrows showing content delivered from the nearest CDN node.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>13. Message Queues/Brokers</h3>
+            <p><strong>Concept:</strong> A system that allows independent applications to communicate asynchronously by sending messages to a queue. Decouples services. (e.g., Kafka, RabbitMQ, SQS)</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Producer service -> Queue -> Consumer service.</li>
+                <li>Show messages being put into the queue and consumed asynchronously. Emphasize decoupling.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>14. APIs (REST, GraphQL, gRPC)</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>REST:</strong> Stateless, resource-based, uses standard HTTP methods (GET, POST, PUT, DELETE).</li>
+                <li><strong>GraphQL:</strong> Query language for APIs; allows clients to request exactly what data they need.</li>
+                <li><strong>gRPC:</strong> High-performance, uses Protocol Buffers for serialization, efficient for microservices.</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A "Client" icon making a request to an "API Gateway" icon.</li>
+                <li>Then show branches for each type, with small icons representing their key features (e.g., "HTTP Verbs" for REST, "Custom Query" for GraphQL, "Binary/Fast" for gRPC).</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>15. Microservices Architecture</h3>
+            <p><strong>Concept:</strong> An architectural style that structures an application as a collection of loosely coupled, independently deployable services.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A large application broken down into many small, distinct service bubbles (e.g., "User Service," "Order Service," "Payment Service").</li>
+                <li>Show these services communicating via APIs. Contrast with a single large "Monolith" block.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>16. Monolithic Architecture</h3>
+            <p><strong>Concept:</strong> All components of an application are contained in a single, tightly coupled unit.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A single large box representing the application, with many internal modules interconnected, perhaps showing a "spaghetti" effect for complexity.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>17. Serverless Architecture (FaaS)</h3>
+            <p><strong>Concept:</strong> Cloud providers manage servers, dynamically allocating resources. Developers only write and deploy code (functions) that run in response to events.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>An event trigger (e.g., user click, new file) pointing to a "Cloud Function" icon, which then performs a task.</li>
+                <li>Emphasize "No Server Management."</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>18. Service Mesh</h3>
+            <p><strong>Concept:</strong> A dedicated infrastructure layer for handling service-to-service communication, often used in microservices. Provides traffic management, security, and observability. (e.g., Istio, Linkerd)</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Multiple microservice bubbles, with a transparent "mesh" layer surrounding them.</li>
+                <li>Show traffic flowing through it and providing features like "Load Balancing," "Retries," "Observability."</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>19. Distributed Systems</h3>
+            <p><strong>Concept:</strong> A system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A network of several computer nodes, each with a different role.</li>
+                <li>Connected by arrows showing data and message flow.</li>
+            </ul>
+        </div>
+    </div> <!-- End Core Components & Architecture Patterns -->
+
+    <div class="category-section">
+        <h2>III. Data Management & Storage</h2>
+
+        <div class="concept-item">
+            <h3>20. Database Sharding/Partitioning</h3>
+            <p><strong>Concept:</strong> Dividing a large database into smaller, more manageable pieces (shards) across multiple servers.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A large database cylinder splitting into multiple smaller cylinders.</li>
+                <li>Each smaller cylinder resides on a different server. Show data being routed to specific shards.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>21. Database Replication</h3>
+            <p><strong>Concept:</strong> Creating and maintaining multiple copies of data across different nodes or locations for redundancy, high availability, and read scalability.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A "Master" database sending data to multiple "Replica" (or "Slave") databases.</li>
+                <li>Show read requests going to replicas and write requests going to the master.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>22. Indexes</h3>
+            <p><strong>Concept:</strong> Data structures that improve the speed of data retrieval operations on a database table at the cost of additional writes and storage space.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A book with an index.</li>
+                <li>Show a quick lookup in the index vs. scanning every page to find information. Relate to database rows.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>23. Data Consistency Models (CAP Theorem)</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>CAP Theorem:</strong> A distributed database system can only guarantee two out of three properties: Consistency, Availability, Partition Tolerance.</li>
+                <li><strong>Consistency:</strong> All clients see the same data at the same time.</li>
+                <li><strong>Availability:</strong> Every request receives a response, without guarantee of latest data.</li>
+                <li><strong>Partition Tolerance:</strong> System continues to operate despite network partitions.</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A triangle with C, A, P at its vertices.</li>
+                <li>Show different database types (e.g., traditional RDBMS vs. NoSQL) favoring different sides of the triangle.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>24. ACID vs. BASE</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>ACID (Atomic, Consistent, Isolated, Durable):</strong> Properties guaranteeing reliable processing of database transactions (typical for SQL).</li>
+                <li><strong>BASE (Basically Available, Soft state, Eventually consistent):</strong> Properties for NoSQL databases, prioritizing availability and partition tolerance over immediate consistency.</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Two distinct bubbles: one labeled "ACID" with four smaller icons/words for each property, connected to SQL.</li>
+                <li>Another labeled "BASE" with three icons/words, connected to NoSQL.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>25. Data Lake vs. Data Warehouse</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>Data Lake:</strong> Stores raw, unstructured data in its native format, often for future analysis.</li>
+                <li><strong>Data Warehouse:</strong> Stores structured, processed data for reporting and business intelligence.</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Data Lake: A large, murky lake with various types of raw data flowing in.</li>
+                <li>Data Warehouse: A structured building with shelves of neatly organized, categorized data.</li>
+            </ul>
+        </div>
+    </div> <!-- End Data Management & Storage -->
+
+    <div class="category-section">
+        <h2>IV. Security & Reliability</h2>
+
+        <div class="concept-item">
+            <h3>26. Authentication vs. Authorization</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>Authentication:</strong> Verifying who a user is (e.g., username/password, MFA).</li>
+                <li><strong>Authorization:</strong> Determining what a user is allowed to do (e.g., roles, permissions).</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Authentication: A user with a key trying to open a lock.</li>
+                <li>Authorization: A user badge showing access levels to different rooms/features.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>27. Rate Limiting</h3>
+            <p><strong>Concept:</strong> Controls the rate at which an API or service can be called, preventing abuse and ensuring fair usage.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A funnel or a gate with a counter.</li>
+                <li>Show incoming requests, and the gate only allowing a certain number per time unit, with excess requests being blocked or delayed.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>28. Circuit Breakers</h3>
+            <p><strong>Concept:</strong> A pattern to prevent cascading failures in a distributed system by stopping repeated attempts to an unresponsive service.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A request flow from Service A to Service B.</li>
+                <li>If Service B fails, the circuit breaker opens, preventing further requests from A to B for a period. Then it closes to retry.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>29. Idempotency</h3>
+            <p><strong>Concept:</strong> An operation is idempotent if applying it multiple times produces the same result as applying it once. Crucial for reliable distributed systems (e.g., payment retries).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>An arrow with "Operation X" repeated multiple times, but the "Result" box only shows one final state.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>30. Distributed Transactions</h3>
+            <p><strong>Concept:</strong> Transactions that involve multiple independent participants (e.g., databases, services) and need to maintain atomicity across them. (Often complex, 2PC is a common pattern).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Multiple database icons.</li>
+                <li>A central "Transaction Coordinator" sending "Prepare" messages and then "Commit/Rollback" messages to all participants.</li>
+            </ul>
+        </div>
+    </div> <!-- End Security & Reliability -->
+
+    <div class="category-section">
+        <h2>V. Operational & Deployment</h2>
+
+        <div class="concept-item">
+            <h3>31. Monitoring & Logging</h3>
+            <p><strong>Concept:</strong></p>
+            <ul>
+                <li><strong>Monitoring:</strong> Collecting and analyzing metrics (CPU, memory, network, request rates) to observe system health.</li>
+                <li><strong>Logging:</strong> Recording events and messages generated by the system for debugging and auditing.</li>
+            </ul>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Monitoring: A dashboard with gauges and graphs for system metrics.</li>
+                <li>Logging: A stream of text messages flowing into a central log management system.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>32. Alerting</h3>
+            <p><strong>Concept:</strong> Notifying relevant personnel when specific conditions or thresholds are met (e.g., error rates exceed a limit, disk space is low).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A dashboard with a "red" indicator, triggering notifications to phone, email, or a Slack channel.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>33. CI/CD (Continuous Integration/Continuous Delivery)</h3>
+            <p><strong>Concept:</strong> Automating the stages of software delivery (building, testing, deploying) to enable rapid and reliable releases.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>An infinite loop icon.</li>
+                <li>Stages: "Code" -> "Build" -> "Test" -> "Deploy" -> "Monitor" -> "Feedback" -> "Code" again.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>34. Containerization (Docker)</h3>
+            <p><strong>Concept:</strong> Packaging an application and its dependencies into a self-contained, portable unit (container) that can run consistently across different environments.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A ship carrying multiple identical containers.</li>
+                <li>Each container labeled as an "App" with its "Dependencies," all on different "OS" ships.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>35. Orchestration (Kubernetes)</h3>
+            <p><strong>Concept:</strong> Automating the deployment, scaling, and management of containerized applications.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A conductor directing an orchestra of multiple container ships (Docker icons).</li>
+                <li>Show features like "Auto-scaling," "Self-healing," "Load Balancing" for containers.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>36. Infrastructure as Code (IaC)</h3>
+            <p><strong>Concept:</strong> Managing and provisioning computing infrastructure through machine-readable definition files, rather than manual hardware configuration or interactive configuration tools. (e.g., Terraform, Ansible).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A code editor showing configuration files (e.g., YAML/JSON) with an arrow pointing to various infrastructure resources (servers, databases, networks) being automatically provisioned in a cloud.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>37. Blue/Green Deployment</h3>
+            <p><strong>Concept:</strong> A deployment strategy where two identical production environments (Blue and Green) are maintained. New release is deployed to inactive (e.g., Green) and traffic is switched.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Two identical cloud environments (one blue, one green).</li>
+                <li>Traffic goes to blue. New version deployed to green. Then an arrow showing traffic switching to green, and blue becomes inactive.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>38. Canary Deployment</h3>
+            <p><strong>Concept:</strong> Rolling out a new version of an application to a small subset of users first, monitoring for issues, then gradually expanding to all users.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A large user group (many small stick figures).</li>
+                <li>A small percentage (e.g., 5%) of traffic is diverted to a new version, then gradually increases (e.g., 25%, 100%).</li>
+            </ul>
+        </div>
+    </div> <!-- End Operational & Deployment -->
+
+    <div class="category-section">
+        <h2>VI. System Design Approaches & Methodologies</h2>
+
+        <div class="concept-item">
+            <h3>39. Domain-Driven Design (DDD)</h3>
+            <p><strong>Concept:</strong> An approach to software development that centers on defining a rich and expressive model of the business domain.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A central "Core Domain" bubble surrounded by "Bounded Contexts," each with its own model and language.</li>
+                <li>Show clear communication lines between them.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>40. Event-Driven Architecture</h3>
+            <p><strong>Concept:</strong> A software architecture paradigm that promotes the production, detection, consumption of, and reaction to events. (Closely related to Message Queues/Brokers).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>An "Event Source" -> "Event Bus" -> multiple "Event Consumers" reacting to specific events.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>41. API Gateway</h3>
+            <p><strong>Concept:</strong> A single entry point for all client requests to a backend, often used in microservices. Handles routing, authentication, rate limiting, etc.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Multiple client types (web, mobile, 3rd party) pointing to a central "API Gateway."</li>
+                <li>The API Gateway then routes requests to various backend services.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>42. Backend for Frontend (BFF)</h3>
+            <p><strong>Concept:</strong> A pattern where a separate backend service is created for each specific frontend application (e.g., one for web, one for mobile).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A "Web Client" connected to "Web BFF," and a "Mobile Client" connected to "Mobile BFF."</li>
+                <li>Both BFFs then connect to shared backend microservices.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>43. Graceful Degradation / Feature Flags</h3>
+            <p><strong>Concept:</strong> Designing a system to continue operating in a limited capacity when some components fail, rather than failing completely. Feature flags allow enabling/disabling features without code deployment.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A system diagram where a component fails, but the overall system still works, perhaps with reduced functionality.</li>
+                <li>A switch icon next to a feature, showing it can be toggled on/off.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>44. Observability (Metrics, Tracing, Logging)</h3>
+            <p><strong>Concept:</strong> The ability to understand the internal state of a system by examining the data it generates (logs, metrics, traces).</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Three overlapping circles: Metrics (quantifiable data), Logs (event records), Tracing (request flow across services).</li>
+                <li>All feeding into a "Monitoring Platform."</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>45. Chaos Engineering</h3>
+            <p><strong>Concept:</strong> The discipline of experimenting on a system in production in order to build confidence in the system's ability to withstand turbulent conditions.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A controlled environment with a "Chaos Monkey" injecting failures (e.g., "Network Latency," "Server Crash") into a system to see how it reacts.</li>
+            </ul>
+        </div>
+    </div> <!-- End System Design Approaches & Methodologies -->
+
+    <div class="category-section">
+        <h2>VII. Advanced Concepts & Considerations</h2>
+
+        <div class="concept-item">
+            <h3>46. WebSockets</h3>
+            <p><strong>Concept:</strong> A full-duplex communication protocol over a single TCP connection, allowing for real-time, bidirectional data transfer between client and server.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Client and Server icons, with a single continuous double-headed arrow representing a persistent connection.</li>
+                <li>Show data flowing both ways.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>47. Server-Sent Events (SSE)</h3>
+            <p><strong>Concept:</strong> A standard for unidirectional server-to-client event streaming over HTTP. Allows server to push updates to browser.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Server icon with an arrow pushing updates to a Client icon, emphasizing one-way flow.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>48. GraphQL Subscriptions</h3>
+            <p><strong>Concept:</strong> A GraphQL feature that allows clients to receive real-time updates from a server when data changes, typically implemented over WebSockets.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Similar to WebSockets, but specifically showing a "GraphQL Client" subscribing to "Events" from a "GraphQL Server," receiving live updates.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>49. Event Sourcing</h3>
+            <p><strong>Concept:</strong> A pattern where all changes to application state are stored as a sequence of immutable events. The current state is derived by replaying these events.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>A timeline of "Events" (e.g., "Order Created," "Item Added," "Order Paid").</li>
+                <li>An arrow pointing from the event stream to a "Current State" icon, implying derivation.</li>
+            </ul>
+        </div>
+
+        <div class="concept-item">
+            <h3>50. CQRS (Command Query Responsibility Segregation)</h3>
+            <p><strong>Concept:</strong> Separating the read (query) and write (command) operations of a data store. Often used with Event Sourcing.</p>
+            <h4>Infographic Idea:</h4>
+            <ul>
+                <li>Two distinct paths: "Commands" go to a "Write Model" (e.g., database) and "Queries" go to a separate "Read Model" (e.g., optimized view or materialized view).</li>
+                <li>Often with a synchronization mechanism between them.</li>
+            </ul>
+        </div>
+    </div> <!-- End Advanced Concepts & Considerations -->
+
+</div> <!-- End container -->
+
+</body>
+</html>

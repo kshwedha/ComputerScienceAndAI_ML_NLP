@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Reliability & Redundancy</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .scenario {
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .scenario-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .scenario-title h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .diagram-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .server {
+            width: 100px;
+            height: 80px;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .server.healthy {
+            background: #27ae60;
+        }
+        
+        .server.failed {
+            background: #e74c3c;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .server.failed::before {
+            content: '❌';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #c0392b;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+        }
+        
+        .database {
+            width: 80px;
+            height: 60px;
+            background: #3498db;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin: 10px;
+        }
+        
+        .database.failed {
+            background: #e74c3c;
+        }
+        
+        .load-balancer {
+            width: 120px;
+            height: 60px;
+            background: #9b59b6;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .client {
+            width: 80px;
+            height: 60px;
+            background: #f39c12;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .arrow {
+            font-size: 2em;
+            color: #27ae60;
+            animation: pulse 2s infinite;
+        }
+        
+        .arrow.redirect {
+            color: #e74c3c;
+            animation: bounce 1s infinite;
+        }
+        
+        .arrow.blocked {
+            color: #95a5a6;
+            opacity: 0.5;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .step-by-step {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+        
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .metric {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .connection-line {
+            width: 60px;
+            height: 3px;
+            background: #27ae60;
+            position: relative;
+        }
+        
+        .connection-line.failed {
+            background: #e74c3c;
+        }
+        
+        .connection-line::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -2px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #27ae60;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+        
+        .connection-line.failed::after {
+            border-left-color: #e74c3c;
+        }
+        
+        .failover-indicator {
+            background: #f39c12;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>System Reliability & Redundancy</h1>
+            <p>How redundant components ensure high availability through failover mechanisms</p>
+        </div>
+        
+        <div class="content">
+            <div class="scenario">
+                <div class="scenario-title">
+                    <h2>Normal Operation - All Systems Healthy</h2>
+                    <p style="color: #7f8c8d; margin-top: 10px;">Traffic flows normally with load balancing across redundant components</p>
+                </div>
+                
+                <div class="diagram-container">
+                    <div class="client">Client</div>
+                    <div class="arrow">→</div>
+                    <div class="load-balancer">Load Balancer</div>
+                    <div class="arrow">→</div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="server healthy">Server A</div>
+                        <div class="server healthy">Server B</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="database">DB Primary</div>
+                        <div class="database">DB Backup</div>
+                    </div>
+                </div>
+                
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50ms</div>
+                        <div class="metric-label">Response Time</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scenario">
+                <div class="scenario-title">
+                    <h2>Failure Scenario - Automatic Failover</h2>
+                    <p style="color: #7f8c8d; margin-top: 10px;">Server A fails, traffic automatically redirects to healthy Server B</p>
+                </div>
+                
+                <div class="diagram-container">
+                    <div class="client">Client</div>
+                    <div class="arrow">→</div>
+                    <div class="load-balancer">Load Balancer</div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin: 0 20px;">
+                        <div class="arrow blocked">↗</div>
+                        <div class="arrow redirect">↘</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="server failed">Server A</div>
+                        <div class="server healthy">Server B</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="database">DB Primary</div>
+                        <div class="database">DB Backup</div>
+                    </div>
+                </div>
+                
+                <div class="failover-indicator" style="text-align: center; margin: 20px 0;">
+                    🔄 AUTOMATIC FAILOVER IN PROGRESS
+                </div>
+                
+                <div class="step-by-step">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">Failover Process</h3>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div>Health check detects Server A failure</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div>Load balancer removes Server A from rotation</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div>All traffic redirected to Server B automatically</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div>Users experience minimal to no downtime</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div>System administrators alerted for Server A repair</div>
+                    </div>
+                </div>
+                
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">99.5%</div>
+                        <div class="metric-label">Uptime Maintained</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2 sec</div>
+                        <div class="metric-label">Failover Time</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Data Loss</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scenario">
+                <div class="scenario-title">
+                    <h2>Database Redundancy</h2>
+                    <p style="color: #7f8c8d; margin-top: 10px;">Primary database fails, backup takes over seamlessly</p>
+                </div>
+                
+                <div class="diagram-container">
+                    <div class="client">Client</div>
+                    <div class="arrow">→</div>
+                    <div class="load-balancer">Load Balancer</div>
+                    <div class="arrow">→</div>
+                    <div class="server healthy">Server B</div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin: 0 20px;">
+                        <div class="arrow blocked">↗</div>
+                        <div class="arrow redirect">↘</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="database failed">DB Primary</div>
+                        <div class="database">DB Backup</div>
+                    </div>
+                </div>
+                
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                    <h4 style="color: #d68910; margin-top: 0;">🔄 Database Failover Benefits:</h4>
+                    <ul style="color: #856404; margin-bottom: 0;">
+                        <li><strong>Continuous Availability:</strong> Service remains online during database failures</li>
+                        <li><strong>Data Integrity:</strong> Regular replication ensures minimal data loss</li>
+                        <li><strong>Automatic Recovery:</strong> No manual intervention required for failover</li>
+                        <li><strong>Performance Optimization:</strong> Read/write splitting improves overall performance</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 30px; border-radius: 15px; margin-top: 30px;">
+                <h3 style="margin-top: 0; text-align: center;">Key Reliability Principles</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">🔄</div>
+                        <h4>Redundancy</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Multiple identical components eliminate single points of failure</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
+                        <h4>Fast Failover</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Automatic detection and switching minimizes downtime</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">🔍</div>
+                        <h4>Health Monitoring</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Continuous monitoring enables proactive failure detection</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2em; margin-bottom: 10px;">📊</div>
+                        <h4>Load Distribution</h4>
+                        <p style="font-size: 0.9em; opacity: 0.9;">Balanced traffic prevents component overload</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

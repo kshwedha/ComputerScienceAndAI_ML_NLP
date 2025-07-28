@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Major Tech Companies: System Design & Business Models</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony Neutrals (Slate, Sky, White) -->
+    <!-- Application Structure Plan: A two-section single-page application, toggled by a top navigation bar (System Design vs. Business Models). Within each section, a sticky left sidebar provides company-level navigation. The main content area displays detailed information for the selected company/product, organized with clear HLD/LLD sub-sections for system design and comprehensive explanations for business models. This structure facilitates focused exploration of either technical architecture or strategic business aspects, allowing users to deep dive into specific companies and their key products/models. -->
+    <!-- Visualization & Content Choices: Content is primarily text-based, presented in responsive cards using Tailwind CSS. Interactive elements include tab switching for main sections and sidebar navigation for companies/products, implemented with JavaScript for dynamic content loading and active link highlighting. Source links are provided at the end of each relevant content block for further exploration. No charts or complex graphics are used; focus is on clear textual presentation and intuitive navigation. No SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .active-tab {
+            background-color: #0ea5e9; /* sky-500 */
+            color: white;
+            font-weight: 600;
+        }
+        .sidebar-item-active {
+            background-color: #e0f2fe; /* sky-100 */
+            color: #0c4a6e; /* sky-800 */
+            font-weight: 600;
+            border-left: 4px solid #0ea5e9; /* sky-500 */
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-5xl font-bold text-slate-900">Major Tech Companies: System Design & Business Models</h1>
+            <p class="text-slate-600 mt-2 text-lg">A deep dive into the architecture and strategies of industry leaders.</p>
+        </header>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="mb-8 flex justify-center space-x-4">
+            <button id="designTab" class="px-6 py-3 rounded-lg text-lg font-medium text-slate-700 bg-white shadow-sm hover:bg-slate-100 transition active-tab">System Design</button>
+            <button id="businessTab" class="px-6 py-3 rounded-lg text-lg font-medium text-slate-700 bg-white shadow-sm hover:bg-slate-100 transition">Business Models</button>
+        </nav>
+
+        <!-- System Design Content Section -->
+        <div id="systemDesignContent" class="content-section active">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Left Sidebar - System Design -->
+                <aside class="md:col-span-1 md:sticky top-8 self-start">
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Companies & Products</h3>
+                        <nav id="designNav" class="max-h-[70vh] overflow-y-auto space-y-2">
+                            <!-- Design navigation items will be injected by JS -->
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Right Content - System Design -->
+                <main class="md:col-span-3">
+                    <div id="design-content-area" class="space-y-8">
+                        <!-- Design content sections will be injected by JS -->
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Business Models Content Section -->
+        <div id="businessModelContent" class="content-section">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Left Sidebar - Business Models -->
+                <aside class="md:col-span-1 md:sticky top-8 self-start">
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Companies</h3>
+                        <nav id="businessNav" class="max-h-[70vh] overflow-y-auto space-y-2">
+                            <!-- Business navigation items will be injected by JS -->
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Right Content - Business Models -->
+                <main class="md:col-span-3">
+                    <div id="business-content-area" class="space-y-8">
+                        <!-- Business content sections will be injected by JS -->
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const systemDesignData = [
+            {
+                company: "YouTube",
+                id: "youtube-design",
+                products: [
+                    {
+                        id: "youtube-streaming",
+                        title: "YouTube Video Streaming",
+                        hld: "YouTube's video streaming system is a massive distributed system designed for high availability, low latency, and global scale. It involves Clients (web, mobile, smart TVs), an Upload Service, a Transcoding Service (converting raw videos into multiple formats/resolutions), Distributed Storage, a global Content Delivery Network (CDN) for fast delivery, a Streaming Service, and Metadata/User Services.",
+                        lld: "<strong>Video Upload:</strong> Clients upload raw video files (often large) to a dedicated upload service, using resumable uploads and chunking. Files are initially stored in object storage (e.g., Google Cloud Storage).<br><strong>Transcoding (Encoding):</strong> A message queue triggers transcoding jobs. A pool of distributed workers converts videos into adaptive bitrate streaming (ABS) formats (HLS, DASH) with multiple resolutions and codecs, breaking them into small chunks. Metadata is extracted.<br><strong>Storage & CDN:</strong> Transcoded video chunks are stored in highly distributed, fault-tolerant object storage. Popular chunks are pushed to YouTube's global CDN edge servers. Less popular videos are fetched on demand.<br><strong>Video Streaming:</strong> The streaming service identifies the best resolution/bitrate based on user device and network, serving chunks from the nearest CDN. Clients use adaptive bitrate logic to dynamically switch streams.<br><strong>API Design:</strong> RESTful APIs for upload (`POST /upload-video`), metadata retrieval (`GET /video/{video_id}`), and streaming (`GET /video/{video_id}/stream/{chunk_id}`).",
+                        sources: [
+                            { text: "GeeksforGeeks: System Design of YouTube - A Complete Architecture", url: "https://www.geeksforgeeks.org/system-design/system-design-of-youtube-a-complete-architecture/" }
+                        ]
+                    },
+                    {
+                        id: "youtube-recommendation",
+                        title: "YouTube Recommendation Engine",
+                        hld: "A complex, multi-stage machine learning pipeline designed to maximize watch time and user satisfaction. It involves Data Collection, Candidate Generation (selecting a large pool of relevant videos), Ranking (scoring/ordering candidates), Re-ranking/Filtering (applying business rules, diversity), and Serving recommendations to the UI.",
+                        lld: "<strong>Data Sources:</strong> User behavior logs (watch history, clicks, likes, searches), content metadata (title, tags, creator), and contextual information (time, device).<br><strong>Candidate Generation (Deep Learning):</strong> Uses deep neural networks (DNNs) and two-tower models to generate hundreds of relevant video candidates by learning user and video embeddings. Cold start handling uses popular/trending content.<br><strong>Ranking (Deep Learning):</strong> A separate, more complex DNN takes candidates and rich features to predict metrics like watch time and click-through probability. Multi-task learning is used. Extensive feature engineering is crucial.<br><strong>Re-ranking/Filtering:</strong> Applies rules for diversity, freshness, and to avoid showing watched videos. A/B testing frameworks are used.<br><strong>Serving:</strong> Recommendations are cached and served via APIs.",
+                        sources: [
+                            { text: "Hello Interview: Video Recommendation System Design", url: "https://www.hellointerview.com/learn/ml-system-design/problem-breakdowns/video-recommendations/" }
+                        ]
+                    }
+                ]
+            },
+            {
+                company: "Netflix",
+                id: "netflix-design",
+                products: [
+                    {
+                        id: "netflix-streaming",
+                        title: "Netflix Video Streaming Architecture",
+                        hld: "Netflix's streaming architecture is built for extreme resilience, scalability, and quality, leveraging microservices and a hybrid cloud/CDN approach. It includes Clients, AWS Cloud (for microservices), Open Connect (Netflix's global CDN), Content Ingestion & Encoding Pipeline, Playback Service, API Gateway (Zuul), and Distributed Databases.",
+                        lld: "<strong>Content Ingestion & Encoding:</strong> Raw content uploaded to AWS S3. A complex encoding pipeline (e.g., using distributed processing) transcodes videos into hundreds of formats/bitrates (e.g., HLS, DASH) and chunks them. Per-title encoding optimizes quality.<br><strong>Open Connect:</strong> Encoded video chunks pushed to Open Connect Appliances (OCAs) at ISP peering points globally. OCAs pre-position popular content during off-peak hours.<br><strong>Microservices & API Gateway:</strong> Hundreds of microservices communicate via REST/gRPC. Zuul acts as a reverse proxy, handling routing, authentication, and load balancing.<br><strong>Playback Service:</strong> Manages streaming sessions, authenticates, authorizes content, and determines optimal stream quality using adaptive bitrate streaming.<br><strong>Databases:</strong> Polyglot persistence: Cassandra (NoSQL) for high-volume viewing history; MySQL (RDBMS) for ACID-compliant data like billing. EV Cache (custom Memcached-based) for caching.<br><strong>Resilience:</strong> Extensive use of Chaos Engineering (e.g., Chaos Monkey) to test system resilience.",
+                        sources: [
+                            { text: "GeeksforGeeks: System Design Netflix - A Complete Architecture", url: "https://www.geeksforgeeks.org/system-design/system-design-netflix-a-complete-architecture/" }
+                        ]
+                    },
+                    {
+                        id: "netflix-recommendation",
+                        title: "Netflix Recommendation System",
+                        hld: "Netflix's recommendation system is a sophisticated, data-driven engine that personalizes content discovery. It involves Data Collection (implicit/explicit feedback), Feature Engineering, Model Training (various ML models), Candidate Generation, Ranking & Personalization, and Serving recommendations to the UI.",
+                        lld: "<strong>Data Sources:</strong> User interaction data (play events, watch duration, searches, ratings), content metadata (genre, cast, synopsis), and contextual data.<br><strong>Algorithms & Models:</strong> Uses a diverse ensemble: Collaborative Filtering (user-based, item-based), Content-Based Filtering, and increasingly Deep Learning (Foundation Models) to capture complex patterns and learn user/item embeddings. Reinforcement Learning for real-time optimization. Personalized artwork.<br><strong>Data Pipeline:</strong> Apache Kafka for real-time event streaming; Apache Spark/Hadoop for batch processing and data transformation.<br><strong>Feature Store:</strong> Stores pre-computed user and item features/embeddings for fast retrieval.<br><strong>Inference & Ranking Service:</strong> Fetches features, runs multiple ranking models, applies re-ranking logic (diversity, freshness, business rules). Results cached for quick delivery.<br><strong>A/B Testing:</strong> Extensive framework to evaluate new algorithms on key metrics (watch time, retention).",
+                        sources: [
+                            { text: "HelloPM: Netflix Content Recommendation System", url: "https://hellopm.co/netflix-content-recommendation-system-product-analytics-case-study/" },
+                            { text: "Netflix Tech Blog: Foundation Model for Personalized Recommendation", url: "https://netflixtechblog.com/foundation-model-for-personalized-recommendation-1a0bd8e02d39" }
+                        ]
+                    }
+                ]
+            },
+            {
+                company: "Uber",
+                id: "uber-design",
+                products: [
+                    {
+                        id: "uber-ride-hailing",
+                        title: "Uber Ride-Hailing Service (Real-time Location & Dispatch)",
+                        hld: "Uber's core HLD focuses on real-time geospatial data processing, efficient matching of supply/demand, and robust communication. It includes Mobile Clients, an API Gateway, Real-time Location Service, Dispatch System (DISCO), Map & Routing Service, Notification Service, Payment Service, Data Streaming Platform (Kafka), and Distributed Databases.",
+                        lld: "<strong>Real-time Location Tracking:</strong> Driver apps send GPS coordinates every few seconds via WebSockets. Data ingested by high-throughput Kafka. A real-time processing layer updates driver locations in a low-latency geospatial database (e.g., custom on MySQL, Cassandra, Redis). Uses S2 library for efficient spatial indexing.<br><strong>Dispatch System (DISCO):</strong> Rider requests hit Demand Service (via WebSockets), which sends location (S2 cell ID) to Dispatch System. DISCO queries geospatial DB for nearby drivers, uses graph algorithms on road network for ETAs (considering traffic), and ML-driven algorithms to match optimal driver. Offers sent sequentially/in parallel.<br><strong>Communication:</strong> WebSockets for persistent, bidirectional real-time updates (location, status, messages). Push Notifications for critical alerts.<br><strong>Databases:</strong> Polyglot persistence: Schemaless (custom on MySQL) for horizontal scalability; Cassandra/Riak for high-volume real-time data; Redis for caching hot data and queuing.<br><strong>Fraud Detection:</strong> ML models on historical data identify suspicious activities.",
+                        sources: [
+                            { text: "GeeksforGeeks: System Design of Uber App", url: "https://www.geeksforgeeks.org/system-design/system-design-of-uber-app-uber-system-architecture/" },
+                            { text: "Medium: Uber Architecture and System Design", url: "https://medium.com/nerd-for-tech/uber-architecture-and-system-design-e8ac26690dfc" },
+                            { text: "Uber Blog: Uber's Real-Time Push Platform", url: "https://www.uber.com/en-GB/blog/real-time-push-platform/" }
+                        ]
+                    }
+                ]
+            },
+            {
+                company: "Amazon",
+                id: "amazon-design",
+                products: [
+                    {
+                        id: "amazon-ecommerce",
+                        title: "Amazon E-commerce Platform (General)",
+                        hld: "Amazon.com is a quintessential example of a massive microservices architecture, built for extreme scale, availability, and performance, heavily leveraging AWS. It includes Clients, an API Gateway, thousands of Microservices (Product Catalog, Order Management, Search, etc.), Load Balancers, CDNs, Distributed Databases (polyglot persistence), Caching Layers, and Message Queues/Event Streams.",
+                        lld: "<strong>Shopping Cart Service:</strong> Manages user carts in fast NoSQL DB (DynamoDB, Redis). APIs: `POST /cart/add`, `GET /cart/{user_id}`.<br><strong>Checkout & Order Service:</strong> Orchestrates checkout. Interacts with Inventory, Payment, Notification services. Uses distributed transactions (Saga patterns). Order data in RDBMS (Aurora, PostgreSQL). APIs: `POST /order/create`.<br><strong>Inventory Service:</strong> Manages real-time stock levels, critical for consistency. Often event-driven.<br><strong>Fulfillment Service:</strong> Receives 'Order Placed' events, orchestrates picking/packing/shipping, updates status.<br><strong>Notifications:</strong> Uses message queues for asynchronous notifications (email, push).",
+                        sources: [
+                            { text: "YouTube: E-Commerce Platform like Amazon Architecture Design", url: "https://www.youtube.com/watch?v=-wJuExkI97s" },
+                            { text: "DesignGurus: Amazon System Design Interview", url: "https://www.designgurus.io/blog/system-design-interview-amazon" }
+                        ]
+                    },
+                    {
+                        id: "amazon-recommendation",
+                        title: "Amazon Recommendation Engine",
+                        hld: "Amazon's recommendation engine is a sophisticated ML-driven system for personalized product suggestions. It involves Data Sources (user behavior, product metadata), Feature Store, Model Training, Inference & Ranking Service, and API Gateway for serving recommendations.",
+                        lld: "<strong>Data Sources:</strong> Real-time and historical data: user behavior logs (search, clicks, purchases), product metadata (category, price, reviews), browsing patterns.<br><strong>Data Processing Tools:</strong> AWS Kinesis/Kafka for real-time streams; Amazon S3 for raw data; AWS Glue/Apache Spark for cleaning/transformation; DynamoDB/Redis for fast lookups.<br><strong>Core Components:</strong> Data Pipelines, Feature Store (SageMaker Feature Store), Recommendation Engine (deep learning, collaborative filtering, NLP), Inference & Ranking Service, API Gateway, Database (DynamoDB/Redis for caching).<br><strong>Model Approaches:</strong> Collaborative Filtering, Content-Based Filtering, Deep Learning (Transformers, CNNs), Reinforcement Learning (Multi-Armed Bandits), Graph Neural Networks.<br><strong>Deployment Strategy:</strong> AWS SageMaker Endpoints, Docker + Kubernetes (AWS EKS), AWS Lambda + API Gateway for serverless inference.<br><strong>Real-Time Inference:</strong> User interaction streamed via Kinesis/Kafka. Feature store fetches embeddings. Model inference request to SageMaker. Ranking system applies personalization. Recommendations served instantly with Redis caching.",
+                        sources: [
+                            { text: "FullStack Labs: Recommendation System Development with AWS Personalize", url: "https://www.fullstack.com/labs/resources/blog/building-a-recommendation-system-using-aws-personalize" },
+                            { text: "Medium: Amazon's Machine Learning System Design", url: "https://medium.com/@andilepingo/amazons-machine-learning-system-design-end-to-end-overview-004481363a6d" }
+                        ]
+                    }
+                ]
+            },
+            {
+                company: "Apple",
+                id: "apple-design",
+                products: [
+                    {
+                        id: "apple-ecosystem",
+                        title: "Apple Ecosystem Integration (iCloud, App Store Implicit)",
+                        hld: "Apple's system design is unique in its deep vertical integration across hardware, software, and services, creating a tightly controlled and optimized ecosystem. It emphasizes security, privacy, performance, and seamless user experience across devices. Key components include Apple Devices, iCloud Client Frameworks, iCloud Sync Service, Distributed Storage, Authentication, Notification Service, and Encryption/Key Management.",
+                        lld: "<strong>Data Model:</strong> Supports Key-Value, Document Storage, Structured Data, Photos/Videos, Device Backups.<br><strong>Synchronization Protocol:</strong> Devices communicate with iCloud services to push/pull changes. Uses conflict resolution and delta synchronization.<br><strong>Distributed Storage:</strong> Massive, highly available object storage for large files (photos, backups). Distributed key-value stores/NoSQL for metadata. Data replicated across data centers.<br><strong>Encryption:</strong> Data heavily encrypted in transit (TLS/SSL) and at rest. Sensitive data uses end-to-end encryption with secure key management (Secure Enclave).<br><strong>Push Notifications (APNs):</strong> Used to efficiently notify devices of data changes, triggering clients to pull updates.<br><strong>Throttling & Rate Limiting:</strong> Implemented to manage load and prevent abuse.<br><strong>App Store Specifics:</strong> App submission via App Store Connect. App Review (automated/manual). Content storage/CDN for binaries. Discovery/Search (indexing, ranking). Payment processing (IAP, subscriptions).",
+                        sources: [
+                            { text: "Ample: How to leverage the Apple ecosystem for business success", url: "https://ample.co.in/how-to-leverage-the-apple-ecosystem-for-business-success/" },
+                            { text: "Renascence.io: How Apple Elevates Customer Experience (CX) Through Ecosystem Integration", url: "https://www.renascence.io/journal/how-apple-elevates-customer-experience-cx-through-ecosystem-integration" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const businessModelData = [
+            {
+                company: "YouTube",
+                id: "youtube-business",
+                model: "YouTube's primary revenue driver is advertising, supplemented by subscriptions and creator monetization tools.<br><strong>Advertising (Primary):</strong> Displays various forms of ads (video, display, overlay) to viewers. Advertisers pay for targeting. Revenue is shared with content creators via the YouTube Partner Program (YPP).<br><strong>YouTube Premium (Subscription):</strong> Offers an ad-free viewing experience, offline downloads, background playback, and access to YouTube Music Premium for a monthly fee.<br><strong>YouTube TV (Subscription):</strong> A live TV streaming service.<br><strong>Creator Monetization:</strong> Includes Channel Memberships, Super Chat (live streams), and Merchandise Shelves.",
+                sources: [
+                    { text: "IIDE: Elaborative Business Model Of YouTube 2025", url: "https://iide.co/case-studies/business-model-of-youtube/" },
+                    { text: "StartupTalky: YouTube Business Model", url: "https://startuptalky.com/youtube-business-model/" }
+                ]
+            },
+            {
+                company: "Netflix",
+                id: "netflix-business",
+                model: "Netflix primarily operates on a subscription-based model, offering on-demand streaming content.<br><strong>Subscription Fees (Primary):</strong> Users pay a recurring monthly fee for unlimited access to its content library. Different tiers offer varying streaming quality and concurrent streams.<br><strong>Content Licensing & Original Production:</strong> Invests heavily in acquiring licensing rights for existing content and, more significantly, in producing its own exclusive original content ('Netflix Originals'). This strategy differentiates them and attracts/retains subscribers.<br><strong>Ad-Supported Tier (Newer):</strong> Introduced a cheaper subscription tier that includes advertisements, expanding its revenue streams and appealing to a more price-sensitive audience.",
+                sources: [
+                    { text: "DigitalBizModels: Netflix Biz Model Canvas", url: "https://www.digitalbizmodels.com/blog/business-model-canvas-netflix" },
+                    { text: "Untaylored: Netflix - Explaining the Business Model and Revenue Streams", url: "https://www.untaylored.com/post/netflix-explaining-the-business-model-and-revenue-streams" }
+                ]
+            },
+            {
+                company: "Uber",
+                id: "uber-business",
+                model: "Uber operates as a multi-sided platform, connecting service providers (drivers, restaurants, merchants) with consumers (riders, eaters).<br><strong>Commission-Based (Primary):</strong> Uber takes a commission (a percentage) from each completed ride or delivery transaction.<br><strong>Dynamic Pricing (Surge Pricing):</strong> Implements dynamic pricing during periods of high demand to incentivize more drivers.<br><strong>Advertising:</strong> Increasingly generates revenue through advertising on its platform (e.g., promoted listings on Uber Eats).<br><strong>Subscription Services:</strong> Offers subscription programs (e.g., Uber One) for discounts.<br><strong>New Ventures:</strong> Expanded into freight logistics (Uber Freight) and other delivery services.",
+                sources: [
+                    { text: "Investopedia: How Uber Makes Money", url: "https://www.investopedia.com/ask/answers/013015/how-do-ridesharing-companies-uber-make-money.asp" },
+                    { text: "Business Model Analyst: Uber Business Model", url: "https://businessmodelanalyst.com/uber-business-model/" }
+                ]
+            },
+            {
+                company: "Amazon",
+                id: "amazon-business",
+                model: "Amazon has a highly diversified business model, evolving from an online retailer to a technology conglomerate with significant revenue from cloud services, advertising, and subscriptions.<br><strong>E-commerce (Online Stores & Third-Party Marketplace):</strong> Direct sales of products. Provides a platform for millions of third-party sellers, earning commissions, fulfillment fees (FBA), and advertising revenue.<br><strong>Amazon Web Services (AWS) (Cloud Computing):</strong> Provides on-demand cloud computing platforms and APIs on a pay-as-you-go basis. This is Amazon's most profitable segment.<br><strong>Subscription Services (Amazon Prime):</strong> A membership program offering benefits like free/fast shipping, streaming video (Prime Video), music, e-books, and other perks. Drives customer loyalty.<br><strong>Advertising Services:</strong> Offers various advertising solutions to brands and sellers on its e-commerce platform.<br><strong>Other Ventures:</strong> Includes physical stores, devices (Kindle, Echo), and other services.",
+                sources: [
+                    { text: "DigitalBizModels: Amazon Biz Model Canvas", url: "https://www.digitalbizmodels.com/blog/amazon-business-model-canvas" },
+                    { text: "Medium: Amazon Business Model: How Does Amazon Make Money?", url: "https://medium.com/@emilyanderson51691/amazon-business-model-how-does-amazon-make-money-cdd3587f692f" }
+                ]
+            },
+            {
+                company: "Apple",
+                id: "apple-business",
+                model: "Apple's business model has traditionally been hardware-centric but has significantly diversified into high-margin services.<br><strong>Hardware Sales (Primary Revenue Driver):</strong> Generates the majority of its revenue from the sale of premium devices like iPhones, Macs, iPads, Apple Watches, and AirPods.<br><strong>Services (High-Growth Segment):</strong> A rapidly growing and highly profitable segment, including App Store Commissions, Subscriptions (Apple Music, Apple TV+, iCloud storage, Apple Arcade, Apple Fitness+, Apple News+), Apple Pay transaction fees, and Advertising.<br><strong>Ecosystem Lock-in:</strong> Seamless integration and user experience across its hardware and software encourage users to stay within the Apple ecosystem.<br><strong>Premium Pricing & Brand Loyalty:</strong> Commands premium prices for its products due to strong brand perception, design, and perceived quality, fostering a highly loyal customer base.",
+                sources: [
+                    { text: "Boardmix: Apple Business Model", url: "https://boardmix.com/analysis/apple-business-model/" },
+                    { text: "IIDE: Comprehensive Business Model Of Apple 2025", url: "https://iide.co/case-studies/business-model-of-apple/" }
+                ]
+            }
+        ];
+
+        const designTab = document.getElementById('designTab');
+        const businessTab = document.getElementById('businessTab');
+        const systemDesignContent = document.getElementById('systemDesignContent');
+        const businessModelContent = document.getElementById('businessModelContent');
+        const designNav = document.getElementById('designNav');
+        const businessNav = document.getElementById('businessNav');
+        const designContentArea = document.getElementById('design-content-area');
+        const businessContentArea = document.getElementById('business-content-area');
+
+        function renderDesignContent() {
+            designNav.innerHTML = '';
+            designContentArea.innerHTML = '';
+
+            systemDesignData.forEach(company => {
+                const companyNavDiv = document.createElement('div');
+                companyNavDiv.className = 'mb-4';
+                const companyNavHeader = document.createElement('h4');
+                companyNavHeader.className = 'text-lg font-semibold text-slate-800 mb-2 p-2';
+                companyNavHeader.textContent = company.company;
+                companyNavDiv.appendChild(companyNavHeader);
+
+                const navList = document.createElement('ul');
+                navList.className = 'space-y-1';
+
+                const companyContentSection = document.createElement('div');
+                companyContentSection.id = company.id;
+                companyContentSection.className = 'bg-white p-6 rounded-lg shadow-md scroll-mt-24';
+                companyContentSection.innerHTML = `<h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-6 pb-2 border-b-2 border-blue-200">${company.company} System Design</h2>`;
+                
+                company.products.forEach(product => {
+                    const productNavLink = document.createElement('li');
+                    productNavLink.innerHTML = `<a href="#${product.id}" class="block px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors duration-200 sidebar-item">${product.title}</a>`;
+                    navList.appendChild(productNavLink);
+
+                    const productContentDiv = document.createElement('div');
+                    productContentDiv.id = product.id;
+                    productContentDiv.className = 'bg-white p-6 rounded-lg shadow-md mt-6 border-l-4 border-slate-300 scroll-mt-24';
+                    productContentDiv.innerHTML = `
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-3">${product.title}</h3>
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-slate-700 mb-2">HLD (High-Level Design):</h4>
+                            <p class="text-slate-600">${product.hld}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-slate-700 mb-2">LLD (Low-Level Design):</h4>
+                            <p class="text-slate-600">${product.lld}</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-200">
+                            <h4 class="font-semibold text-slate-700 mb-2">Deep Dive Sources:</h4>
+                            <ul class="list-disc ml-5 text-sm text-blue-600">
+                                ${product.sources.map(source => `<li><a href="${source.url}" target="_blank" class="hover:underline">${source.text}</a></li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    companyContentSection.appendChild(productContentDiv);
+                });
+                companyNavDiv.appendChild(navList);
+                designNav.appendChild(companyNavDiv);
+                designContentArea.appendChild(companyContentSection);
+            });
+        }
+
+        function renderBusinessContent() {
+            businessNav.innerHTML = '';
+            businessContentArea.innerHTML = '';
+
+            businessModelData.forEach(company => {
+                const companyNavLink = document.createElement('li');
+                companyNavLink.innerHTML = `<a href="#${company.id}" class="block px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors duration-200 sidebar-item">${company.company}</a>`;
+                businessNav.appendChild(companyNavLink);
+
+                const companyContentDiv = document.createElement('div');
+                companyContentDiv.id = company.id;
+                companyContentDiv.className = 'bg-white p-6 rounded-lg shadow-md scroll-mt-24 border-l-4 border-slate-300';
+                companyContentDiv.innerHTML = `
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-6 pb-2 border-b-2 border-blue-200">${company.company} Business Model</h2>
+                    <p class="text-slate-700">${company.model}</p>
+                    <div class="mt-4 pt-4 border-t border-slate-200">
+                        <h4 class="font-semibold text-slate-700 mb-2">Deep Dive Sources:</h4>
+                        <ul class="list-disc ml-5 text-sm text-blue-600">
+                            ${company.sources.map(source => `<li><a href="${source.url}" target="_blank" class="hover:underline">${source.text}</a></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                businessContentArea.appendChild(companyContentDiv);
+            });
+        }
+
+        function switchTab(activeTabId) {
+            designTab.classList.remove('active-tab');
+            businessTab.classList.remove('active-tab');
+            systemDesignContent.classList.remove('active');
+            businessModelContent.classList.remove('active');
+
+            if (activeTabId === 'designTab') {
+                designTab.classList.add('active-tab');
+                systemDesignContent.classList.add('active');
+                renderDesignContent();
+            } else {
+                businessTab.classList.add('active-tab');
+                businessModelContent.classList.add('active');
+                renderBusinessContent();
+            }
+            // Reset scroll to top of content area when switching tabs
+            document.querySelector('main').scrollTo(0, 0);
+        }
+
+        designTab.addEventListener('click', () => switchTab('designTab'));
+        businessTab.addEventListener('click', () => switchTab('businessTab'));
+
+        // Initial render on load
+        switchTab('designTab');
+
+        // Active state on scroll for sidebars
+        function setupIntersectionObserver(navId, contentAreaId) {
+            const navLinks = document.querySelectorAll(`#${navId} .sidebar-item`);
+            const contentSections = document.querySelectorAll(`#${contentAreaId} > div[id]`);
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('sidebar-item-active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('sidebar-item-active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-20% 0px -70% 0px" }); // Adjusted rootMargin for better active state detection
+
+            contentSections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Handle click to scroll and set active class immediately
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        // Manually set active class immediately on click
+                        navLinks.forEach(l => l.classList.remove('sidebar-item-active'));
+                        this.classList.add('sidebar-item-active');
+                    }
+                });
+            });
+        }
+
+        // Setup observers after content is rendered
+        // Using a small timeout to ensure content is fully rendered before observing
+        setTimeout(() => {
+            setupIntersectionObserver('designNav', 'design-content-area');
+            setupIntersectionObserver('businessNav', 'business-content-area');
+        }, 500); // Adjust timeout if needed
+    </script>
+
+</body>
+</html>

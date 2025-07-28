@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Data Structures: B+ Trees, HashMaps, Bloom Filters & More</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 2.8em;
+            letter-spacing: 1px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-size: 2em;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 30px;
+            font-size: 1.6em;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background-color: transparent;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #fff; /* Darker red for inline code */
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        strong {
+            color: #e74c3c;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #6a4f00;
+        }
+        .note h3 {
+            color: #d19a2e;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .concept-box {
+            background-color: #f8fafa;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .concept-box h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .concept-box strong {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Advanced Data Structures: B+ Trees, HashMaps, Bloom Filters & More</h1>
+
+        <div class="concept-box">
+            <h2>1. B+ Tree</h2>
+            <h3>Explanation</h3>
+            <p>A <strong>B+ Tree</strong> is a self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in logarithmic time. It is a variant of the B-tree, primarily used for efficient storage and retrieval of data in secondary storage (like disk drives or SSDs), where I/O operations are significantly slower than in-memory operations.</p>
+            <p>Key characteristics of B+ Trees:</p>
+            <ul>
+                <li><strong>All data pointers are at leaf nodes:</strong> Unlike a B-tree, internal nodes of a B+ tree only store keys (acting as indices) to guide the search. Actual data records (or pointers to them) are stored exclusively in the leaf nodes. This maximizes the number of keys that can fit in an internal node, reducing the tree's height and thus the number of disk I/O operations for search.</li>
+                <li><strong>Leaf nodes are linked:</strong> All leaf nodes are linked together in a sequential manner, forming a doubly linked list. This allows for very efficient range queries and sequential traversal of data without traversing the entire tree.</li>
+                <li><strong>Balanced structure:</strong> All leaf nodes are at the same depth, ensuring that every search operation takes approximately the same amount of time. This balance is maintained through node splitting and merging operations during insertion and deletion.</li>
+                <li><strong>High fan-out:</strong> Each node can have a large number of children (and thus keys), which keeps the tree relatively "flat" (low height) even for very large datasets, minimizing disk reads.</li>
+            </ul>
+            <p>B+ Trees are fundamental to file systems and database indexing (e.g., in MySQL's InnoDB engine).</p>
+
+            <h3>Algorithm: Search</h3>
+            <p>Searching for a key in a B+ Tree involves traversing from the root down to a leaf node.</p>
+            <ol>
+                <li>Start at the <strong>root node</strong>.</li>
+                <li>If the current node is an <strong>internal node</strong>:
+                    <ul>
+                        <li>Perform a binary search (or linear scan if keys are few) on the keys within the node to find the appropriate child pointer. If the search key is less than or equal to the current key, follow the left pointer; otherwise, follow the right.</li>
+                        <li>Move to the child node pointed to by the chosen pointer.</li>
+                    </ul>
+                </li>
+                <li>If the current node is a <strong>leaf node</strong>:
+                    <ul>
+                        <li>Search for the key within the leaf node.</li>
+                        <li>If found, return the associated value/record pointer.</li>
+                        <li>If not found, the key does not exist in the tree.</li>
+                    </ul>
+                </li>
+            </ol>
+            <pre><code class="language-python">
+# Conceptual Pseudocode for B+ Tree Search
+# (Highly simplified, omits actual node structure and disk I/O)
+
+class BPlusTreeNode:
+    def __init__(self, is_leaf=False):
+        self.keys = []
+        self.children = [] # For internal nodes, points to child nodes
+        self.values = []   # For leaf nodes, stores actual data
+        self.is_leaf = is_leaf
+        self.next_leaf = None # For linked leaf nodes
+
+def search_bplus_tree(root, key):
+    current_node = root
+    while not current_node.is_leaf:
+        # Find the correct child pointer
+        # (Conceptual: in real implementation, this would be binary search)
+        found_child = False
+        for i, node_key in enumerate(current_node.keys):
+            if key < node_key:
+                current_node = current_node.children[i]
+                found_child = True
+                break
+        if not found_child: # If key is greater than all keys, go to last child
+            current_node = current_node.children[len(current_node.keys)]
+
+    # Now at a leaf node
+    # (Conceptual: in real implementation, this would be binary search)
+    for i, leaf_key in enumerate(current_node.keys):
+        if leaf_key == key:
+            return current_node.values[i] # Key found, return associated value
+    return None # Key not found
+            </code></pre>
+            <p><strong>Explanation:</strong> The search algorithm efficiently navigates the tree. Because internal nodes only store keys to guide the search and each node can hold many keys/pointers (high fan-out), the path from root to leaf is very short, minimizing disk accesses. Once a leaf is reached, the actual data is found (or its absence confirmed).</p>
+
+            <h3>Algorithm: Insertion (Simplified)</h3>
+            <p>Insertion maintains the B+ Tree's sorted and balanced properties.</p>
+            <ol>
+                <li><strong>Search for Leaf:</strong> Traverse the tree to find the correct leaf node <code>L</code> where the new key-value pair should be inserted.</li>
+                <li><strong>Insert into Leaf:</strong>
+                    <ul>
+                        <li>If <code>L</code> is not full, insert the new key-value pair into <code>L</code> in sorted order. Done.</li>
+                        <li>If <code>L</code> is full, <strong>split</strong> <code>L</code> into two new leaf nodes, <code>L1</code> and <code>L2</code>. The keys are evenly distributed. Promote the smallest key from <code>L2</code> (the new right node) to the parent node. Update the linked list of leaf nodes.</li>
+                    </ul>
+                </li>
+                <li><strong>Propagate Split (if necessary):</strong> If promoting a key causes the parent node to become full, the parent node also splits, and a key is promoted to its parent. This process can propagate all the way up to the root, potentially increasing the tree's height by one.</li>
+            </ol>
+            <pre><code class="language-python">
+# Conceptual Pseudocode for B+ Tree Insertion
+# (Highly simplified, focuses on the core logic of finding a leaf and splitting)
+
+# Assumes a 'Node' class with 'is_leaf', 'keys', 'children', 'values', 'next_leaf'
+# and a 'MAX_KEYS_PER_NODE' constant defined.
+
+# Simplified helper to split a full node and return new node and promoted key
+def _split_node(node, parent_node=None):
+    mid = len(node.keys) // 2
+    promoted_key = node.keys[mid] # Key to promote (for internal nodes)
+
+    if node.is_leaf:
+        # Leaf node split: promote copy of first key of right half
+        new_node = BPlusTreeNode(is_leaf=True)
+        new_node.keys = node.keys[mid:]
+        new_node.values = node.values[mid:]
+        node.keys = node.keys[:mid]
+        node.values = node.values[:mid]
+        
+        new_node.next_leaf = node.next_leaf
+        node.next_leaf = new_node
+        promoted_key = new_node.keys[0] # Smallest key of the new right leaf
+
+    else: # Internal node split
+        new_node = BPlusTreeNode(is_leaf=False)
+        new_node.keys = node.keys[mid+1:] # Don't include promoted key in new node
+        new_node.children = node.children[mid+1:]
+        node.keys = node.keys[:mid]
+        node.children = node.children[:mid+1]
+        
+    return new_node, promoted_key
+
+def insert_bplus_tree(root, key, value):
+    path = [] # Store path of nodes traversed
+    current_node = root
+
+    while not current_node.is_leaf:
+        path.append(current_node)
+        
+        # Find the correct child index (conceptual: binary search)
+        child_idx = 0
+        while child_idx < len(current_node.keys) and key >= current_node.keys[child_idx]:
+            child_idx += 1
+        current_node = current_node.children[child_idx]
+
+    # At leaf node 'current_node'
+    # Find insertion point
+    insert_idx = 0
+    while insert_idx < len(current_node.keys) and key > current_node.keys[insert_idx]:
+        insert_idx += 1
+    
+    current_node.keys.insert(insert_idx, key)
+    current_node.values.insert(insert_idx, value)
+
+    # Handle overflow if leaf is full
+    if len(current_node.keys) > MAX_KEYS_PER_NODE: # MAX_KEYS_PER_NODE defined externally
+        new_right_node, promoted_key = _split_node(current_node)
+
+        # Propagate split up the tree
+        child_to_insert = new_right_node
+        while path:
+            parent = path.pop()
+            
+            # Find where to insert promoted key and new child
+            insert_idx_parent = 0
+            while insert_idx_parent < len(parent.keys) and promoted_key > parent.keys[insert_idx_parent]:
+                insert_idx_parent += 1
+            
+            parent.keys.insert(insert_idx_parent, promoted_key)
+            parent.children.insert(insert_idx_parent + 1, child_to_insert)
+
+            if len(parent.keys) > MAX_KEYS_PER_NODE:
+                child_to_insert, promoted_key = _split_node(parent)
+            else:
+                return # Balance restored
+        
+        # If path is empty, root split, create new root
+        new_root = BPlusTreeNode(is_leaf=False)
+        new_root.keys = [promoted_key]
+        new_root.children = [current_node, child_to_insert]
+        # Update global root reference (depends on how tree is managed)
+        # root = new_root
+            </code></pre>
+            <p><strong>Explanation:</strong> Insertion is more complex due to maintaining balance. The key idea is to insert at the leaf, and if it overflows, split it and promote a key. This promotion can cascade upwards, splitting parent nodes if they also overflow, until a node is found with space or a new root is created, ensuring all leaves remain at the same depth.</p>
+        </div>
+
+        <div class="concept-box">
+            <h2>2. Hash Map (e.g., Redis HashMap Context)</h2>
+            <h3>Explanation</h3>
+            <p>A <strong>Hash Map</strong> (also known as a Hash Table, Dictionary, or Associative Array) is a data structure that implements an associative array abstract data type, a structure that can map keys to values. A hash map uses a hash function to compute an index into an array of buckets or slots, from which the desired value can be found.</p>
+            <p>Key concepts:</p>
+            <ul>
+                <li><strong>Key-Value Pairs:</strong> Stores data as pairs of (key, value). Keys are unique.</li>
+                <li><strong>Hash Function:</strong> Takes a key and converts it into an integer (hash code), which is then used to determine the index (bucket) where the value should be stored. A good hash function distributes keys evenly across buckets to minimize collisions.</li>
+                <li><strong>Collision Resolution:</strong> When two different keys hash to the same bucket, a collision occurs. Common strategies include:
+                    <ul>
+                        <li><strong>Chaining:</strong> Each bucket stores a linked list (or another data structure like a balanced tree) of all key-value pairs that hash to that bucket.</li>
+                        <li><strong>Open Addressing:</strong> If a bucket is occupied, the algorithm probes (searches) for the next available empty slot using various strategies (linear probing, quadratic probing, double hashing).</li>
+                    </ul>
+                </li>
+                <li><strong>Load Factor:</strong> The ratio of the number of items stored to the number of buckets. When the load factor exceeds a certain threshold, the hash map typically undergoes a "resize" or "rehash" operation, increasing the number of buckets and re-inserting all existing items. This helps maintain efficient O(1) average-case performance.</li>
+            </ul>
+            <p><strong>Redis Hashes</strong> are a specific data type in Redis that allow you to store multiple field-value pairs under a single key, essentially acting as a miniature hash map within a Redis key. They are highly optimized for efficiency, especially for small numbers of fields, leveraging different internal encoding strategies (like ziplist for small hashes, or regular hash tables for larger ones).</p>
+
+            <h3>Algorithm: Insert, Get, Delete</h3>
+            <p>The fundamental operations in a hash map:</p>
+            <pre><code class="language-python">
+# Conceptual Pseudocode for HashMap Operations
+# (Using Chaining for collision resolution)
+
+class HashMap:
+    def __init__(self, capacity=10):
+        self.capacity = capacity
+        self.buckets = [[] for _ in range(capacity)] # List of lists (for chaining)
+        self.size = 0
+
+    def _hash(self, key):
+        # A simple hash function for demonstration.
+        # Real-world hash functions are more robust (e.g., Python's hash()).
+        return hash(key) % self.capacity
+
+    def insert(self, key, value):
+        index = self._hash(key)
+        bucket = self.buckets[index]
+
+        # Check if key already exists, update value if so
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)
+                return
+
+        # Add new key-value pair
+        bucket.append((key, value))
+        self.size += 1
+
+        # Optional: Trigger rehash if load factor is too high
+        # if self.size / self.capacity > LOAD_FACTOR_THRESHOLD:
+        #    self._rehash()
+
+    def get(self, key):
+        index = self._hash(key)
+        bucket = self.buckets[index]
+
+        for k, v in bucket:
+            if k == key:
+                return v # Key found
+        return None # Key not found
+
+    def delete(self, key):
+        index = self._hash(key)
+        bucket = self.buckets[index]
+
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                del bucket[i]
+                self.size -= 1
+                return True # Key deleted
+        return False # Key not found
+            </code></pre>
+            <p><strong>Explanation:</strong>
+                <ul>
+                    <li><strong><code>insert(key, value)</code>:</strong> The key is hashed to get a bucket index. If the key already exists in that bucket's list, its value is updated. Otherwise, the new key-value pair is appended to the bucket's list.</li>
+                    <li><strong><code>get(key)</code>:</strong> The key is hashed to find its bucket. The bucket's list is then iterated to find the specific key and return its value.</li>
+                    <li><strong><code>delete(key)</code>:</strong> Similar to `get`, the key is hashed to find the bucket, and then the key-value pair is removed from the bucket's list.</li>
+                </ul>
+                All these operations achieve <strong>O(1) average time complexity</strong>, assuming a good hash function and proper collision resolution, as they typically involve a constant number of operations: hash calculation, and then a (usually short) traversal of a linked list in the case of chaining. In the worst-case (all keys hash to the same bucket), it degrades to O(N).
+            </p>
+        </div>
+
+        <div class="concept-box">
+            <h2>3. Bloom Filter</h2>
+            <h3>Explanation</h3>
+            <p>A <strong>Bloom Filter</strong> is a space-efficient probabilistic data structure used to test whether an element is a member of a set. It is "probabilistic" because it can produce <strong>false positives</strong> (it might tell you an element is in the set when it's not), but it guarantees <strong>no false negatives</strong> (it will never tell you an element is not in the set if it actually is).</p>
+            <p>A Bloom filter consists of:</p>
+            <ul>
+                <li>A <strong>bit array</strong> (or bit vector) of `m` bits, initially all set to 0.</li>
+                <li>`k` independent <strong>hash functions</strong>, each mapping an element to a position within the bit array.</li>
+            </ul>
+            <p>Use cases include:</p>
+            <ul>
+                <li><strong>Checking for existence before a costly operation:</strong> E.g., preventing database lookups for non-existent usernames, or checking if a URL has been visited before downloading.</li>
+                <li><strong>Deduplication:</strong> Identifying duplicate items in a stream of data.</li>
+                <li><strong>Network routing:</strong> Quickly checking if a packet's destination is a known route.</li>
+            </ul>
+            <p>The trade-off for its space efficiency is the possibility of false positives. The probability of false positives increases with the number of elements added and decreases with the size of the bit array (`m`) and the number of hash functions (`k`).</p>
+
+            <h3>Algorithm: Add & Check</h3>
+            <pre><code class="language-python">
+import math
+import hashlib # For a simple hash function in example
+
+class BloomFilter:
+    def __init__(self, capacity, false_positive_rate):
+        self.capacity = capacity
+        self.false_positive_rate = false_positive_rate
+        
+        # Calculate optimal size (m) of bit array
+        # m = -(n * ln(p)) / (ln(2)^2)
+        self.size = self._calculate_size(capacity, false_positive_rate)
+        
+        # Calculate optimal number (k) of hash functions
+        # k = (m / n) * ln(2)
+        self.num_hashes = self._calculate_num_hashes(self.size, capacity)
+        
+        self.bit_array = [0] * self.size # Initialize all bits to 0
+
+    def _calculate_size(self, n, p):
+        # n: expected number of items, p: false positive rate
+        m = -(n * math.log(p)) / (math.log(2) ** 2)
+        return int(m)
+
+    def _calculate_num_hashes(self, m, n):
+        # m: bit array size, n: expected number of items
+        k = (m / n) * math.log(2)
+        return int(k)
+
+    def _get_hashes(self, item):
+        # Generate multiple hash indices for an item
+        # In practice, use better hash functions like MurmurHash, FNV, etc.
+        # This uses hashlib.md5 with different 'seeds'
+        hashes = []
+        for i in range(self.num_hashes):
+            # Concatenate item with seed to get different hash values
+            combined_string = str(item) + str(i)
+            # Use md5 as a simple example, real Bloom filters often use non-cryptographic hashes
+            digest = int(hashlib.md5(combined_string.encode('utf-8')).hexdigest(), 16)
+            hashes.append(digest % self.size)
+        return hashes
+
+    def add(self, item):
+        """Adds an item to the Bloom filter."""
+        indices = self._get_hashes(item)
+        for index in indices:
+            self.bit_array[index] = 1
+
+    def check(self, item):
+        """Checks if an item is possibly in the Bloom filter."""
+        indices = self._get_hashes(item)
+        for index in indices:
+            if self.bit_array[index] == 0:
+                return False # Definitely not in the set
+        return True # Possibly in the set (could be a false positive)
+
+# Example Usage:
+# bf = BloomFilter(capacity=100, false_positive_rate=0.01)
+# bf.add("apple")
+# bf.add("banana")
+#
+# print(bf.check("apple"))   # Expected: True
+# print(bf.check("banana"))  # Expected: True
+# print(bf.check("orange"))  # Expected: False or True (False Positive)
+# print(bf.check("grape"))   # Expected: False or True (False Positive)
+            </code></pre>
+            <p><strong>Explanation:</strong>
+                <ul>
+                    <li><strong><code>add(item)</code>:</strong> For an item to be added, `k` hash functions are applied to it. Each hash function produces an index in the bit array, and the bit at that index is set to 1.</li>
+                    <li><strong><code>check(item)</code>:</strong> To check for an item's existence, the same `k` hash functions are applied. If all the bits at the computed indices are 1, the filter returns `True` (meaning the item *might* be in the set). If even one of the bits is 0, it means the item was definitely not added, and the filter returns `False`.</li>
+                </ul>
+                The cleverness lies in the fact that multiple items can set the same bits. A false positive occurs when an item that was never added happens to hash to a set of bits that were all previously set to 1 by other added items.
+            </p>
+        </div>
+
+        <h2>Other Related Data Structures & Concepts</h2>
+
+        <div class="concept-box">
+            <h3>4. Trie (Prefix Tree)</h3>
+            <h3>Explanation</h3>
+            <p>A <strong>Trie</strong> (pronounced "try" or "tree", from "retrieval") is a tree-like data structure used to store a dynamic set of strings where the common prefixes among strings are exploited. Each node in a trie typically represents a single character or a sequence of characters in a string. It is particularly efficient for operations involving prefixes.</p>
+            <p>Key characteristics:</p>
+            <ul>
+                <li><strong>Prefix-based:</strong> All children of a node have a common prefix formed by the string associated with that node and its ancestors.</li>
+                <li><strong>No key storage:</strong> Unlike binary search trees, nodes do not explicitly store the full key. The key's value is determined by its position in the tree.</li>
+                <li><strong>Applications:</strong> Autocomplete features, spell checkers, dictionary implementations, IP routing (longest prefix matching).</li>
+            </ul>
+            <h3>Algorithm: Insert & Search</h3>
+            <pre><code class="language-python">
+class TrieNode:
+    def __init__(self):
+        self.children = {} # Maps character to TrieNode
+        self.is_end_of_word = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        """Inserts a word into the trie."""
+        current = self.root
+        for char in word:
+            if char not in current.children:
+                current.children[char] = TrieNode()
+            current = current.children[char]
+        current.is_end_of_word = True
+
+    def search(self, word: str) -> bool:
+        """Returns if the word is in the trie."""
+        current = self.root
+        for char in word:
+            if char not in current.children:
+                return False
+            current = current.children[char]
+        return current.is_end_of_word
+
+    def starts_with(self, prefix: str) -> bool:
+        """Returns if there is any word in the trie that starts with the given prefix."""
+        current = self.root
+        for char in prefix:
+            if char not in current.children:
+                return False
+            current = current.children[char]
+        return True
+
+# Example Usage:
+# trie = Trie()
+# trie.insert("apple")
+# trie.insert("app")
+# print(trie.search("apple"))      # True
+# print(trie.search("app"))       # True
+# print(trie.search("ap"))        # False
+# print(trie.starts_with("ap"))   # True
+# print(trie.starts_with("appl")) # True
+            </code></pre>
+            <p><strong>Explanation:</strong> Insertion involves traversing the trie character by character. If a character's node doesn't exist, a new one is created. The last node of a word is marked. Search is similar; if any character path doesn't exist, the word/prefix is not found. Time complexity for both is O(L), where L is the length of the string/prefix, as it only depends on the string's length, not the total number of strings.</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>5. Skip List</h3>
+            <h3>Explanation</h3>
+            <p>A <strong>Skip List</strong> is a probabilistic data structure that allows for fast search, insertion, and deletion of elements within an ordered sequence, offering an average time complexity of O(log N), similar to balanced binary search trees, but often simpler to implement. It is built on top of multiple layers of sorted linked lists.</p>
+            <p>Key characteristics:</p>
+            <ul>
+                <li><strong>Multi-level Linked List:</strong> The bottom-most layer is a standard sorted linked list containing all elements. Higher layers act as "express lanes" by skipping over elements in lower layers.</li>
+                <li><strong>Probabilistic Balancing:</strong> When a new node is inserted, its level (how many layers it participates in) is determined randomly (e.g., by flipping a coin). This probabilistic approach maintains balance with high probability, avoiding the complex rebalancing operations of trees.</li>
+                <li><strong>Applications:</strong> Redis uses skip lists for its sorted sets, allowing efficient range queries and fast addition/removal of elements in ordered collections.</li>
+            </ul>
+            <h3>Algorithm: Search (Simplified)</h3>
+            <pre><code class="language-python">
+# Conceptual Pseudocode for Skip List Search
+
+class SkipListNode:
+    def __init__(self, key, value=None, level=0):
+        self.key = key
+        self.value = value
+        self.forward = [None] * (level + 1) # Pointers for each level
+
+class SkipList:
+    def __init__(self, max_level=16, probability=0.5):
+        self.max_level = max_level
+        self.probability = probability
+        self.level = 0 # Current highest level in the skip list
+        self.header = SkipListNode(key=-float('inf'), level=max_level) # Sentinel node
+
+    def _random_level(self):
+        # Determine a random level for a new node
+        lvl = 0
+        while lvl < self.max_level and random.random() < self.probability:
+            lvl += 1
+        return lvl
+
+    def search(self, search_key):
+        """Searches for a key in the skip list."""
+        current = self.header
+        # Start from the highest level and move down
+        for i in range(self.level, -1, -1):
+            while current.forward[i] and current.forward[i].key < search_key:
+                current = current.forward[i]
+        
+        # Now at the base level or one step before the key
+        current = current.forward[0] # Move to the potential node
+        
+        if current and current.key == search_key:
+            return current.value # Key found
+        else:
+            return None # Key not found
+
+# Insertion involves similar traversal to find insertion points at each level
+# and then randomly determining the new node's level.
+            </code></pre>
+            <p><strong>Explanation:</strong> Search starts at the highest level of the header node. It traverses horizontally until it finds a node whose key is greater than or equal to the search key, or reaches the end of the current level. If the key is greater, it moves down to the next lower level and continues the traversal from the last visited node. This "express lane" approach drastically reduces the number of comparisons. Insertion (and deletion) follow a similar pattern, first searching for the correct spot, then updating pointers at each relevant level.</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>6. LRU Cache (Least Recently Used)</h3>
+            <h3>Explanation</h3>
+            <p>An <strong>LRU (Least Recently Used) Cache</strong> is a caching strategy that discards the least recently used items first when the cache reaches its capacity. This policy is based on the heuristic that if an item has been used recently, it is more likely to be used again soon.</p>
+            <p>It's commonly implemented using a combination of two data structures:</p>
+            <ul>
+                <li>A <strong>Hash Map (Dictionary)</strong>: To provide O(1) average time complexity for checking if an item exists in the cache and for direct access to the cached item. The key maps to the actual cached value and a reference to its corresponding node in the linked list.</li>
+                <li>A <strong>Doubly Linked List</strong>: To maintain the order of usage. The most recently used items are at one end (e.g., the head), and the least recently used items are at the other end (e.g., the tail).</li>
+            </ul>
+            <p><strong>Operations:</strong></p>
+            <ul>
+                <li><strong>Get:</strong> If the item is in the cache, retrieve its value and move its corresponding node to the front (most recently used) of the linked list. If not, return null/error.</li>
+                <li><strong>Put (Insert/Update):</strong>
+                    <ul>
+                        <li>If the item already exists, update its value and move its node to the front.</li>
+                        <li>If it's a new item:
+                            <ul>
+                                <li>If the cache is full, remove the least recently used item (from the tail of the linked list) and its entry from the hash map.</li>
+                                <li>Add the new item to the front of the linked list and to the hash map.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>Algorithm: Get & Put</h3>
+            <pre><code class="language-python">
+class DNode:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.prev = None
+        self.next = None
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = {} # Map key to DNode
+        self.head = DNode(0, 0) # Sentinel head
+        self.tail = DNode(0, 0) # Sentinel tail
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def _add_node(self, node):
+        # Add node right after head
+        node.prev = self.head
+        node.next = self.head.next
+        self.head.next.prev = node
+        self.head.next = node
+
+    def _remove_node(self, node):
+        # Remove a node
+        prev_node = node.prev
+        next_node = node.next
+        prev_node.next = next_node
+        next_node.prev = prev_node
+
+    def _move_to_front(self, node):
+        self._remove_node(node)
+        self._add_node(node)
+
+    def get(self, key: int) -> int:
+        if key in self.cache:
+            node = self.cache[key]
+            self._move_to_front(node) # Mark as recently used
+            return node.value
+        return -1
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            node = self.cache[key]
+            node.value = value # Update value
+            self._move_to_front(node) # Mark as recently used
+        else:
+            if len(self.cache) >= self.capacity:
+                # Remove LRU item (tail's prev)
+                lru_node = self.tail.prev
+                self._remove_node(lru_node)
+                del self.cache[lru_node.key]
+            
+            new_node = DNode(key, value)
+            self._add_node(new_node) # Add new node to front
+            self.cache[key] = new_node
+
+# Example Usage:
+# lru_cache = LRUCache(2)
+# lru_cache.put(1, 10) # Cache: {1:10}
+# lru_cache.put(2, 20) # Cache: {1:10, 2:20}
+# print(lru_cache.get(1)) # Returns 10, Cache: {2:20, 1:10} (1 is now MRU)
+# lru_cache.put(3, 30) # Capacity 2, 2 is LRU, remove 2. Cache: {1:10, 3:30}
+# print(lru_cache.get(2)) # Returns -1
+# lru_cache.put(4, 40) # Capacity 2, 1 is LRU, remove 1. Cache: {3:30, 4:40}
+# print(lru_cache.get(1)) # Returns -1
+# print(lru_cache.get(3)) # Returns 30, Cache: {4:40, 3:30}
+            </code></pre>
+            <p><strong>Explanation:</strong> The combined use of a hash map and a doubly linked list enables O(1) average time complexity for both `get` and `put` operations. The hash map allows direct access to nodes, while the linked list efficiently manages the recency order, allowing constant-time removal of the LRU item and constant-time promotion of accessed/inserted items.</p>
+        </div>
+
+        <div class="concept-box">
+            <h3>7. Merkle Tree (Hash Tree)</h3>
+            <h3>Explanation</h3>
+            <p>A <strong>Merkle Tree</strong> (also known as a Hash Tree) is a tree-like data structure where each non-leaf node is a cryptographic hash of its child nodes, and each leaf node is a cryptographic hash of a data block. The top-most hash is called the <strong>Merkle Root</strong> (or Root Hash).</p>
+            <p>Key properties and applications:</p>
+            <ul>
+                <li><strong>Efficient Data Verification:</strong> Merkle trees allow for efficient and secure verification of large data structures. Instead of downloading and hashing an entire file or dataset, you only need the Merkle Root (from a trusted source) and a small subset of hashes (a Merkle Proof) to verify the integrity of any specific data block.</li>
+                <li><strong>Tamper Detection:</strong> If even a single data block is altered, the hash of its leaf node changes, which propagates up the tree, changing all parent hashes up to the Merkle Root. This makes any tampering immediately detectable by comparing the calculated root hash with the trusted root hash.</li>
+                <li><strong>Used in Distributed Systems:</strong>
+                    <ul>
+                        <li><strong>Blockchains (e.g., Bitcoin, Ethereum):</strong> Transactions in a block are organized into a Merkle tree. The Merkle root is included in the block header, allowing for lightweight verification of transactions without processing the entire block.</li>
+                        <li><strong>Peer-to-peer networks (e.g., BitTorrent):</strong> Used to verify downloaded data chunks.</li>
+                        <li><strong>Distributed databases (e.g., Apache Cassandra):</strong> For efficient data synchronization and consistency checking between replicas.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>Algorithm: Build & Verify</h3>
+            <pre><code class="language-python">
+import hashlib
+
+def sha256_hash(data):
+    """Simple SHA256 hashing function."""
+    return hashlib.sha256(data.encode('utf-8')).hexdigest()
+
+def build_merkle_tree(data_blocks):
+    """
+    Builds a Merkle Tree from a list of data blocks.
+    Returns the Merkle Root and a list of all nodes.
+    """
+    if not data_blocks:
+        return None, []
+
+    # Leaf nodes are hashes of data blocks
+    leaves = [sha256_hash(block) for block in data_blocks]
+    nodes = leaves[:] # All hashes are nodes in the tree
+
+    current_level = leaves
+    while len(current_level) > 1:
+        next_level = []
+        for i in range(0, len(current_level), 2):
+            left_child = current_level[i]
+            right_child = current_level[i+1] if i+1 < len(current_level) else left_child # Handle odd number of nodes by duplicating last
+            
+            parent_hash = sha256_hash(left_child + right_child)
+            next_level.append(parent_hash)
+            nodes.append(parent_hash) # Add internal node to overall list
+        current_level = next_level
+    
+    merkle_root = current_level[0]
+    return merkle_root, nodes
+
+def verify_merkle_proof(data_block, proof, merkle_root):
+    """
+    Verifies if a data_block is part of a Merkle Tree given a proof and the Merkle Root.
+    Proof: List of hashes required to reconstruct the path from leaf to root.
+    Each element in proof is (hash_value, 'left'/'right') indicating its sibling's position.
+    """
+    current_hash = sha256_hash(data_block)
+
+    for proof_hash, position in proof:
+        if position == 'left':
+            current_hash = sha256_hash(proof_hash + current_hash)
+        elif position == 'right':
+            current_hash = sha256_hash(current_hash + proof_hash)
+        else:
+            raise ValueError("Invalid proof position")
+    
+    return current_hash == merkle_root
+
+# Example Usage:
+# data = ["txA", "txB", "txC", "txD", "txE"]
+# root, all_nodes = build_merkle_tree(data)
+# print(f"Merkle Root: {root}")
+#
+# # Example Merkle Proof for "txB" (conceptual proof for demonstration)
+# # In a real scenario, the proof generation would be part of the Merkle Tree library.
+# # For txB (L1), its sibling is L0 ("txA"). The parent is Hash01.
+# # The sibling of Hash01 is Hash23. Its parent is Hash0123.
+# # If data size is odd, like 5, then L4's (txE) sibling will be L4 itself.
+# # The next level would be H(L0,L1), H(L2,L3), H(L4,L4) --> H(H(L0,L1),H(L2,L3)), H(H(L4,L4),H(H(L4,L4)))
+#
+# # Simplified proof structure: (sibling_hash, sibling_position_relative_to_current)
+# # To verify txB: needs H(txA) and then H(txC+txD) (if it was binary tree, etc.)
+# # This is highly dependent on actual tree structure.
+# # Let's assume a simpler case for a 4-block tree: L0, L1, L2, L3
+# # Merkle proof for L1: [(hash(L0), 'left'), (hash(L2+L3), 'right')]
+# # This part requires the actual internal tree structure
+# # Let's just demonstrate build and then a conceptual check with the root.
+#
+# # Verify a known block (conceptual, real proof generation is complex)
+# print(f"Is 'txC' part of the tree? (Conceptual check, assumes proof generation works):")
+# # A real proof would provide the necessary sibling hashes at each level.
+# # For 'txC', you'd need hash('txD') and then the hash of the left subtree (H(txA, txB))
+# # This is hard to generate manually for a simple example.
+# # Let's assume `proof_for_txC` is provided by a Merkle tree library.
+# # For now, we will skip generating a valid proof within this snippet.
+# # Actual verification needs `proof_for_txC = merkel_tree_obj.get_proof("txC")`
+# # For simplicity, let's just confirm the hash function works.
+#
+# # Basic verification that is always true if block is original:
+# block_to_check = "txA"
+# # This is NOT a Merkle proof verification, but just re-hashing
+# # For real proof, you need a list of intermediate sibling hashes.
+# print(f"Hash of '{block_to_check}': {sha256_hash(block_to_check)}")
+# print(f"This hash would be a leaf node in the Merkle Tree.")
+            </code></pre>
+            <p><strong>Explanation:</strong>
+                <ul>
+                    <li><strong>Building:</strong> The process starts by hashing each data block to create leaf nodes. Then, pairs of hashes from the current level are concatenated and hashed to form the nodes of the next higher level. This continues until only a single root hash remains. If there's an odd number of hashes at any level, the last hash is often duplicated.</li>
+                    <li><strong>Verification:</strong> To verify a data block, its hash is computed. Then, using a provided "Merkle proof" (a list of sibling hashes along the path from the leaf to the root), the original leaf hash is iteratively combined with its siblings' hashes, moving up the tree. If the final computed hash matches the trusted Merkle Root, the data block's integrity is confirmed. This process is very efficient (logarithmic time) because only a logarithmic number of hashes need to be computed and transmitted.</li>
+                </ul>
+            </p>
+        </div>
+
+        <div class="concept-box">
+            <h3>8. Count-Min Sketch</h3>
+            <h3>Explanation</h3>
+            <p>The <strong>Count-Min Sketch</strong> is a probabilistic data structure used for estimating the frequency of elements in a data stream. It provides a compact summary of a large dataset where exact counting is memory-prohibitive. Like Bloom filters, it is space-efficient but offers approximate answers, specifically for frequency queries.</p>
+            <p>Key characteristics:</p>
+            <ul>
+                <li><strong>Matrix of Counters:</strong> It consists of a 2D array (matrix) of counters, typically of dimensions `d` (depth/number of hash functions) by `w` (width). All counters are initialized to zero.</li>
+                <li><strong>Multiple Hash Functions:</strong> `d` independent hash functions are used. Each hash function maps an element to an index within a specific row of the matrix.</li>
+                <li><strong>Overestimation:</strong> When querying, the Count-Min Sketch can overestimate the true frequency of an element (due to hash collisions), but it will never underestimate it. The error bounds can be probabilistically guaranteed based on `d` and `w`.</li>
+                <li><strong>Applications:</strong> Network traffic analysis (estimating IP address frequencies), database query optimization (estimating join sizes), identifying "heavy hitters" (most frequent items) in data streams, and approximate analytics in big data systems.</li>
+            </ul>
+            <p>The parameters `w` and `d` are chosen based on the desired error margin ($\epsilon$) and confidence level ($\delta$). Typically, $w \approx e/\epsilon$ and $d \approx \ln(1/\delta)$.</p>
+            <h3>Algorithm: Add & Query</h3>
+            <pre><code class="language-python">
+import mmh3 # A fast non-cryptographic hash function
+import sys # For sys.maxsize, representing infinity
+
+class CountMinSketch:
+    def __init__(self, width, depth, seed=0):
+        self.width = width
+        self.depth = depth
+        self.seed = seed # Base seed for hash functions
+        self.table = [[0 for _ in range(width)] for _ in range(depth)]
+
+    def _get_hash_index(self, item, row_idx):
+        """
+        Generates a hash index for an item for a specific row.
+        Uses mmh3 with a unique seed per row (base_seed + row_idx).
+        """
+        return mmh3.hash(str(item), self.seed + row_idx) % self.width
+
+    def add(self, item, count=1):
+        """Adds an item to the sketch, incrementing its frequency."""
+        for i in range(self.depth):
+            index = self._get_hash_index(item, i)
+            self.table[i][index] += count
+
+    def query(self, item):
+        """Estimates the frequency of an item."""
+        min_count = sys.maxsize # Initialize with a very large number
+        for i in range(self.depth):
+            index = self._get_hash_index(item, i)
+            min_count = min(min_count, self.table[i][index])
+        return min_count
+
+# Example Usage:
+# # Typical parameter calculation for error epsilon=0.01 and confidence delta=0.01
+# # width = math.ceil(math.e / epsilon) = math.ceil(2.718 / 0.01) = 272
+# # depth = math.ceil(math.log(1 / delta)) = math.ceil(math.log(1 / 0.01)) = math.ceil(4.605) = 5
+#
+# cms = CountMinSketch(width=272, depth=5)
+#
+# # Simulate a data stream
+# stream_data = ["apple", "banana", "apple", "cherry", "banana", "apple", "mango", "banana", "apple"]
+#
+# for item in stream_data:
+#     cms.add(item)
+#
+# print(f"Estimated frequency of 'apple': {cms.query('apple')}")     # Should be 4
+# print(f"Estimated frequency of 'banana': {cms.query('banana')}")    # Should be 3
+# print(f"Estimated frequency of 'cherry': {cms.query('cherry')}")    # Should be 1
+# print(f"Estimated frequency of 'mango': {cms.query('mango')}")     # Should be 1
+# print(f"Estimated frequency of 'grape': {cms.query('grape')}")     # Should be 0 or a small positive false count
+            </code></pre>
+            <p><strong>Explanation:</strong>
+                <ul>
+                    <li><strong><code>add(item, count)</code>:</strong> When an item arrives, it is passed through all `d` hash functions. Each hash function produces an index for a specific row. The counter at that `(row, index)` position in the table is incremented by `count` (default 1).</li>
+                    <li><strong><code>query(item)</code>:</strong> To estimate an item's frequency, the item is again passed through all `d` hash functions. The values of the `d` corresponding counters in the table are retrieved. The minimum of these `d` values is taken as the estimated frequency. This minimum operation is key because an item's true count will always be present in at least one counter (or overestimated due to collisions, but never underestimated).</li>
+                </ul>
+                The Count-Min Sketch provides a highly compact and efficient way to approximate item frequencies in high-throughput data streams.
+            </p>
+        </div>
+
+        <div class="note">
+            <h3>Important Note on Code Examples:</h3>
+            <p>The code snippets provided are highly simplified conceptual pseudocode or basic implementations. Their primary purpose is to illustrate the core logic and algorithms of these data structures. They are not optimized for performance, memory efficiency, or robustness for production environments. For actual applications, it is strongly recommended to use well-tested libraries (e.g., Python's built-in `dict` for HashMaps, `collections.OrderedDict` for LRU, or specialized C/C++ libraries wrapped for Python for B+ Trees, Skip Lists, Bloom Filters, and Count-Min Sketches like `pybloom_live`, `bitarray`, `mmh3`, etc.) or dedicated database systems that implement these structures internally.</p>
+        </div>
+
+        <p class="footer" style="text-align: center; margin-top: 50px; font-size: 0.9em; color: #777;">
+            This document provides a comprehensive overview of several fundamental and advanced data structures.
+        </p>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-line-numbers.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+<script>Prism.plugins.lineNumbers();</script>
+<script>Prism.highlightAll();</script>
+</body>
+</html>

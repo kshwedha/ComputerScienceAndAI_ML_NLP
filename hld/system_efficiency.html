@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Usage: Efficient vs Inefficient Systems</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+        
+        .metrics-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .metric-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+        
+        .metric-title {
+            flex: 1;
+        }
+        
+        .metric-title h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+        
+        .metric-title p {
+            margin: 5px 0 0 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .bar-label {
+            min-width: 120px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .efficient-label {
+            color: #27ae60;
+        }
+        
+        .inefficient-label {
+            color: #e74c3c;
+        }
+        
+        .bar-container {
+            flex: 1;
+            height: 25px;
+            background: #ecf0f1;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            position: relative;
+            transition: width 2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .efficient-bar {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+        
+        .inefficient-bar {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        
+        .bar-value {
+            min-width: 60px;
+            text-align: right;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .data-flow-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+        
+        .flow-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .flow-header h2 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .flow-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .flow-diagram {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .efficient-flow {
+            border: 3px solid #27ae60;
+        }
+        
+        .inefficient-flow {
+            border: 3px solid #e74c3c;
+        }
+        
+        .flow-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .efficient-flow .flow-title h3 {
+            color: #27ae60;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .inefficient-flow .flow-title h3 {
+            color: #e74c3c;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .flow-step {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            position: relative;
+            border-left: 4px solid #3498db;
+        }
+        
+        .efficient-flow .flow-step {
+            border-left-color: #27ae60;
+        }
+        
+        .inefficient-flow .flow-step {
+            border-left-color: #e74c3c;
+        }
+        
+        .step-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .step-content {
+            display: inline-block;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .flow-arrow {
+            text-align: center;
+            margin: 10px 0;
+            color: #3498db;
+            font-size: 1.5rem;
+        }
+        
+        .efficiency-tips {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+            border: 2px solid #3498db;
+        }
+        
+        .tips-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .tips-header h2 {
+            color: #3498db;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .tip-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tip-item:hover {
+            border-color: #3498db;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.1);
+        }
+        
+        .tip-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            color: #3498db;
+        }
+        
+        .tip-item h4 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .tip-item p {
+            color: #7f8c8d;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .flow-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ System Resource Efficiency</h1>
+            <p>Comparing Optimized vs Unoptimized System Performance</p>
+        </div>
+        
+        <div class="metrics-container">
+            <!-- CPU Usage -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">🖥️</span>
+                    <div class="metric-title">
+                        <h3>CPU Usage</h3>
+                        <p>Processor utilization comparison</p>
+                    </div>
+                </div>
+                
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label efficient-label">✅ Efficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill efficient-bar" style="width: 25%;">25%</div>
+                        </div>
+                        <div class="bar-value">25%</div>
+                    </div>
+                    
+                    <div class="bar-row">
+                        <div class="bar-label inefficient-label">❌ Inefficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill inefficient-bar" style="width: 85%;">85%</div>
+                        </div>
+                        <div class="bar-value">85%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Memory Usage -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">🧠</span>
+                    <div class="metric-title">
+                        <h3>Memory Usage</h3>
+                        <p>RAM consumption analysis</p>
+                    </div>
+                </div>
+                
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label efficient-label">✅ Efficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill efficient-bar" style="width: 35%;">35%</div>
+                        </div>
+                        <div class="bar-value">35%</div>
+                    </div>
+                    
+                    <div class="bar-row">
+                        <div class="bar-label inefficient-label">❌ Inefficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill inefficient-bar" style="width: 90%;">90%</div>
+                        </div>
+                        <div class="bar-value">90%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Network Usage -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">🌐</span>
+                    <div class="metric-title">
+                        <h3>Network I/O</h3>
+                        <p>Data transfer efficiency</p>
+                    </div>
+                </div>
+                
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label efficient-label">✅ Efficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill efficient-bar" style="width: 20%;">20%</div>
+                        </div>
+                        <div class="bar-value">20%</div>
+                    </div>
+                    
+                    <div class="bar-row">
+                        <div class="bar-label inefficient-label">❌ Inefficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill inefficient-bar" style="width: 75%;">75%</div>
+                        </div>
+                        <div class="bar-value">75%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Response Time -->
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-icon">⏱️</span>
+                    <div class="metric-title">
+                        <h3>Response Time</h3>
+                        <p>Request processing speed</p>
+                    </div>
+                </div>
+                
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label efficient-label">✅ Efficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill efficient-bar" style="width: 15%;">50ms</div>
+                        </div>
+                        <div class="bar-value">50ms</div>
+                    </div>
+                    
+                    <div class="bar-row">
+                        <div class="bar-label inefficient-label">❌ Inefficient</div>
+                        <div class="bar-container">
+                            <div class="bar-fill inefficient-bar" style="width: 95%;">2000ms</div>
+                        </div>
+                        <div class="bar-value">2000ms</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-flow-section">
+            <div class="flow-header">
+                <h2>📊 Data Flow Optimization</h2>
+                <p>How efficient systems process data differently</p>
+            </div>
+            
+            <div class="flow-comparison">
+                <!-- Efficient Data Flow -->
+                <div class="flow-diagram efficient-flow">
+                    <div class="flow-title">
+                        <h3>✅ Optimized Data Flow</h3>
+                    </div>
+                    
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <span class="step-icon">🎯</span>
+                            <div class="step-content">
+                                <div class="step-title">Smart Caching</div>
+                                <div class="step-description">Frequently accessed data stored in memory</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">↓</div>
+                        
+                        <div class="flow-step">
+                            <span class="step-icon">🔄</span>
+                            <div class="step-content">
+                                <div class="step-title">Connection Pooling</div>
+                                <div class="step-description">Reuse database connections efficiently</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">↓</div>
+                        
+                        <div class="flow-step">
+                            <span class="step-icon">📈</span>
+                            <div class="step-content">
+                                <div class="step-title">Query Optimization</div>
+                                <div class="step-description">Indexed queries with minimal data retrieval</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">↓</div>
+                        
+                        <div class="flow-step">
+                            <span class="step-icon">⚡</span>
+                            <div class="step-content">
+                                <div class="step-title">Compressed Response</div>
+                                <div class="step-description">Minimal data transfer with compression</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inefficient Data Flow -->
+                <div class="flow-diagram inefficient-flow">
+                    <div class="flow-title">
+                        <h3>❌ Unoptimized Data Flow</h3>
+                    </div>
+                    
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <span class="step-icon">💔</span>
+                            <div class="step-content">
+                                <div class="step-title">No Caching</div>
+                                <div class="step-description">Every request hits the database directly</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">↓</div>
+                        
+                        <div class="flow-step">
+                            <span class="step-icon">🐌</span>
+                            <div class="step-content">
+                                <div class="step-title">New Connections</div>
+                                <div class="step-description">Creates new connection for each request</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">↓</div>
+                        
+                        <div class="flow-step">
+                            <span class="step-icon">📉</span>
+                            <div class="step-content">
+                                <div class="step-title">Inefficient Queries</div>
+                                <div class="step-description">Full table scans, no indexes, over-fetching</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">↓</div>
+                        
+                        <div class="flow-step">
+                            <span class="step-icon">📦</span>
+                            <div class="step-content">
+                                <div class="step-title">Large Responses</div>
+                                <div class="step-description">Uncompressed, excessive data transfer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="efficiency-tips">
+            <div class="tips-header">
+                <h2>💡 Optimization Strategies</h2>
+                <p>Key techniques to improve system efficiency</p>
+            </div>
+            
+            <div class="tips-grid">
+                <div class="tip-item">
+                    <span class="tip-icon">🚀</span>
+                    <h4>Algorithm Optimization</h4>
+                    <p>Use efficient algorithms with better time and space complexity (O(log n) vs O(n²))</p>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">💾</span>
+                    <h4>Memory Management</h4>
+                    <p>Implement proper garbage collection and avoid memory leaks</p>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">🗂️</span>
+                    <h4>Database Indexing</h4>
+                    <p>Create indexes on frequently queried columns to speed up data retrieval</p>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">⚡</span>
+                    <h4>Lazy Loading</h4>
+                    <p>Load data only when needed to reduce initial resource consumption</p>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">📊</span>
+                    <h4>Performance Monitoring</h4>
+                    <p>Continuously monitor and profile system performance to identify bottlenecks</p>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">🔧</span>
+                    <h4>Code Profiling</h4>
+                    <p>Use profiling tools to identify and optimize resource-intensive operations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
