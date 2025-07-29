@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Intermediate Algorithms</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.8em;
+        }
+        .navbar {
+            background-color: #34495e;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: inline-block; /* For centering */
+        }
+        .navbar li {
+            display: inline-block;
+            margin: 0 20px;
+        }
+        .navbar li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        .navbar li a:hover {
+            color: #1abc9c;
+        }
+        .content {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-size: 2em;
+        }
+        h3 {
+            color: #27ae60;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        h4 {
+            color: #e67e22;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap; /* Ensures code wraps */
+        }
+        .note {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #388e3c;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-size: 0.9em;
+            border-top: 1px solid #34495e;
+        }
+        .math-formula {
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        .math-formula p {
+            font-size: 1.1em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Machine Learning: Intermediate Algorithms</h1>
+        <p>Support Vector Machines, K-Nearest Neighbors, Naive Bayes, and Ensemble Methods</p>
+    </div>
+
+    <div class="navbar">
+        <ul>
+            <li><a href="AI.html" onclick="loadPage('AI.html'); return false;">AI</a></li>
+            <li><a href="ML.html" onclick="loadPage('ML.html'); return false;">ML (Overview)</a></li>
+            <li><a href="ML_Foundations.html" onclick="loadPage('ML_Foundations.html'); return false;">ML (Foundations)</a></li>
+            <li><a href="ML_Intermediate_Algorithms.html" onclick="loadPage('ML_Intermediate_Algorithms.html'); return false;">ML (Intermediate)</a></li>
+            <li><a href="NLP.html" onclick="loadPage('NLP.html'); return false;">NLP (Overview)</a></li>
+            <li><a href="NLP_Foundations.html" onclick="loadPage('NLP_Foundations.html'); return false;">NLP (Foundations)</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h2>Expanding Your Machine Learning Toolkit</h2>
+        <p>
+            Building upon the foundational algorithms like Linear Regression, Logistic Regression, and Decision Trees, the world of Machine Learning offers a rich array of more sophisticated models. These intermediate algorithms address different types of problems, handle data complexities more effectively, or combine simpler models to achieve superior performance. This section explores some of the most prominent intermediate supervised learning algorithms.
+        </p>
+
+        <h3>1. Support Vector Machines (SVMs)</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Support Vector Machines (SVMs) were developed in the 1990s by Vladimir Vapnik and his colleagues at AT&T Bell Labs, building on earlier work. SVMs are powerful and versatile supervised learning models primarily used for classification, but also for regression and outlier detection.
+        </p>
+        <p>
+            The core idea behind SVMs (for classification) is to find an optimal separating hyperplane that best divides the data into different classes. This hyperplane is chosen such that it maximizes the margin between the closest data points of different classes, known as "support vectors."
+        </p>
+        <ul>
+            <li><strong>Linear SVM:</strong> When data is linearly separable, SVM finds a straight line (or hyperplane) that perfectly separates the classes with the largest possible margin.</li>
+            <li><strong>Soft Margin SVM:</strong> For linearly inseparable data, SVM allows some misclassifications or data points to fall within the margin, using a "soft margin" to balance maximizing the margin and minimizing misclassifications.</li>
+            <li><strong>Kernel Trick:</strong> A revolutionary concept that allows SVMs to perform non-linear classification. By implicitly mapping input data into a higher-dimensional feature space, SVM can find a linear hyperplane in that higher dimension that corresponds to a non-linear decision boundary in the original feature space. Common kernel functions include:
+                <ul>
+                    <li>Polynomial Kernel: $K(x_i, x_j) = (x_i \cdot x_j + r)^d$</li>
+                    <li>Radial Basis Function (RBF) or Gaussian Kernel: $K(x_i, x_j) = \exp(-\gamma ||x_i - x_j||^2)$</li>
+                    <li>Sigmoid Kernel: $K(x_i, x_j) = \tanh(\alpha x_i \cdot x_j + r)$</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Robustness to High Dimensions:</strong> Highly effective in high-dimensional spaces, making them suitable for text classification (many features).</li>
+            <li><strong>Effective with Clear Margin of Separation:</strong> Performs very well when there's a clear separation between classes.</li>
+            <li><strong>Memory Efficient:</strong> Uses a subset of training points in the decision function (the support vectors), making it memory efficient.</li>
+            <li><strong>Versatility:</strong> Applicable to various problems, including image classification, handwriting recognition, and bioinformatics.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <p>
+            The mathematical formulation of SVM involves solving a quadratic programming problem. The objective is to maximize the margin, which can be stated as minimizing $||w||^2$ subject to constraints.
+        </p>
+        <ul>
+            <li><strong>Optimization Problem (Hard Margin):</strong>
+                $$ \min_{w, b} \frac{1}{2} ||w||^2 $$
+                subject to $y_i(w \cdot x_i - b) \ge 1$ for all $i = 1, \dots, N$.
+                Here, $w$ is the normal vector to the hyperplane, $b$ is the intercept, and $y_i$ is the label (+1 or -1).
+            </li>
+            <li><strong>Soft Margin (with slack variables $\xi_i$):</strong>
+                $$ \min_{w, b, \xi} \frac{1}{2} ||w||^2 + C \sum_{i=1}^{N} \xi_i $$
+                subject to $y_i(w \cdot x_i - b) \ge 1 - \xi_i$ and $\xi_i \ge 0$.
+                $C$ is the regularization parameter, balancing margin maximization and misclassification cost.
+            </li>
+            <li><strong>Dual Problem:</strong> The optimization problem is often solved using its dual form, which introduces Lagrange multipliers and makes the kernel trick possible by expressing the decision function solely in terms of dot products (which are replaced by kernel functions).</li>
+        </ul>
+
+        <h4>Code Example (Python - scikit-learn):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.svm import SVC # Support Vector Classifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# 1. Load the Iris dataset (multi-class classification example)
+iris = datasets.load_iris()
+X = iris.data[:, :2]  # Using only the first two features for easy visualization
+y = iris.target
+
+# 2. Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print("--- Support Vector Machine (SVC) ---")
+
+# 3. Create an SVC model instance
+# 'kernel' can be 'linear', 'poly', 'rbf', 'sigmoid'
+# 'C' is the regularization parameter (inverse of strength of regularization)
+# 'gamma' is the kernel coefficient for 'rbf', 'poly', 'sigmoid'
+model_svc = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
+
+# 4. Train the model
+model_svc.fit(X_train, y_train)
+
+# 5. Make predictions on the test set
+y_pred_svc = model_svc.predict(X_test)
+
+# 6. Evaluate the model
+accuracy_svc = accuracy_score(y_test, y_pred_svc)
+conf_matrix_svc = confusion_matrix(y_test, y_pred_svc)
+class_report_svc = classification_report(y_test, y_pred_svc, target_names=iris.target_names)
+
+print(f"\nAccuracy (SVC): {accuracy_svc:.2f}")
+print("\nConfusion Matrix (SVC):")
+print(conf_matrix_svc)
+print("\nClassification Report (SVC):")
+print(class_report_svc)
+
+# Plotting the decision boundary (for 2 features)
+plt.figure(figsize=(10, 7))
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
+                     np.arange(y_min, y_max, 0.02))
+
+Z = model_svc.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.contourf(xx, yy, Z, alpha=0.8, cmap=plt.cm.RdYlBu)
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.RdYlBu, edgecolors='k', s=20)
+plt.xlabel(iris.feature_names[0])
+plt.ylabel(iris.feature_names[1])
+plt.title('SVC Decision Boundary (RBF Kernel)')
+plt.show()
+            </code></pre>
+        </div>
+
+        <h3>2. K-Nearest Neighbors (KNN)</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            K-Nearest Neighbors (KNN) is one of the oldest and simplest non-parametric supervised learning algorithms, first proposed by Evelyn Fix and Joseph Hodges in 1951. It's often referred to as a "lazy learner" because it does not build an explicit model during the training phase. Instead, it memorizes the entire training dataset.
+        </p>
+        <p>
+            During prediction, KNN classifies a new data point based on the majority class (for classification) or the average value (for regression) of its 'K' nearest neighbors in the feature space.
+        </p>
+        <ul>
+            <li><strong>K Value:</strong> The 'K' is a hyperparameter representing the number of nearest neighbors to consider. Choosing an optimal 'K' is crucial.</li>
+            <li><strong>Distance Metrics:</strong> The "nearest" neighbors are determined by a distance function. Common metrics include:
+                <ul>
+                    <li>Euclidean Distance: $d(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}$</li>
+                    <li>Manhattan Distance: $d(x, y) = \sum_{i=1}^{n} |x_i - y_i|$</li>
+                </ul>
+            </li>
+            <li><strong>Voting/Averaging:</strong> For classification, the new data point is assigned the class that is most common among its K neighbors. For regression, it's assigned the average of the K neighbors' values.</li>
+        </ul>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Simplicity & Interpretability:</strong> Easy to understand and implement.</li>
+            <li><strong>Non-linear Decision Boundaries:</strong> Can model complex, non-linear relationships.</li>
+            <li><strong>No Training Phase:</strong> Computation is deferred until prediction time.</li>
+            <li><strong>Multi-Class Ready:</strong> Naturally extends to multi-class classification problems.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <p>
+            The primary computational burden in KNN lies in the prediction phase, where distances to all training points must be calculated.
+        </p>
+        <ul>
+            <li><strong>Training:</strong> Simply storing the training dataset.</li>
+            <li><strong>Prediction:</strong> For a new data point:
+                <ol>
+                    <li>Calculate the distance from the new point to all points in the training dataset.</li>
+                    <li>Sort the distances and identify the K nearest neighbors.</li>
+                    <li>For classification, tally the votes of the K neighbors' classes and assign the majority class. For regression, average their target values.</li>
+                </ol>
+            </li>
+            <li><strong>Complexity:</strong> The prediction time complexity is $O(N \times D)$ where $N$ is the number of training samples and $D$ is the number of features. This can be slow for very large datasets or high dimensions. Efficient data structures (e.g., KD-trees, Ball trees) can speed up neighbor searches.</li>
+        </ul>
+
+        <h4>Code Example (Python - scikit-learn):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.datasets import make_moons # A dataset for demonstrating non-linear boundaries
+
+# 1. Generate synthetic data (moon-shaped for non-linear example)
+X, y = make_moons(n_samples=100, noise=0.2, random_state=42)
+
+# 2. Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print("\n--- K-Nearest Neighbors (KNN) ---")
+
+# 3. Create a KNN Classifier instance
+# 'n_neighbors' is the 'K' value. Try experimenting with different K.
+# 'metric' can be 'euclidean', 'manhattan', etc.
+model_knn = KNeighborsClassifier(n_neighbors=5, metric='euclidean')
+
+# 4. Train the model (simple fitting, no complex learning)
+model_knn.fit(X_train, y_train)
+
+# 5. Make predictions on the test set
+y_pred_knn = model_knn.predict(X_test)
+
+# 6. Evaluate the model
+accuracy_knn = accuracy_score(y_test, y_pred_knn)
+conf_matrix_knn = confusion_matrix(y_test, y_pred_knn)
+class_report_knn = classification_report(y_test, y_pred_knn)
+
+print(f"\nAccuracy (KNN): {accuracy_knn:.2f}")
+print("\nConfusion Matrix (KNN):")
+print(conf_matrix_knn)
+print("\nClassification Report (KNN):")
+print(class_report_knn)
+
+# Plotting the decision boundary (for 2 features)
+plt.figure(figsize=(10, 7))
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
+                     np.arange(y_min, y_max, 0.02))
+
+Z = model_knn.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.contourf(xx, yy, Z, alpha=0.8, cmap=plt.cm.RdYlBu)
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.RdYlBu, edgecolors='k', s=20)
+plt.title('KNN Decision Boundary (K=5)')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.show()
+            </code></pre>
+        </div>
+
+        <h3>3. Naive Bayes</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Naive Bayes classifiers are a family of probabilistic algorithms based on Bayes' Theorem with a "naive" independence assumption. They are particularly well-suited for high-dimensional datasets like text, and their origins are linked to early developments in text categorization in the 1950s.
+        </p>
+        <p>
+            The "naive" assumption is that the presence (or absence) of a particular feature in a class is unrelated to the presence (or absence) of any other feature, given the class variable. While this assumption is rarely true in real-world data, Naive Bayes models often perform surprisingly well.
+        </p>
+        <ul>
+            <li><strong>Bayes' Theorem:</strong>
+                $$ P(A|B) = \frac{P(B|A) P(A)}{P(B)} $$
+                In the context of classification, this becomes:
+                $$ P(\text{class} | \text{features}) = \frac{P(\text{features} | \text{class}) P(\text{class})}{P(\text{features})} $$
+                The model then calculates the probability for each class and selects the class with the highest probability.
+            </li>
+            <li><strong>Variants:</strong>
+                <ul>
+                    <li><strong>Gaussian Naive Bayes:</strong> Assumes features follow a Gaussian (normal) distribution. Suitable for continuous numerical data.</li>
+                    <li><strong>Multinomial Naive Bayes:</strong> Assumes features represent counts (e.g., word counts in text). Ideal for text classification.</li>
+                    <li><strong>Bernoulli Naive Bayes:</strong> Assumes features are binary (e.g., presence/absence of a word).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Achievements & Impact:</h4>
+        <ul>
+            <li><strong>Simplicity & Speed:</strong> Extremely fast to train and predict, even with large datasets.</li>
+            <li><strong>Handles High Dimensionality:</strong> Performs well with many features, especially in text classification.</li>
+            <li><strong>Good for Text Classification:</strong> Historically very effective for spam detection, sentiment analysis, and document categorization due to its efficiency and decent performance.</li>
+            <li><strong>Requires Small Training Data:</strong> Can perform reasonably well even with limited training examples.</li>
+        </ul>
+
+        <h4>Computational Details:</h4>
+        <p>
+            The training of a Naive Bayes classifier involves calculating prior probabilities of each class and the likelihoods of each feature given each class.
+        </p>
+        <ul>
+            <li><strong>Prior Probability:</strong> $P(\text{class}) = \frac{\text{Number of samples in class}}{\text{Total number of samples}}$</li>
+            <li><strong>Likelihood:</strong> $P(\text{feature} | \text{class})$. How this is calculated depends on the variant:
+                <ul>
+                    <li>For Multinomial Naive Bayes (word counts):
+                        $$ P(w_i | C) = \frac{\text{count}(w_i, C) + \alpha}{\text{count}(C) + \alpha \cdot N} $$
+                        where $\text{count}(w_i, C)$ is the number of times word $w_i$ appears in documents of class $C$, $\text{count}(C)$ is the total number of words in class $C$, $\alpha$ is a smoothing parameter (Laplace smoothing, typically 1), and $N$ is the size of the vocabulary. This prevents zero probabilities for unseen words.</li>
+                    <li>For Gaussian Naive Bayes: calculates mean and variance of features for each class.</li>
+                </ul>
+            </li>
+            <li><strong>Prediction:</strong> For a new sample with features $f_1, f_2, \dots, f_m$:
+                $$ \text{classify}(f_1, \dots, f_m) = \arg\max_{C} P(C) \prod_{j=1}^{m} P(f_j | C) $$
+                (The denominator $P(\text{features})$ is constant for all classes, so it can be ignored during maximization.)
+            </li>
+        </ul>
+
+        <h4>Code Example (Python - scikit-learn):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import numpy as np
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.datasets import fetch_20newsgroups # For text data example
+from sklearn.feature_extraction.text import TfidfVectorizer # For text data transformation
+
+print("\n--- Naive Bayes ---")
+
+# 1. Example with Gaussian Naive Bayes (for numerical data)
+print("\n--- Gaussian Naive Bayes (for numerical data) ---")
+from sklearn.datasets import load_iris
+iris = load_iris()
+X_num, y_num = iris.data, iris.target
+X_train_num, X_test_num, y_train_num, y_test_num = train_test_split(X_num, y_num, test_size=0.2, random_state=42)
+
+model_gnb = GaussianNB()
+model_gnb.fit(X_train_num, y_train_num)
+y_pred_gnb = model_gnb.predict(X_test_num)
+
+print(f"Accuracy (GaussianNB on Iris): {accuracy_score(y_test_num, y_pred_gnb):.2f}")
+print("Classification Report (GaussianNB):\n", classification_report(y_test_num, y_pred_gnb, target_names=iris.target_names))
+
+# 2. Example with Multinomial Naive Bayes (for text data)
+print("\n--- Multinomial Naive Bayes (for text data) ---")
+# Load a subset of the 20 Newsgroups dataset for text classification
+categories = ['alt.atheism', 'soc.religion.christian', 'comp.graphics', 'sci.med']
+newsgroups_train = fetch_20newsgroups(subset='train', categories=categories, shuffle=True, random_state=42)
+newsgroups_test = fetch_20newsgroups(subset='test', categories=categories, shuffle=True, random_state=42)
+
+# Convert text data to TF-IDF features (as MultinomialNB works best with counts/frequencies)
+vectorizer = TfidfVectorizer()
+X_train_vec = vectorizer.fit_transform(newsgroups_train.data)
+X_test_vec = vectorizer.transform(newsgroups_test.data)
+
+model_mnb = MultinomialNB()
+model_mnb.fit(X_train_vec, newsgroups_train.target)
+y_pred_mnb = model_mnb.predict(X_test_vec)
+
+print(f"\nAccuracy (MultinomialNB on 20 Newsgroups): {accuracy_score(newsgroups_test.target, y_pred_mnb):.2f}")
+print("Classification Report (MultinomialNB):\n", classification_report(newsgroups_test.target, y_pred_mnb, target_names=newsgroups_test.target_names))
+            </code></pre>
+        </div>
+
+        <h3>4. Ensemble Methods: Random Forest</h3>
+        <h4>Development & Concept:</h4>
+        <p>
+            Ensemble methods are a powerful family of machine learning techniques that combine the predictions from multiple individual models (often called "weak learners" or "base estimators") to produce a more robust and accurate final prediction. The core idea is that a group of diverse and individually weak models can collectively form a strong model, mitigating the biases and variances of individual models.
+        </p>
+        <p>
+            Two primary types of ensemble methods are:
+        </p>
+        <ul>
+            <li><strong>Bagging (Bootstrap Aggregating):</strong> Trains multiple models independently on different random subsets (bootstrapped samples) of the training data and then averages or majority-votes their predictions. This reduces variance.</li>
+            <li><strong>Boosting:</strong> Trains models sequentially, where each new model tries to correct the errors of the previous ones. This reduces bias and can also reduce variance.</li>
+        </ul>
+
+        <h4>Random Forest (Bagging Example)</h4>
+        <p>
+            <strong>Random Forest</strong>, proposed by Leo Breiman in 2001, is an ensemble learning method primarily used for classification and regression that operates by constructing a multitude of decision trees at training time and outputting the class that is the mode of the classes (classification) or mean prediction (regression) of the individual trees.
+        </p>
+        <ul>
+            <li><strong>Key Principles:</strong>
+                <ol>
+                    <li><strong>Bootstrapping:</strong> Each tree in the forest is trained on a different random subset of the training data (sampled with replacement).</li>
+                    <li><strong>Feature Randomness:</strong> When splitting a node in a tree, only a random subset of features is considered for the best split. This decorrelates the trees, making them more independent.</li>
+                    <li><strong>Aggregation:</strong> For classification, predictions are combined via majority voting. For regression, predictions are averaged.</li>
+                </ol>
+            </li>
+        </ul>
+
+        <h4>Achievements & Impact (Random Forest):</h4>
+        <ul>
+            <li><strong>High Accuracy:</strong> Generally provides excellent predictive accuracy and often outperforms single decision trees.</li>
+            <li><strong>Reduces Overfitting:</strong> The randomness introduced through bootstrapping and feature subsetting helps to reduce the variance and prevent overfitting, a common issue with individual decision trees.</li>
+            <li><strong>Handles High Dimensionality:</strong> Can work well with a large number of features.</li>
+            <li><strong>Feature Importance:</strong> Provides a robust measure of feature importance based on how much each feature contributes to reducing impurity across all trees.</li>
+            <li><strong>Versatility:</strong> Can be used for both classification and regression.</li>
+        </ul>
+
+        <h4>Computational Details (Random Forest):</h4>
+        <ul>
+            <li><strong>Training:</strong>
+                <ol>
+                    <li>For each tree ($N_{trees}$ times):
+                        <ul>
+                            <li>Draw a bootstrap sample (random sampling with replacement) of the training data.</li>
+                            <li>Train a decision tree on this sample. At each node, select the best split from a random subset of features (e.g., $\sqrt{D}$ for classification, $D/3$ for regression, where $D$ is total features).</li>
+                            <li>Grow the tree typically until leaves are pure or a maximum depth is reached (no pruning usually needed due to aggregation).</li>
+                        </ul>
+                    </li>
+                </ol>
+            </li>
+            <li><strong>Prediction:</strong> For a new data point, each tree in the forest makes a prediction.
+                <ul>
+                    <li>For classification: The final prediction is the class that receives the majority of votes from all trees.</li>
+                    <li>For regression: The final prediction is the average of the predictions from all trees.</li>
+                </ul>
+            </li>
+            <li><strong>Parallelizable:</strong> Because each tree is built independently, Random Forests are highly parallelizable, making them efficient to train on multi-core processors.</li>
+        </ul>
+
+        <h4>Code Example (Python - scikit-learn):</h4>
+        <div class="code-block">
+            <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.datasets import load_breast_cancer # A common dataset for classification
+
+# 1. Load a dataset for classification (e.g., Breast Cancer dataset)
+cancer = load_breast_cancer()
+X, y = cancer.data, cancer.target
+feature_names = cancer.feature_names
+class_names = cancer.target_names
+
+# 2. Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print("\n--- Random Forest Classifier ---")
+
+# 3. Create a Random Forest Classifier instance
+# 'n_estimators': number of trees in the forest (more trees generally better, but slower)
+# 'max_features': number of features to consider when looking for the best split (e.g., 'sqrt', 'log2', int)
+# 'random_state': for reproducibility
+model_rf = RandomForestClassifier(n_estimators=100, max_features='sqrt', random_state=42)
+
+# 4. Train the model
+model_rf.fit(X_train, y_train)
+
+# 5. Make predictions on the test set
+y_pred_rf = model_rf.predict(X_test)
+
+# 6. Evaluate the model
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
+conf_matrix_rf = confusion_matrix(y_test, y_pred_rf)
+class_report_rf = classification_report(y_test, y_pred_rf, target_names=class_names)
+
+print(f"\nAccuracy (Random Forest): {accuracy_rf:.2f}")
+print("\nConfusion Matrix (Random Forest):")
+print(conf_matrix_rf)
+print("\nClassification Report (Random Forest):")
+print(class_report_rf)
+
+# 7. Get Feature Importances
+print("\nFeature Importances (Random Forest):")
+importances = model_rf.feature_importances_
+indices = np.argsort(importances)[::-1] # Sort in descending order
+
+for f in range(X.shape[1]):
+    print(f"  {feature_names[indices[f]]}: {importances[indices[f]]:.4f}")
+
+# Optional: Plot feature importances
+plt.figure(figsize=(12, 6))
+plt.title("Feature Importances (Random Forest)")
+plt.bar(range(X.shape[1]), importances[indices], align="center")
+plt.xticks(range(X.shape[1]), [feature_names[i] for i in indices], rotation=90)
+plt.xlim([-1, X.shape[1]])
+plt.tight_layout()
+plt.show()
+            </code></pre>
+        </div>
+
+        <h2>Learning Resources and Attachments</h2>
+        <h3>Online Courses:</h3>
+        <ul>
+            <li><a href="https://www.coursera.org/specializations/machine-learning-engineering-for-production-mlops" target="_blank">Machine Learning Engineering for Production (MLOps) Specialization (DeepLearning.AI, Coursera)</a> - Covers practical aspects and advanced models.</li>
+            <li><a href="https://www.edx.org/course/applied-machine-learning-in-python" target="_blank">Applied Machine Learning in Python (University of Michigan, Coursera/edX)</a> - Focuses on scikit-learn and various models.</li>
+        </ul>
+        <h3>Key Textbooks:</h3>
+        <ul>
+            <li>"The Elements of Statistical Learning" by Trevor Hastie, Robert Tibshirani, Jerome Friedman. (More advanced, but comprehensive).</li>
+            <li>"Python Machine Learning" by Sebastian Raschka and Vahid Mirjalili. (Excellent for understanding algorithms with Python implementations).</li>
+        </ul>
+        <h3>Simulated Attachments (Downloadable Resources):</h3>
+        <div class="note">
+            These are placeholder links. You would replace `your-server.com/path/to/file.pdf` with the actual URL where you host these files.
+        </div>
+        <ul>
+            <li><a href="https://your-server.com/svm_kernel_trick_explained.pdf" download>SVM Kernel Trick Explained (PDF)</a></li>
+            <li><a href="https://your-server.com/naive_bayes_probability_concepts.pdf" download>Naive Bayes Probability Concepts (PDF)</a></li>
+            <li><a href="https://your-server.com/ensemble_methods_random_forest_deep_dive.pdf" download>Ensemble Methods & Random Forest Deep Dive (PDF)</a></li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 ML Learning Guide. Data current as of July 29, 2025. Designed for Computer Students & Scientists.</p>
+    </div>
+
+    <script>
+        function loadPage(pageName) {
+            window.location.href = pageName;
+        }
+    </script>
+</body>
+</html>

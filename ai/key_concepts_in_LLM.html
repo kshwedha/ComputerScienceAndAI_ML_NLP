@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Training Concepts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        tr:hover {
+            background-color: #f3f4f6;
+        }
+        code {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6 max-w-7xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Key Concepts in Large Language Model (LLM) Training</h1>
+        <p class="text-gray-600 mb-8 text-center">This table explains essential terms in LLM training and inference, with examples based on training a chatbot to answer questions like <code>What is AI?</code>. Each concept includes a visual description to aid understanding.</p>
+
+        <div class="table-container bg-white rounded-lg shadow-md">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Term</th>
+                        <th>Definition</th>
+                        <th>Role</th>
+                        <th>Example</th>
+                        <th>Visual Description</th>
+                        <th>Key Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Gradient</strong></td>
+                        <td>Vector indicating the direction and magnitude of the steepest increase in the loss function with respect to model parameters.</td>
+                        <td>Guides parameter updates via backpropagation to minimize loss using gradient descent.</td>
+                        <td>Training a chatbot to predict “the” in “AI is the…”; gradients adjust weights to favor “the” over “an.”</td>
+                        <td>A 3D landscape where the loss is the height; gradients are arrows pointing uphill, guiding descent to the lowest point.</td>
+                        <td><strong>Gradient clipping</strong> prevents instability; <strong>Adam optimizer</strong> uses gradients efficiently.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Loss Function</strong></td>
+                        <td>Measures the difference between model predictions and true outputs, quantifying error.</td>
+                        <td>Guides optimization by minimizing error, typically using <strong>cross-entropy loss</strong>.</td>
+                        <td>Chatbot predicts low probability for “the” in “AI is the future”; high cross-entropy loss prompts weight adjustments.</td>
+                        <td>A graph plotting error (y-axis) against parameters (x-axis); training seeks the curve’s lowest point.</td>
+                        <td>Lower loss improves performance; <strong>regularization</strong> prevents overfitting.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Learning Rate</strong></td>
+                        <td>Hyperparameter controlling the size of parameter updates during gradient descent.</td>
+                        <td>Balances training speed and stability; high rates risk overshooting, low rates slow convergence.</td>
+                        <td>Chatbot trained with <code>1e-5</code> learning rate adjusts weights gradually for accurate “AI is the future” predictions.</td>
+                        <td>A ball rolling down a hill (loss landscape); learning rate is the step size, affecting speed and accuracy.</td>
+                        <td><strong>Learning rate schedules</strong> (e.g., cosine annealing) and <strong>warm-up</strong> improve stability.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Temperature</strong></td>
+                        <td>Hyperparameter controlling output randomness during inference by scaling logits.</td>
+                        <td>Low temperature (e.g., 0.7) produces focused outputs; high temperature (e.g., 1.5) increases diversity.</td>
+                        <td>Chatbot answering “What is AI?” with <code>temperature=0.7</code> outputs “AI is the simulation of human intelligence”; <code>1.5</code> might yield “AI is a magical brain.”</td>
+                        <td>A probability distribution over words; low temperature sharpens the peak, high temperature flattens it.</td>
+                        <td>Used in inference, not training; works with <strong>top-k</strong> or <strong>top-p sampling</strong>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Batch Size</strong></td>
+                        <td>Number of training examples processed before updating parameters.</td>
+                        <td>Balances gradient stability and speed; larger batches reduce noise but need more memory.</td>
+                        <td>Chatbot trained with batch size 32 processes 32 sentences like “AI is the future” before updating weights.</td>
+                        <td>A teacher grading 32 papers (batch) before adjusting lesson plans (weights); smaller batches mean faster updates.</td>
+                        <td><strong>Gradient accumulation</strong> simulates large batches on limited hardware.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Epoch</strong></td>
+                        <td>One complete pass through the training dataset.</td>
+                        <td>Determines how many times the model sees the data; LLMs often use 1–3 epochs.</td>
+                        <td>Chatbot trained for 2 epochs on 1M sentences sees each sentence twice, improving “What is AI?” answers.</td>
+                        <td>Reading a book twice (2 epochs); each pass reinforces understanding but risks memorization.</td>
+                        <td>Too many epochs cause overfitting.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Attention Mechanism</strong></td>
+                        <td>Transformer component allowing focus on relevant input sequence parts.</td>
+                        <td><strong>Self-attention</strong> weighs token importance, crucial for context understanding.</td>
+                        <td>Chatbot focuses on “AI” and “future” in “AI is the future” to predict the next word accurately.</td>
+                        <td>A spotlight illuminating key words in a sentence, dynamically adjusting focus.</td>
+                        <td>Includes <strong>multi-head attention</strong> and <strong>scaled dot-product attention</strong>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tokens</strong></td>
+                        <td>Subword units (e.g., words, word parts) created by the tokenizer.</td>
+                        <td>Converts text to numerical inputs for the model.</td>
+                        <td>“What is AI?” tokenized as <code>[What, is, A, I, ?]</code> for chatbot processing.</td>
+                        <td>A sentence broken into puzzle pieces (tokens) for the model to assemble.</td>
+                        <td>Token count impacts memory and context window limits.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Context Window</strong></td>
+                        <td>Maximum number of tokens processed in one input sequence.</td>
+                        <td>Limits context length during training or inference.</td>
+                        <td>Chatbot with 4096-token context window processes “What is AI?” plus a 4000-token article.</td>
+                        <td>A window showing 4096 words; text beyond requires truncation or splitting.</td>
+                        <td>Larger windows improve long-context tasks but increase memory needs.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fine-tuning</strong></td>
+                        <td>Further training a pre-trained model on a task-specific dataset.</td>
+                        <td>Improves performance on specific tasks like instruction-following.</td>
+                        <td>Chatbot fine-tuned on Q&A pairs to answer “What is AI?” with precise responses.</td>
+                        <td>Teaching a general-knowledge student to specialize in AI Q&A.</td>
+                        <td><strong>LoRA</strong> reduces fine-tuning costs by updating fewer parameters.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quantization</strong></td>
+                        <td>Reducing weight precision (e.g., 16-bit to 4-bit) to save memory and speed inference.</td>
+                        <td>Enables large models to run on consumer hardware.</td>
+                        <td>7B-parameter chatbot quantized to 4-bit reduces size from ~14 GB to ~4 GB for “What is AI?”.</td>
+                        <td>Compressing a large book into a smaller one, retaining most meaning.</td>
+                        <td>May reduce accuracy; common levels are 8-bit or 4-bit.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Optimizer</strong></td>
+                        <td>Algorithm updating parameters based on gradients to minimize loss.</td>
+                        <td><strong>Adam</strong> or <strong>AdamW</strong> ensures efficient training with adaptive updates.</td>
+                        <td>Adam optimizer adjusts chatbot weights to improve “AI is the future” predictions.</td>
+                        <td>A GPS guiding a car (model) to the destination (minimum loss) using gradients.</td>
+                        <td>Adam is robust; alternatives include SGD with momentum.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pre-training</strong></td>
+                        <td>Initial training on a large, general dataset to learn broad language patterns.</td>
+                        <td>Builds foundational knowledge for diverse tasks.</td>
+                        <td>Chatbot pre-trained on Wikipedia learns general language to later answer “What is AI?”.</td>
+                        <td>Teaching a child general knowledge before specializing.</td>
+                        <td>Compute-intensive, requiring vast datasets.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Regularization</strong></td>
+                        <td>Techniques preventing overfitting by adding constraints.</td>
+                        <td><strong>Dropout</strong> or <strong>weight decay</strong> improves generalization.</td>
+                        <td>Dropout during chatbot training prevents memorizing sentences, ensuring robust “What is AI?” answers.</td>
+                        <td>Pruning a tree to prevent overgrowth, keeping it adaptable.</td>
+                        <td>Balances training performance with generalization.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Perplexity</strong></td>
+                        <td>Metric measuring how well the model predicts the next token; lower is better.</td>
+                        <td>Evaluates model quality during training and testing.</td>
+                        <td>Chatbot with low perplexity predicts “the” in “AI is the future” confidently.</td>
+                        <td>A score showing model surprise; lower scores (less surprise) are better.</td>
+                        <td>Used with human evaluation for LLM assessment.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-gray-600">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">About This Table</h2>
+            <p>This table provides a detailed overview of key LLM training and inference concepts, using a chatbot answering <code>What is AI?</code> as a consistent example. Visual descriptions aid understanding, and key notes highlight practical considerations.</p>
+        </div>
+
+        <footer class="mt-8 text-center text-gray-500">
+            <p></p>
+        </footer>
+    </div>
+</body>
+</html>

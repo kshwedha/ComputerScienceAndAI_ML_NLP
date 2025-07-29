@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedding vs. FAISS Vector Store Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        pre code {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: block;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6 max-w-4xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Embedding vs. FAISS Vector Store Comparison</h1>
+        <p class="text-gray-600 mb-8 text-center">This page compares two approaches to handling text embeddings in a Retrieval-Augmented Generation (RAG) pipeline using <code>HuggingFaceEmbeddings</code> with <code>sentence-transformers/all-MiniLM-L6-v2</code>.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- First Snippet -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Embedding a Single Document</h2>
+                <p class="text-gray-600 mb-4"><strong>Purpose:</strong> Embeds a single document (e.g., entire PDF content) into a vector and converts it to a byte string for storage or manual processing.</p>
+                <p class="text-gray-600 mb-4"><strong>Input:</strong> Single text string (<code>content</code>), e.g., decoded <code>manual-testing.pdf</code>.</p>
+                <p class="text-gray-600 mb-4"><strong>Output:</strong> Byte string (<code>np_embeds</code>) representing the embedding vector (e.g., 384-dimensional).</p>
+                <p class="text-gray-600 mb-4"><strong>Use Case:</strong> Store embeddings in a database, transmit over a network, or perform manual similarity calculations.</p>
+                <p class="text-gray-600 mb-4"><strong>Limitations:</strong> No indexing or search capability; processes one document at a time.</p>
+                <pre><code class="language-python">embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+doc_embedding = embedding_model.embed_documents([content])
+np_embeds = np.array(doc_embedding).tobytes()
+</code></pre>
+            </div>
+
+            <!-- Second Snippet -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">FAISS Vector Store</h2>
+                <p class="text-gray-600 mb-4"><strong>Purpose:</strong> Creates a FAISS index from multiple text chunks for efficient similarity search in RAG.</p>
+                <p class="text-gray-600 mb-4"><strong>Input:</strong> List of text chunks (<code>chunks</code>), e.g., split sections of <code>manual-testing.pdf</code>.</p>
+                <p class="text-gray-600 mb-4"><strong>Output:</strong> FAISS index (<code>vector_store</code>) containing embeddings for all chunks, supporting similarity search.</p>
+                <p class="text-gray-600 mb-4"><strong>Use Case:</strong> Retrieve relevant chunks for queries (e.g., "What is Quality?" or "write a quick sort algorithm") in RAG pipelines.</p>
+                <p class="text-gray-600 mb-4"><strong>Advantages:</strong> Scalable, fast retrieval using approximate nearest neighbors; ideal for large documents.</p>
+                <pre><code class="language-python">vector_store = FAISS.from_texts(chunks, embedding_model)
+</code></pre>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Key Differences</h2>
+            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                <li><strong>Granularity:</strong> Single document embedding vs. multiple chunk embeddings.</li>
+                <li><strong>Functionality:</strong> Storage/transmission (first) vs. search/retrieval (second).</li>
+                <li><strong>Efficiency:</strong> First is lightweight for one document; second is optimized for large-scale retrieval.</li>
+                <li><strong>Context:</strong> First is for manual processing; second integrates with RAG for query answering (e.g., using <code>manual-testing.pdf</code>).</li>
+            </ul>
+        </div>
+
+        <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Example Integration in RAG Pipeline</h2>
+            <p class="text-gray-600 mb-4">Below is an example of how the FAISS vector store is used to retrieve relevant chunks from <code>manual-testing.pdf</code> for a query, then passed to an LLM (e.g., LLaMA 3 via Ollama).</p>
+            <pre><code class="language-python">import ollama
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+
+# Read and decode PDF
+content = read_file("sample_data/manual-testing.pdf").decode(encoding='latin-1')
+
+# Split into chunks
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+chunks = text_splitter.split_text(content)
+
+# Create FAISS vector store
+embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+vector_store = FAISS.from_texts(chunks, embedding_model)
+
+# Retrieve relevant chunks
+query = "write a quick sort algorithm."
+retrieved_docs = vector_store.similarity_search(query, k=5)
+context = "\n".join([doc.page_content for doc in retrieved_docs])
+
+# Generate answer with LLM
+prompt = f"Using the following context, write a quick sort algorithm.\n\nContext: {context}\n\nAnswer:"
+response = ollama.chat(
+    model="llama3:8b",
+    messages=[{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": prompt}],
+    options={"temperature": 0.7, "max_tokens": 500}
+)
+print(response['message']['content'])
+</code></pre>
+        </div>
+
+        <footer class="mt-8 text-center text-gray-500">
+            <p>Education</p>
+        </footer>
+    </div>
+</body>
+</html>

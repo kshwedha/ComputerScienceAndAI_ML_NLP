@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Training Concepts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        tr:hover {
+            background-color: #f3f4f6;
+        }
+        code {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        details {
+            margin-bottom: 1rem;
+        }
+        summary {
+            background-color: #4b5563;
+            color: #ffffff;
+            padding: 0.75rem;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 0.25rem;
+        }
+        summary:hover {
+            background-color: #6b7280;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0.5rem 0;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const details = document.querySelectorAll('details');
+            details.forEach((detail) => {
+                detail.addEventListener('toggle', () => {
+                    if (detail.open) {
+                        details.forEach((d) => {
+                            if (d !== detail) d.open = false;
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6 max-w-7xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Key Concepts in Large Language Model (LLM) Training</h1>
+        <p class="text-gray-600 mb-8 text-center">This table organizes LLM training and inference concepts into collapsible categories, with examples based on a chatbot predicting <code>AI is...</code>. Placeholder images represent diagrams (e.g., loss curves, attention weights), with alt text describing visuals.</p>
+
+        <div class="table-container bg-white rounded-lg shadow-md">
+            <details open>
+                <summary>Optimization</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Definition</th>
+                            <th>Role</th>
+                            <th>Example</th>
+                            <th>Visual Content</th>
+                            <th>Key Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Gradient</strong></td>
+                            <td>Vector indicating the direction and magnitude of the steepest increase in the loss function relative to model parameters.</td>
+                            <td>Guides parameter updates via backpropagation to minimize loss using gradient descent.</td>
+                            <td>Chatbot predicts “was” instead of “is” in <code>AI is...</code>; gradients adjust weights to favor “is.”</td>
+                            <td><img src="gradient_descent.png" alt="3D loss landscape with an arrow (gradient) pointing uphill; training moves downhill to minimize loss."></td>
+                            <td><strong>Gradient clipping</strong> prevents instability; <strong>Adam optimizer</strong> enhances updates.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Loss Function</strong></td>
+                            <td>Measures error between predictions and actual outputs, typically <strong>cross-entropy loss</strong>.</td>
+                            <td>Quantifies prediction error, guiding optimization to reduce it.</td>
+                            <td>Chatbot assigns low probability to “is” in <code>AI is the future</code>; high cross-entropy loss prompts weight updates.</td>
+                            <td><img src="loss_curve.png" alt="U-shaped curve plotting error (y-axis) vs. parameters (x-axis); training seeks the lowest point."></td>
+                            <td>Lower loss improves performance; <strong>regularization</strong> prevents overfitting.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Learning Rate</strong></td>
+                            <td>Hyperparameter controlling the size of parameter updates based on gradients.</td>
+                            <td>Balances training speed and stability; high rates risk overshooting, low rates slow learning.</td>
+                            <td>Chatbot with <code>learning_rate=1e-5</code> improves <code>AI is the future</code> predictions; <code>1e-2</code> causes instability.</td>
+                            <td><img src="learning_rate.png" alt="Ball rolling down a hill; learning rate determines step size, affecting speed and accuracy."></td>
+                            <td><strong>Learning rate schedules</strong> (e.g., linear decay) and <strong>warm-up</strong> optimize training.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Batch Size</strong></td>
+                            <td>Number of training examples processed before a parameter update.</td>
+                            <td>Balances gradient stability (larger batches) and update frequency (smaller batches).</td>
+                            <td>Chatbot with batch size 16 processes 16 sentences like <code>AI is the future</code> before updating weights.</td>
+                            <td><img src="batch_size.png" alt="Chef cooking 16 dishes (batch) before tweaking the recipe (weights)."></td>
+                            <td><strong>Gradient accumulation</strong> simulates large batches on limited hardware.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Optimizer</strong></td>
+                            <td>Algorithm updating parameters based on gradients to minimize loss.</td>
+                            <td><strong>Adam</strong> or <strong>AdamW</strong> ensures efficient training with adaptive updates.</td>
+                            <td>Adam optimizer adjusts chatbot weights to improve <code>AI is the future</code> predictions.</td>
+                            <td><img src="optimizer.png" alt="GPS guiding a car (model) to minimum loss using gradient directions."></td>
+                            <td>Adam is robust; alternatives include SGD with momentum.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
+            <details>
+                <summary>Model Architecture</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Definition</th>
+                            <th>Role</th>
+                            <th>Example</th>
+                            <th>Visual Content</th>
+                            <th>Key Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Attention Mechanism</strong></td>
+                            <td>Transformer component allowing focus on relevant input sequence parts.</td>
+                            <td><strong>Self-attention</strong> weighs token importance for context-aware predictions.</td>
+                            <td>Chatbot emphasizes “AI” and “future” in <code>AI is the future</code> to predict the next word.</td>
+                            <td><img src="attention_mechanism.png" alt="Sentence with arrows showing attention weights; 'AI' and 'future' are highlighted."></td>
+                            <td><strong>Multi-head attention</strong> and <strong>scaled dot-product attention</strong> improve efficiency.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tokens</strong></td>
+                            <td>Subword units (e.g., words, word parts) created by the tokenizer.</td>
+                            <td>Converts text to numerical tokens for model processing.</td>
+                            <td><code>AI is...</code> tokenized as <code>[AI, is, …]</code>; chatbot processes these to predict the next token.</td>
+                            <td><img src="tokens.png" alt="Sentence split into LEGO bricks (tokens); each brick represents a word/subword."></td>
+                            <td>Token count affects memory and context window; tokenizers vary (e.g., BPE).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
+            <details>
+                <summary>Training Data</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Definition</th>
+                            <th>Role</th>
+                            <th>Example</th>
+                            <th>Visual Content</th>
+                            <th>Key Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Epoch</strong></td>
+                            <td>One full pass through the training dataset.</td>
+                            <td>Determines how many times the model sees the data, typically 1–3 epochs for LLMs.</td>
+                            <td>Chatbot trained for 1 epoch on 100,000 sentences learns <code>AI is...</code> patterns; 2 epochs reinforce learning.</td>
+                            <td><img src="epoch.png" alt="Textbook read once (1 epoch); multiple reads improve understanding."></td>
+                            <td>Too many epochs cause overfitting.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pre-training</strong></td>
+                            <td>Initial training on a large, general dataset to learn broad language patterns.</td>
+                            <td>Builds foundational knowledge for diverse tasks.</td>
+                            <td>Chatbot pre-trained on Wikipedia learns general language for <code>AI is...</code> predictions.</td>
+                            <td><img src="pre_training.png" alt="Child learning general knowledge before specializing."></td>
+                            <td>Compute-intensive, requiring vast datasets.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
+            <details>
+                <summary>Inference</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Definition</th>
+                            <th>Role</th>
+                            <th>Example</th>
+                            <th>Visual Content</th>
+                            <th>Key Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Temperature</strong></td>
+                            <td>Hyperparameter controlling output randomness in inference by scaling logits.</td>
+                            <td>Low temperature (e.g., 0.7) produces focused outputs; high temperature (e.g., 1.5) increases diversity.</td>
+                            <td>Chatbot with <code>temperature=0.7</code> outputs <code>AI is the future</code>; <code>1.5</code> yields <code>AI is a sci-fi dream</code>.</td>
+                            <td><img src="temperature.png" alt="Probability bar chart; low temperature sharpens high-probability bars."></td>
+                            <td>Used in inference; pairs with <strong>top-k</strong> or <strong>top-p sampling</strong>.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Context Window</strong></td>
+                            <td>Maximum number of tokens processed in one input sequence.</td>
+                            <td>Limits context length during training or inference.</td>
+                            <td>Chatbot with 4096-token context window processes <code>AI is...</code> plus a 4000-token article.</td>
+                            <td><img src="context_window.png" alt="Window showing 4096 words; text beyond is truncated."></td>
+                            <td>Larger windows improve long-context tasks but increase memory needs.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
+            <details>
+                <summary>Advanced Techniques</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Definition</th>
+                            <th>Role</th>
+                            <th>Example</th>
+                            <th>Visual Content</th>
+                            <th>Key Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Fine-tuning</strong></td>
+                            <td>Further training a pre-trained model on a task-specific dataset.</td>
+                            <td>Improves performance on specific tasks like instruction-following.</td>
+                            <td>Chatbot fine-tuned on Q&A pairs to improve <code>AI is...</code> responses.</td>
+                            <td><img src="fine_tuning.png" alt="Student specializing in AI Q&A after general education."></td>
+                            <td><strong>LoRA</strong> reduces fine-tuning costs.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quantization</strong></td>
+                            <td>Reducing weight precision (e.g., 16-bit to 4-bit) to save memory and speed inference.</td>
+                            <td>Enables large models to run on consumer hardware.</td>
+                            <td>7B-parameter chatbot quantized to 4-bit reduces size from ~14 GB to ~4 GB.</td>
+                            <td><img src="quantization.png" alt="Large book compressed into a smaller one, retaining meaning."></td>
+                            <td>May reduce accuracy; common levels are 8-bit or 4-bit.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Regularization</strong></td>
+                            <td>Techniques preventing overfitting by adding constraints.</td>
+                            <td><strong>Dropout</strong> or <strong>weight decay</strong> improves generalization.</td>
+                            <td>Dropout prevents chatbot from memorizing <code>AI is...</code> sentences.</td>
+                            <td><img src="regularization.png" alt="Tree pruned to prevent overgrowth, keeping it adaptable."></td>
+                            <td>Balances training performance with generalization.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Perplexity</strong></td>
+                            <td>Metric measuring how well the model predicts the next token; lower is better.</td>
+                            <td>Evaluates model quality during training and testing.</td>
+                            <td>Chatbot with low perplexity predicts “is” in <code>AI is the future</code> confidently.</td>
+                            <td><img src="perplexity.png" alt="Scoreboard showing model surprise; lower scores are better."></td>
+                            <td>Used with human evaluation for LLM assessment.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
+        </div>
+
+        <div class="mt-6 text-gray-600">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">About This Table</h2>
+            <p>This table covers all key LLM training and inference concepts, organized into collapsible categories. Examples use a chatbot predicting <code>AI is...</code>. Placeholder images represent diagrams, with alt text describing visuals. Generate actual diagrams using the Python code below.</p>
+        </div>
+
+        <div class="mt-6 text-gray-600">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Generating Visuals</h2>
+            <p>Placeholder images are included for diagrams. Use Python with Matplotlib to generate them:</p>
+            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code>
+# Install dependencies
+# pip install matplotlib numpy
+
+# Gradient Descent (3D Loss Landscape)
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+x = np.linspace(-2, 2, 100)
+y = np.linspace(-2, 2, 100)
+X, Y = np.meshgrid(x, y)
+Z = X**2 + Y**2
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_surface(X, Y, Z, cmap='viridis')
+ax.set_title('Gradient Descent Landscape')
+ax.set_xlabel('Parameter 1')
+ax.set_ylabel('Parameter 2')
+ax.set_zlabel('Loss')
+plt.savefig('gradient_descent.png')
+
+# Loss Function (Curve)
+x = np.linspace(-2, 2, 100)
+y = x**2
+plt.figure()
+plt.plot(x, y, label='Loss Function')
+plt.scatter([0], [0], color='red', label='Minimum Loss')
+plt.title('Loss Function Curve')
+plt.xlabel('Parameter Value')
+plt.ylabel('Loss')
+plt.legend()
+plt.savefig('loss_curve.png')
+
+# Learning Rate (Hill Descent)
+x = np.linspace(-2, 2, 100)
+y = x**2
+plt.figure()
+plt.plot(x, y, label='Loss Landscape')
+points = [-1.5, -0.75, 0]
+plt.plot(points, [p**2 for p in points], 'ro-', label='Large Learning Rate')
+points = [-1.5, -1.2, -0.9, -0.6, -0.3, 0]
+plt.plot(points, [p**2 for p in points], 'bo-', label='Small Learning Rate')
+plt.title('Learning Rate Steps')
+plt.xlabel('Parameter')
+plt.ylabel('Loss')
+plt.legend()
+plt.savefig('learning_rate.png')
+
+# Temperature (Probability Distribution)
+words = ['the', 'a', 'an', 'one']
+logits = [2.0, 1.5, 1.0, 0.5]
+temps = [0.7, 1.5]
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+for i, temp in enumerate(temps):
+    probs = np.exp(np.array(logits) / temp) / np.sum(np.exp(np.array(logits) / temp))
+    axes[i].bar(words, probs)
+    axes[i].set_title(f'Temperature = {temp}')
+    axes[i].set_ylabel('Probability')
+plt.savefig('temperature.png')
+
+# Additional visuals (e.g., attention as heatmap, tokens as segments)
+# Example: Attention Mechanism (Heatmap)
+import seaborn as sns
+attention = np.random.rand(5, 5)
+plt.figure()
+sns.heatmap(attention, cmap='Blues', annot=True)
+plt.title('Attention Weights')
+plt.xlabel('Tokens')
+plt.ylabel('Tokens')
+plt.savefig('attention_mechanism.png')
+            </code></pre>
+            <p>Run the code to generate PNG files, place them in the HTML directory, and update <code>src</code> attributes. For other visuals (e.g., batch_size, epoch), request specific Matplotlib scripts.</p>
+        </div>
+
+        <footer class="mt-8 text-center text-gray-500">
+            <p></p>
+        </footer>
+    </div>
+</body>
+</html>

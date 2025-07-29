@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go: Basic to Advanced Code Roadmap</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 3.2em;
+            letter-spacing: 1px;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 0;
+            font-size: 2.4em;
+            flex-grow: 1;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 35px;
+            font-size: 1.9em;
+        }
+        h4 {
+            color: #1e6d9b;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background-color: #e0e6ed;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #c0392b;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        strong {
+            color: #e74c3c;
+        }
+        .concept-section {
+            background-color: #f8fafa;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 30px 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .concept-section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .code-block {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #6a4f00;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border-left: 6px solid #dc3545;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #721c24;
+        }
+
+        /* --- Collapsible Specific Styles --- */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 20px;
+        }
+        .toggle-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            min-width: 90px;
+            text-align: center;
+        }
+        .toggle-button:hover {
+            background-color: #2980b9;
+        }
+        .toggle-button.collapsed {
+            background-color: #95a5a6;
+        }
+        .collapsible-content {
+            display: none;
+            padding-top: 10px;
+        }
+        .collapsible-content.expanded {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Go</h1>
+
+        <p>Go (or Golang) is an open-source programming language designed by Google to build simple, reliable, and efficient software. It excels in systems programming, web services, and concurrent applications due to its strong support for concurrency, fast compilation, and robust standard library. This roadmap guides you through Go's core concepts, advanced features, and best practices, providing practical code examples for each step.</p>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>1. Go Fundamentals (The Basics)</h2>
+                <button class="toggle-button" data-target="go-fundamentals-content">Expand</button>
+            </div>
+            <div id="go-fundamentals-content" class="collapsible-content">
+                <h3>1.1. Setting Up Your Environment</h3>
+                <ul>
+                    <li>Install Go (Go 1.18+ recommended for generics).</li>
+                    <li>Configure GOPATH and GOROOT (though Go Modules reduce reliance on GOPATH).</li>
+                    <li>Use a good IDE (e.g., VS Code with Go extension, GoLand).</li>
+                    <li>Understand Go workspaces.</li>
+                </ul>
+                <pre><code class="language-bash">
+# Check Go version
+go version
+
+# Create a new Go module (in your project directory)
+go mod init example.com/myproject
+
+# Run a Go program
+go run main.go
+
+# Build an executable
+go build -o myapp main.go
+
+# Install a package
+go get github.com/gin-gonic/gin
+                </code></pre>
+
+                <h3>1.2. Basic Syntax & Data Types</h3>
+                <ul>
+                    <li><strong>Packages:</strong> Every Go program is made of packages. `main` package is the entry point.</li>
+                    <li><strong>Imports:</strong> Bringing in functionality from other packages.</li>
+                    <li><strong>Variables:</strong> Declaration (`var`), short declaration (`:=`), zero values.</li>
+                    <li><strong>Constants:</strong> Declared with `const`.</li>
+                    <li><strong>Basic Types:</strong>
+                        <ul>
+                            <li><strong>Numbers:</strong> `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `float32`, `float64`, `complex64`, `complex128`.</li>
+                            <li><strong>Booleans:</strong> `bool` (`true`, `false`).</li>
+                            <li><strong>Strings:</strong> `string` (UTF-8 encoded).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pointers:</strong> `*` (type of pointer), `&` (address of), `nil` (zero value for pointers).</li>
+                </ul>
+                <pre><code class="language-go">
+package main // main package is the entry point of executable programs
+
+import (
+    "fmt" // Import the fmt package for formatted I/O
+    "math" // Import math package
+)
+
+func main() {
+    // Variable declaration with var keyword (zero-valued by default)
+    var greeting string // Declared, default value is ""
+    greeting = "Hello, Go!"
+    fmt.Println(greeting)
+
+    // Short variable declaration (type inferred) - used for first assignment
+    name := "Alice"
+    age := 30
+    isStudent := true
+    fmt.Printf("Name: %s, Age: %d, Is Student: %t\n", name, age, isStudent)
+
+    // Explicit type declaration
+    var height float64 = 1.75
+    fmt.Printf("Height: %.2f\n", height)
+
+    // Constants
+    const PI = 3.14159
+    const GREETING_MESSAGE = "Welcome!"
+    fmt.Printf("PI: %f, Message: %s\n", PI, GREETING_MESSAGE)
+
+    // Pointers
+    var num int = 42
+    var ptr *int // Declare a pointer to an int
+    ptr = &num   // Assign the address of num to ptr
+
+    fmt.Printf("Value of num: %d\n", num)
+    fmt.Printf("Address of num: %p\n", &num)
+    fmt.Printf("Value of ptr (address): %p\n", ptr)
+    fmt.Printf("Value pointed to by ptr: %d\n", *ptr) // Dereference ptr
+
+    *ptr = 100 // Change value through pointer
+    fmt.Printf("New value of num: %d\n", num)
+
+    // String operations (Go strings are immutable)
+    str1 := "Go"
+    str2 := "lang"
+    combined := str1 + str2
+    fmt.Printf("Combined string: %s\n", combined)
+    fmt.Printf("Length of combined: %d\n", len(combined)) // Length in bytes
+    fmt.Printf("First character (byte): %c\n", combined[0]) // Accesses byte, not rune
+
+    // Runes (Unicode code points) for proper character handling
+    runes := []rune(combined)
+    fmt.Printf("First character (rune): %c\n", runes[0])
+    fmt.Printf("Length of runes: %d\n", len(runes))
+
+    // Type conversion (explicit)
+    intVal := 10
+    floatVal := float64(intVal) // Convert int to float64
+    fmt.Printf("Int to Float: %.1f\n", floatVal)
+
+    // Blank identifier (_) for unused variables/imports
+    _, err := fmt.Println("This line prints but its return values are ignored.")
+    if err != nil {
+        fmt.Println("Error printing.")
+    }
+
+    // Math functions
+    fmt.Printf("Square root of 16: %.2f\n", math.Sqrt(16))
+}
+                </code></pre>
+
+                <h3>1.3. Operators</h3>
+                <ul>
+                    <li><strong>Arithmetic:</strong> `+`, `-`, `*`, `/`, `%` (modulo).</li>
+                    <li><strong>Comparison:</strong> `==`, `!=`, `<`, `>`, `<=`, `>=`.</li>
+                    <li><strong>Logical:</strong> `&&` (AND), `||` (OR), `!` (NOT).</li>
+                    <li><strong>Assignment:</strong> `=`, `+=`, `-=`, etc.</li>
+                    <li><strong>Bitwise:</strong> `&`, `|`, `^`, `&^` (AND NOT), `<<`, `>>`.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+func main() {
+    // Arithmetic
+    a := 10
+    b := 3
+    fmt.Printf("a + b = %d\n", a+b)
+    fmt.Printf("a / b = %d (integer division)\n", a/b)
+    fmt.Printf("a %% b = %d\n", a%b)
+
+    // Comparison
+    fmt.Printf("a == b: %t\n", a == b)
+    fmt.Printf("a > b: %t\n", a > b)
+
+    // Logical
+    x := true
+    y := false
+    fmt.Printf("x && y: %t\n", x && y)
+    fmt.Printf("x || y: %t\n", x || y)
+    fmt.Printf("!x: %t\n", !x)
+
+    // Assignment
+    count := 0
+    count += 5 // count = count + 5
+    fmt.Printf("Count: %d\n", count)
+
+    // Increment/Decrement (only as statements, not expressions)
+    count++ // count = count + 1
+    fmt.Printf("Count after increment: %d\n", count)
+    count-- // count = count - 1
+    fmt.Printf("Count after decrement: %d\n", count)
+
+    // Bitwise
+    p := 5  // 0101 in binary
+    q := 3  // 0011 in binary
+    fmt.Printf("p & q (AND): %d\n", p&q)   // 0001 = 1
+    fmt.Printf("p | q (OR): %d\n", p|q)    // 0111 = 7
+    fmt.Printf("p ^ q (XOR): %d\n", p^q)   // 0110 = 6
+    fmt.Printf("p &^ q (AND NOT): %d\n", p&^q) // 0100 = 4 (bits set in p but not in q)
+    fmt.Printf("p << 1 (Left Shift): %d\n", p<<1) // 1010 = 10
+    fmt.Printf("q >> 1 (Right Shift): %d\n", q>>1) // 0001 = 1
+}
+                </code></pre>
+
+                <h3>1.4. Control Flow</h3>
+                <ul>
+                    <li><strong>`if`, `else if`, `else`:</strong> Conditional execution. Can include a short statement before the condition.</li>
+                    <li><strong>`for` loop:</strong> Go's only loop construct. Can be used as a `while` loop, traditional `for` loop, or `for-range` loop.</li>
+                    <li><strong>`switch` statement:</strong> Multi-way conditional. Supports expression-less `switch` (like `if-else if`), `fallthrough`, and type switches.</li>
+                    <li><strong>`break`, `continue`:</strong> Modifying loop behavior.</li>
+                    <li><strong>`defer`:</strong> Schedules a function call to be run after the surrounding function returns. Used for cleanup.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+func main() {
+    // if/else if/else
+    score := 85
+    if score >= 90 {
+        fmt.Println("Grade A")
+    } else if score >= 80 {
+        fmt.Println("Grade B")
+    } else {
+        fmt.Println("Grade C")
+    }
+
+    // if with a short statement
+    if val := 15; val > 10 {
+        fmt.Printf("%d is greater than 10\n", val)
+    } else {
+        fmt.Printf("%d is not greater than 10\n", val)
+    }
+
+    // for loop (traditional)
+    fmt.Println("For loop (traditional):")
+    for i := 0; i < 3; i++ {
+        fmt.Printf("Iteration %d\n", i)
+    }
+
+    // for loop (acting as a while loop)
+    fmt.Println("For loop (while-style):")
+    count := 0
+    for count < 5 {
+        fmt.Printf("Count is %d\n", count)
+        count++
+    }
+
+    // for-range loop (iterating over slices, arrays, maps, strings, channels)
+    fmt.Println("For-range loop:")
+    fruits := []string{"apple", "banana", "cherry"}
+    for index, fruit := range fruits {
+        fmt.Printf("Index %d: %s\n", index, fruit)
+    }
+    // To ignore index: for _, fruit := range fruits { ... }
+
+    // switch statement
+    day := "Wednesday"
+    switch day {
+    case "Monday", "Tuesday":
+        fmt.Println("Start of week")
+    case "Wednesday":
+        fmt.Println("Mid-week")
+    default:
+        fmt.Println("Weekend or other day")
+    }
+
+    // switch with no expression (like if-else if)
+    num := 7
+    switch {
+    case num < 0:
+        fmt.Println("Negative")
+    case num % 2 == 0:
+        fmt.Println("Even")
+    default:
+        fmt.Println("Odd")
+    }
+
+    // switch with fallthrough (rarely used, usually indicates poor design)
+    fmt.Println("Switch with fallthrough:")
+    finger := 3
+    switch finger {
+    case 1:
+        fmt.Println("Thumb")
+    case 2:
+        fmt.Println("Index")
+        fallthrough // Continues to the next case
+    case 3:
+        fmt.Println("Middle")
+        fallthrough
+    case 4:
+        fmt.Println("Ring")
+    case 5:
+        fmt.Println("Pinky")
+    }
+
+    // break and continue
+    fmt.Println("Break and Continue:")
+    for i := 0; i < 10; i++ {
+        if i%2 != 0 {
+            continue // Skip odd numbers
+        }
+        if i > 6 {
+            break // Exit loop if i is greater than 6
+        }
+        fmt.Printf("%d ", i)
+    }
+    fmt.Println("\n")
+
+    // defer statement
+    // defer calls are pushed onto a stack. When the surrounding function returns,
+    // deferred calls are executed in Last-In-First-Out (LIFO) order.
+    fmt.Println("--- Defer Demo ---")
+    fmt.Println("Opening file...")
+    file := createFile("/tmp/defer_example.txt")
+    defer closeFile(file) // This will be called when main exits
+    writeFile(file, "Hello from defer!")
+    fmt.Println("Main function finishing.")
+}
+
+func createFile(p string) *os.File {
+    fmt.Println("Creating file:", p)
+    f, err := os.Create(p)
+    if err != nil {
+        panic(err) // Panic if file creation fails
+    }
+    return f
+}
+
+func writeFile(f *os.File, text string) {
+    fmt.Println("Writing to file...")
+    fmt.Fprintln(f, text) // Write string and newline
+}
+
+func closeFile(f *os.File) {
+    fmt.Println("Closing file:", f.Name())
+    err := f.Close()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error closing file %s: %v\n", f.Name(), err)
+    }
+}
+                </code></pre>
+
+                <h3>1.5. Functions</h3>
+                <ul>
+                    <li>Defining functions with `func`.</li>
+                    <li>Parameters and return values (can return multiple values, including errors).</li>
+                    <li>Named return values.</li>
+                    <li>Variadic functions (accepting a variable number of arguments).</li>
+                    <li>Anonymous functions (closures).</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "errors"
+)
+
+// Simple function
+func greet(name string) string {
+    return fmt.Sprintf("Hello, %s!", name)
+}
+
+// Function with multiple return values (common for error handling)
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, errors.New("division by zero is not allowed")
+    }
+    return a / b, nil // nil indicates no error
+}
+
+// Function with named return values (makes code more readable for multiple returns)
+func calculateStats(numbers []int) (sum int, count int, avg float64) {
+    count = len(numbers)
+    if count == 0 {
+        return 0, 0, 0.0 // Explicit return for empty slice
+    }
+    for _, num := range numbers {
+        sum += num
+    }
+    avg = float64(sum) / float64(count)
+    return // Naked return, returns the named return variables
+}
+
+// Variadic function (accepts variable number of arguments)
+func sumAll(nums ...int) int {
+    total := 0
+    for _, num := range nums {
+        total += num
+    }
+    return total
+}
+
+func main() {
+    fmt.Println(greet("Go Developer"))
+
+    result, err := divide(10.0, 2.0)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Printf("Division result: %.2f\n", result)
+    }
+
+    result, err = divide(10.0, 0.0)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Printf("Division result: %.2f\n", result)
+    }
+
+    data := []int{10, 20, 30, 40, 50}
+    s, c, a := calculateStats(data)
+    fmt.Printf("Sum: %d, Count: %d, Average: %.2f\n", s, c, a)
+
+    emptyData := []int{}
+    s, c, a = calculateStats(emptyData)
+    fmt.Printf("Empty data stats: Sum: %d, Count: %d, Average: %.2f\n", s, c, a)
+
+    fmt.Printf("Sum of 1,2,3: %d\n", sumAll(1, 2, 3))
+    fmt.Printf("Sum of 1,2,3,4,5: %d\n", sumAll(1, 2, 3, 4, 5))
+
+    // Passing a slice to a variadic function
+    numsSlice := []int{10, 20, 30}
+    fmt.Printf("Sum of slice: %d\n", sumAll(numsSlice...)) // Use ... to unpack slice
+
+    // Anonymous function (closure)
+    adder := func(x int) func(int) int {
+        return func(y int) int {
+            return x + y // 'x' is closed over from the outer function
+        }
+    }
+    addFive := adder(5)
+    fmt.Printf("Add five to 3: %d\n", addFive(3)) // Output: 8
+}
+                </code></pre>
+
+                <h3>1.6. Basic I/O</h3>
+                <ul>
+                    <li>`fmt` package for formatted input/output.</li>
+                    <li>`os` package for file system operations.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+    "strings"
+)
+
+func main() {
+    // Output using fmt.Println, fmt.Printf
+    fmt.Println("Hello, Go I/O!")
+    fmt.Printf("Formatted output: %s is %d years old.\n", "Bob", 25)
+
+    // User input (reading from stdin)
+    fmt.Print("Enter your name: ")
+    reader := bufio.NewReader(os.Stdin)
+    input, _ := reader.ReadString('\n') // Read until newline
+    name := strings.TrimSpace(input)    // Remove newline character
+    fmt.Printf("Hello, %s!\n", name)
+
+    // File writing
+    filePath := "output.txt"
+    file, err := os.Create(filePath) // Create a new file (or truncate if exists)
+    if err != nil {
+        fmt.Println("Error creating file:", err)
+        return
+    }
+    defer file.Close() // Ensure file is closed
+
+    _, err = fmt.Fprintln(file, "This is the first line.")
+    if err != nil {
+        fmt.Println("Error writing to file:", err)
+        return
+    }
+    _, err = file.WriteString("This is the second line.\n")
+    if err != nil {
+        fmt.Println("Error writing to file:", err)
+        return
+    }
+    fmt.Println("Content written to output.txt")
+
+    // File reading
+    readContent, err := os.ReadFile(filePath) // Read entire file into a byte slice
+    if err != nil {
+        fmt.Println("Error reading file:", err)
+        return
+    }
+    fmt.Println("\nContent of output.txt:")
+    fmt.Println(string(readContent))
+
+    // Reading file line by line
+    fmt.Println("\nReading output.txt line by line:")
+    file, err = os.Open(filePath)
+    if err != nil {
+        fmt.Println("Error opening file for reading:", err)
+        return
+    }
+    defer file.Close()
+
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        fmt.Println(scanner.Text()) // Get the current line
+    }
+    if err := scanner.Err(); err != nil {
+        fmt.Println("Error during scanning:", err)
+    }
+
+    // Clean up the created file
+    err = os.Remove(filePath)
+    if err != nil {
+        fmt.Println("Error deleting file:", err)
+    } else {
+        fmt.Println("output.txt deleted.")
+    }
+}
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>2. Core Data Structures</h2>
+                <button class="toggle-button" data-target="go-data-structures-content">Expand</button>
+            </div>
+            <div id="go-data-structures-content" class="collapsible-content">
+                <h3>2.1. Arrays</h3>
+                <ul>
+                    <li>Fixed-size sequences of elements of the same type.</li>
+                    <li>Rarely used directly in Go, as slices provide more flexibility.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+func main() {
+    // Declaring an array
+    var a [5]int // Array of 5 integers, initialized to zero values (0)
+    fmt.Println("Array a:", a)
+
+    // Initializing an array
+    b := [3]int{1, 2, 3} // Array of 3 integers with initial values
+    fmt.Println("Array b:", b)
+
+    // Accessing and modifying elements
+    a[0] = 10
+    a[4] = 50
+    fmt.Println("Modified array a:", a)
+    fmt.Printf("Element at index 2 of a: %d\n", a[2])
+
+    // Length of an array
+    fmt.Printf("Length of array a: %d\n", len(a))
+
+    // Arrays are value types (copied when assigned or passed to functions)
+    c := b // c is a copy of b
+    c[0] = 100
+    fmt.Println("Array b after modifying c:", b) // b remains unchanged
+    fmt.Println("Array c:", c)
+}
+                </code></pre>
+
+                <h3>2.2. Slices</h3>
+                <ul>
+                    <li>Dynamic-sized, flexible views into arrays. More commonly used than arrays.</li>
+                    <li>Composed of a pointer to an underlying array, length, and capacity.</li>
+                    <li>`make()` for creation, `append()` for adding elements, slicing syntax.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+func main() {
+    // Declaring a slice (zero value is nil)
+    var s []int
+    fmt.Printf("Nil slice: %v, Length: %d, Capacity: %d\n", s, len(s), cap(s))
+
+    // Creating a slice with make (type, length, capacity)
+    // Length is the number of elements it contains
+    // Capacity is the number of elements in the underlying array
+    s = make([]int, 5) // Creates a slice of 5 integers, initialized to 0
+    fmt.Printf("Slice with make (len 5, cap 5): %v, Length: %d, Capacity: %d\n", s, len(s), cap(s))
+
+    s = make([]int, 0, 5) // Creates an empty slice with capacity 5
+    fmt.Printf("Slice with make (len 0, cap 5): %v, Length: %d, Capacity: %d\n", s, len(s), cap(s))
+
+    // Initializing a slice literal
+    numbers := []int{1, 2, 3, 4, 5}
+    fmt.Printf("Slice literal: %v, Length: %d, Capacity: %d\n", numbers, len(numbers), cap(numbers))
+
+    // Slicing an existing slice/array
+    slice1 := numbers[1:4] // Elements from index 1 up to (but not including) 4
+    fmt.Printf("Slice1 (numbers[1:4]): %v, Length: %d, Capacity: %d\n", slice1, len(slice1), cap(slice1))
+
+    slice2 := numbers[:3] // Elements from start up to (but not including) 3
+    fmt.Printf("Slice2 (numbers[:3]): %v, Length: %d, Capacity: %d\n", slice2, len(slice2), cap(slice2))
+
+    slice3 := numbers[2:] // Elements from index 2 to end
+    fmt.Printf("Slice3 (numbers[2:]): %v, Length: %d, Capacity: %d\n", slice3, len(slice3), cap(slice3))
+
+    // Slices share the underlying array
+    slice1[0] = 99 // Modifies the underlying array, affecting 'numbers' and 'slice3'
+    fmt.Println("Numbers after slice1[0]=99:", numbers)
+    fmt.Println("Slice3 after slice1[0]=99:", slice3)
+
+    // Appending to a slice
+    fmt.Println("\n--- Appending to Slice ---")
+    var dynamicSlice []string
+    dynamicSlice = append(dynamicSlice, "apple", "banana")
+    fmt.Printf("Dynamic slice: %v, Length: %d, Capacity: %d\n", dynamicSlice, len(dynamicSlice), cap(dynamicSlice))
+
+    dynamicSlice = append(dynamicSlice, "cherry", "date", "elderberry")
+    // Capacity might double when it needs more space
+    fmt.Printf("Dynamic slice after more appends: %v, Length: %d, Capacity: %d\n", dynamicSlice, len(dynamicSlice), cap(dynamicSlice))
+
+    // Appending one slice to another
+    moreFruits := []string{"fig", "grape"}
+    dynamicSlice = append(dynamicSlice, moreFruits...) // Use ... to unpack the slice
+    fmt.Printf("Dynamic slice after appending another slice: %v, Length: %d, Capacity: %d\n", dynamicSlice, len(dynamicSlice), cap(dynamicSlice))
+
+    // Copying slices
+    fmt.Println("\n--- Copying Slices ---")
+    source := []int{10, 20, 30}
+    destination := make([]int, len(source)) // Destination must have enough capacity
+    copy(destination, source)
+    destination[0] = 100 // Modifying destination does not affect source
+    fmt.Println("Source:", source)
+    fmt.Println("Destination:", destination)
+}
+                </code></pre>
+
+                <h3>2.3. Maps (Hash Maps/Dictionaries)</h3>
+                <ul>
+                    <li>Unordered collections of key-value pairs.</li>
+                    <li>Keys must be comparable (e.g., numbers, strings, structs that contain only comparable types).</li>
+                    <li>`make()` for creation, accessing with `[]`, `delete()` for removal.</li>
+                    <li>Checking for key existence with the "comma ok" idiom.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+func main() {
+    // Declaring a map (zero value is nil)
+    var m map[string]int
+    fmt.Printf("Nil map: %v\n", m) // Prints map[]
+
+    // Creating a map with make
+    // map[KeyType]ValueType
+    ages := make(map[string]int)
+    fmt.Printf("Empty map with make: %v\n", ages)
+
+    // Initializing a map literal
+    salaries := map[string]float64{
+        "Alice": 50000.0,
+        "Bob":   60000.0,
+        "Charlie": 75000.0,
+    }
+    fmt.Printf("Salaries map: %v\n", salaries)
+
+    // Accessing values
+    fmt.Printf("Alice's salary: %.2f\n", salaries["Alice"])
+
+    // Adding/Updating values
+    salaries["David"] = 80000.0
+    salaries["Bob"] = 62000.0 // Update Bob's salary
+    fmt.Printf("Salaries after add/update: %v\n", salaries)
+
+    // Checking for key existence ("comma ok" idiom)
+    if s, ok := salaries["Eve"]; ok {
+        fmt.Printf("Eve's salary: %.2f\n", s)
+    } else {
+        fmt.Println("Eve not found in salaries map.")
+    }
+
+    if s, ok := salaries["David"]; ok {
+        fmt.Printf("David's salary: %.2f\n", s)
+    } else {
+        fmt.Println("David not found.")
+    }
+
+    // Deleting entries
+    delete(salaries, "Charlie")
+    fmt.Printf("Salaries after deleting Charlie: %v\n", salaries)
+
+    // Length of a map
+    fmt.Printf("Number of entries in salaries: %d\n", len(salaries))
+
+    // Iterating over a map (order is not guaranteed)
+    fmt.Println("\nIterating over salaries:")
+    for name, salary := range salaries {
+        fmt.Printf("%s: %.2f\n", name, salary)
+    }
+
+    // Iterating over only keys
+    fmt.Println("\nIterating over only keys:")
+    for name := range salaries {
+        fmt.Println(name)
+    }
+}
+                </code></pre>
+
+                <h3>2.4. Structs</h3>
+                <ul>
+                    <li>Typed collections of fields. Similar to classes in other languages, but without methods directly attached (methods are defined on types).</li>
+                    <li>Used to group related data.</li>
+                    <li>Can be embedded to achieve composition (similar to inheritance).</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+// Define a struct
+type Person struct {
+    FirstName string
+    LastName  string
+    Age       int
+    Email     string
+}
+
+// Define another struct
+type Address struct {
+    Street  string
+    City    string
+    ZipCode string
+}
+
+// Struct embedding (composition over inheritance)
+type Employee struct {
+    Person    // Embedded Person struct (promotes Person's fields)
+    Address   // Embedded Address struct
+    EmployeeID string
+    Department string
+}
+
+// Method on a struct (receiver is a value receiver)
+func (p Person) FullName() string {
+    return p.FirstName + " " + p.LastName
+}
+
+// Method with a pointer receiver (can modify the struct instance)
+func (p *Person) IncrementAge() {
+    p.Age++
+}
+
+func main() {
+    // Creating a struct instance
+    p1 := Person{
+        FirstName: "Alice",
+        LastName:  "Smith",
+        Age:       30,
+        Email:     "alice@example.com",
+    }
+    fmt.Printf("Person 1: %+v\n", p1) // %+v prints struct field names and values
+
+    // Accessing fields
+    fmt.Printf("Person 1's Name: %s %s\n", p1.FirstName, p1.LastName)
+
+    // Modifying fields
+    p1.Age = 31
+    fmt.Printf("Person 1's new age: %d\n", p1.Age)
+
+    // Using a struct method
+    fmt.Printf("Person 1's Full Name: %s\n", p1.FullName())
+
+    // Using a pointer receiver method
+    p1.IncrementAge()
+    fmt.Printf("Person 1's age after increment: %d\n", p1.Age)
+
+    // Creating a struct using field names (order doesn't matter)
+    p2 := Person{Age: 25, FirstName: "Bob", LastName: "Johnson", Email: "bob@example.com"}
+    fmt.Printf("Person 2: %+v\n", p2)
+
+    // Creating a struct using positional arguments (order matters)
+    p3 := Person{"Charlie", "Brown", 40, "charlie@example.com"}
+    fmt.Printf("Person 3: %+v\n", p3)
+
+    // Anonymous structs (for one-off use)
+    anonPerson := struct {
+        Name string
+        Age  int
+    }{
+        Name: "Anonymous",
+        Age:  99,
+    }
+    fmt.Printf("Anonymous Person: %+v\n", anonPerson)
+
+    // Struct embedding example
+    emp1 := Employee{
+        Person: Person{
+            FirstName: "Jane",
+            LastName:  "Doe",
+            Age:       35,
+            Email:     "jane.doe@company.com",
+        },
+        Address: Address{
+            Street:  "123 Main St",
+            City:    "Anytown",
+            ZipCode: "12345",
+        },
+        EmployeeID: "EMP001",
+        Department: "Engineering",
+    }
+    fmt.Printf("\nEmployee 1: %+v\n", emp1)
+    // Accessing embedded fields directly
+    fmt.Printf("Employee Name: %s %s\n", emp1.FirstName, emp1.LastName)
+    fmt.Printf("Employee Street: %s\n", emp1.Street)
+    // Using embedded method
+    fmt.Printf("Employee Full Name (via embedded Person): %s\n", emp1.FullName())
+
+    // Comparing structs (if all fields are comparable)
+    s1 := Person{"Test", "User", 20, "test@example.com"}
+    s2 := Person{"Test", "User", 20, "test@example.com"}
+    s3 := Person{"Another", "User", 20, "another@example.com"}
+    fmt.Printf("s1 == s2: %t\n", s1 == s2)
+    fmt.Printf("s1 == s3: %t\n", s1 == s3)
+}
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>3. Intermediate Go</h2>
+                <button class="toggle-button" data-target="go-intermediate-content">Expand</button>
+            </div>
+            <div id="go-intermediate-content" class="collapsible-content">
+                <h3>3.1. Interfaces</h3>
+                <ul>
+                    <li>Define a set of method signatures.</li>
+                    <li>A type implicitly implements an interface if it implements all its methods.</li>
+                    <li>Go's approach to polymorphism.</li>
+                    <li>Empty interface (`interface{}` or `any` in Go 1.18+) can hold values of any type.</li>
+                    <li>Type assertions and type switches for working with interfaces.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+// Define an interface
+type Shape interface {
+    Area() float64
+    Perimeter() float64
+}
+
+// Define a struct for a Circle
+type Circle struct {
+    Radius float64
+}
+
+// Circle implements the Shape interface
+func (c Circle) Area() float64 {
+    return 3.14159 * c.Radius * c.Radius
+}
+
+func (c Circle) Perimeter() float64 {
+    return 2 * 3.14159 * c.Radius
+}
+
+// Define a struct for a Rectangle
+type Rectangle struct {
+    Width  float64
+    Height float64
+}
+
+// Rectangle implements the Shape interface
+func (r Rectangle) Area() float64 {
+    return r.Width * r.Height
+}
+
+func (r Rectangle) Perimeter() float64 {
+    return 2 * (r.Width + r.Height)
+}
+
+// Function that accepts any type implementing the Shape interface
+func printShapeInfo(s Shape) {
+    fmt.Printf("Shape Type: %T\n", s) // %T prints the concrete type
+    fmt.Printf("  Area: %.2f\n", s.Area())
+    fmt.Printf("  Perimeter: %.2f\n", s.Perimeter())
+}
+
+func main() {
+    c := Circle{Radius: 5}
+    r := Rectangle{Width: 4, Height: 6}
+
+    fmt.Println("--- Interface Demo ---")
+    printShapeInfo(c)
+    printShapeInfo(r)
+
+    // A slice of interfaces
+    shapes := []Shape{
+        Circle{Radius: 3},
+        Rectangle{Width: 2, Height: 8},
+        Circle{Radius: 7},
+    }
+
+    fmt.Println("\n--- Iterating over a slice of Shapes ---")
+    for _, shape := range shapes {
+        printShapeInfo(shape)
+    }
+
+    // Empty Interface (`interface{}` or `any`)
+    // Can hold any type, useful for heterogeneous collections or generic functions
+    var i interface{} // or var i any
+    i = "Hello"
+    fmt.Printf("\nEmpty interface value: %v, Type: %T\n", i, i)
+    i = 123
+    fmt.Printf("Empty interface value: %v, Type: %T\n", i, i)
+
+    // Type Assertion: Extracting the concrete value from an interface
+    // value, ok := interfaceVar.(ConcreteType)
+    strVal, ok := i.(string)
+    if ok {
+        fmt.Printf("Value is string: %s\n", strVal)
+    } else {
+        fmt.Println("Value is not a string.")
+    }
+
+    i = "Go is awesome"
+    strVal, ok = i.(string)
+    if ok {
+        fmt.Printf("Value is string: %s\n", strVal)
+    } else {
+        fmt.Println("Value is not a string.")
+    }
+
+    // Type Switch: Handling different types stored in an interface
+    fmt.Println("\n--- Type Switch Demo ---")
+    checkType := func(val interface{}) {
+        switch v := val.(type) {
+        case int:
+            fmt.Printf("It's an integer: %d\n", v)
+        case string:
+            fmt.Printf("It's a string: %s\n", v)
+        case float64:
+            fmt.Printf("It's a float64: %.2f\n", v)
+        default:
+            fmt.Printf("Unknown type: %T\n", v)
+        }
+    }
+
+    checkType(10)
+    checkType("Go!")
+    checkType(3.14)
+    checkType(true)
+}
+                </code></pre>
+
+                <h3>3.2. Error Handling</h3>
+                <ul>
+                    <li>Go uses explicit error returns (multi-value return, where the last value is `error`).</li>
+                    <li>`error` is an interface.</li>
+                    <li>`errors.New()` for simple errors, `fmt.Errorf()` for formatted errors.</li>
+                    <li>Wrapping errors (`fmt.Errorf("...: %w", err)`) for context.</li>
+                    <li>Checking error types (`errors.Is`, `errors.As`).</li>
+                    <li>Panic and Recover (for unrecoverable errors or graceful shutdown).</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "errors"
+    "fmt"
+    "os"
+)
+
+// Custom error type (implementing the error interface)
+type CustomError struct {
+    Code    int
+    Message string
+}
+
+func (e *CustomError) Error() string {
+    return fmt.Sprintf("Custom Error %d: %s", e.Code, e.Message)
+}
+
+// Function returning a standard error
+func readFileContent(filename string) (string, error) {
+    content, err := os.ReadFile(filename)
+    if err != nil {
+        // Wrap the original error for more context
+        return "", fmt.Errorf("failed to read file %s: %w", filename, err)
+    }
+    return string(content), nil
+}
+
+// Function returning a custom error
+func processInput(value int) (string, error) {
+    if value < 0 {
+        return "", &CustomError{Code: 1001, Message: "Input cannot be negative"}
+    }
+    if value == 0 {
+        return "", errors.New("input cannot be zero") // Standard error
+    }
+    return fmt.Sprintf("Processed value: %d", value), nil
+}
+
+// Function demonstrating Panic and Recover
+func riskyOperation(divisor int) {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Printf("Recovered from panic: %v\n", r)
+            // Optionally, log the error or perform cleanup
+        }
+    }()
+    
+    if divisor == 0 {
+        panic("cannot divide by zero in riskyOperation!")
+    }
+    result := 100 / divisor
+    fmt.Printf("Risky operation result: %d\n", result)
+}
+
+
+func main() {
+    fmt.Println("--- Error Handling Demo ---")
+
+    // --- Standard Error Handling ---
+    content, err := readFileContent("non_existent_file.txt")
+    if err != nil {
+        fmt.Println("Error:", err)
+        // Check if the error is a specific type (e.g., os.PathError)
+        var pathErr *os.PathError
+        if errors.As(err, &pathErr) {
+            fmt.Printf("  It's a path error! Operation: %s, Path: %s\n", pathErr.Op, pathErr.Path)
+        }
+        // Check if the error wraps a specific error (e.g., os.ErrNotExist)
+        if errors.Is(err, os.ErrNotExist) {
+            fmt.Println("  File does not exist.")
+        }
+    } else {
+        fmt.Println("File content:", content)
+    }
+
+    // --- Custom Error Handling ---
+    res, err := processInput(-5)
+    if err != nil {
+        fmt.Println("Error:", err)
+        var customErr *CustomError
+        if errors.As(err, &customErr) { // Check if it's our custom error type
+            fmt.Printf("  Caught CustomError: Code %d, Message: %s\n", customErr.Code, customErr.Message)
+        }
+    } else {
+        fmt.Println(res)
+    }
+
+    res, err = processInput(0)
+    if err != nil {
+        fmt.Println("Error:", err)
+        if errors.Is(err, errors.New("input cannot be zero")) { // Check if it's a specific sentinel error
+            fmt.Println("  Caught 'input cannot be zero' error.")
+        }
+    } else {
+        fmt.Println(res)
+    }
+
+    res, err = processInput(10)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println(res)
+    }
+
+    // --- Panic and Recover Demo ---
+    fmt.Println("\n--- Panic and Recover Demo ---")
+    riskyOperation(5)
+    riskyOperation(0) // This will cause a panic, but recover will catch it
+    fmt.Println("Program continues after panic recovery.")
+    // riskyOperation(0) // If no recover, program would crash here
+}
+                </code></pre>
+
+                <h3>3.3. Concurrency (Goroutines & Channels)</h3>
+                <p>Go's built-in concurrency primitives are a major strength, enabling efficient concurrent programming.</p>
+                <ul>
+                    <li><strong>Goroutines:</strong> Lightweight, independently executing functions. Managed by the Go runtime, not OS threads. Started with the `go` keyword.</li>
+                    <li><strong>Channels:</strong> Typed conduits through which you can send and receive values with a goroutine. Used for safe communication between goroutines.
+                        <ul>
+                            <li><strong>Unbuffered Channels:</strong> Sender blocks until receiver is ready, and vice-versa.</li>
+                            <li><strong>Buffered Channels:</strong> Can hold a fixed number of values. Sender blocks if buffer is full; receiver blocks if buffer is empty.</li>
+                        </ul>
+                    </li>
+                    <li><strong>`select` statement:</strong> Allows a goroutine to wait on multiple communication operations.</li>
+                    <li><strong>`sync` package:</strong> Provides primitives like `sync.WaitGroup` (wait for goroutines to finish), `sync.Mutex` (mutual exclusion), `sync.RWMutex` (read/write mutex).</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "sync"
+    "time"
+)
+
+// --- Goroutine Example ---
+func printNumbers() {
+    for i := 0; i < 5; i++ {
+        time.Sleep(100 * time.Millisecond)
+        fmt.Printf("Number: %d\n", i)
+    }
+}
+
+func printLetters() {
+    for char := 'a'; char <= 'e'; char++ {
+        time.Sleep(150 * time.Millisecond)
+        fmt.Printf("Letter: %c\n", char)
+    }
+}
+
+// --- Channel Example ---
+func producer(ch chan int, wg *sync.WaitGroup) {
+    defer wg.Done()
+    for i := 0; i < 5; i++ {
+        fmt.Printf("Producer: Sending %d\n", i)
+        ch &lt;- i // Send value to channel
+        time.Sleep(50 * time.Millisecond)
+    }
+    close(ch) // Close the channel when done sending
+}
+
+func consumer(ch chan int, wg *sync.WaitGroup) {
+    defer wg.Done()
+    for val := range ch { // Loop until channel is closed and emptied
+        fmt.Printf("Consumer: Received %d\n", val)
+        time.Sleep(100 * time.Millisecond)
+    }
+    fmt.Println("Consumer: Channel closed and emptied.")
+}
+
+// --- Buffered Channel Example ---
+func bufferedProducer(ch chan string) {
+    ch &lt;- "message 1"
+    ch &lt;- "message 2"
+    fmt.Println("Buffered Producer: Sent two messages.")
+    close(ch)
+}
+
+// --- Select Statement Example ---
+func worker(id int, ch chan string) {
+    for {
+        select {
+        case msg := &lt;-ch:
+            fmt.Printf("Worker %d: Received %s\n", id, msg)
+        case &lt;-time.After(500 * time.Millisecond): // Timeout
+            fmt.Printf("Worker %d: Timed out, exiting.\n", id)
+            return
+        }
+    }
+}
+
+func main() {
+    // --- Goroutine Demo ---
+    fmt.Println("--- Goroutine Demo ---")
+    go printNumbers() // Start as a goroutine
+    go printLetters() // Start as another goroutine
+    time.Sleep(1 * time.Second) // Give goroutines time to run
+    fmt.Println("Main function finished Goroutine Demo.\n")
+
+    // --- Channel Demo (Unbuffered) ---
+    fmt.Println("--- Unbuffered Channel Demo ---")
+    ch := make(chan int) // Unbuffered channel
+    var wg sync.WaitGroup
+    wg.Add(2) // Two goroutines to wait for
+
+    go producer(ch, &wg)
+    go consumer(ch, &wg)
+
+    wg.Wait() // Wait for both producer and consumer to finish
+    fmt.Println("Unbuffered Channel Demo Finished.\n")
+
+    // --- Buffered Channel Demo ---
+    fmt.Println("--- Buffered Channel Demo ---")
+    bufferedCh := make(chan string, 2) // Buffered channel with capacity 2
+    go bufferedProducer(bufferedCh)
+    time.Sleep(100 * time.Millisecond) // Give producer time to send
+    fmt.Printf("Main: Reading from buffered channel: %s\n", &lt;-bufferedCh)
+    fmt.Printf("Main: Reading from buffered channel: %s\n", &lt;-bufferedCh)
+    fmt.Println("Buffered Channel Demo Finished.\n")
+
+    // --- Select Statement Demo ---
+    fmt.Println("--- Select Statement Demo ---")
+    selectCh := make(chan string)
+    go worker(1, selectCh)
+    go worker(2, selectCh)
+
+    selectCh &lt;- "Hello"
+    time.Sleep(200 * time.Millisecond)
+    selectCh &lt;- "World"
+    time.Sleep(1 * time.Second) // Let workers time out
+    fmt.Println("Select Statement Demo Finished.\n")
+
+    // --- Mutex Example (for shared resource protection) ---
+    fmt.Println("--- Mutex Demo ---")
+    var counter int
+    var mu sync.Mutex // Mutex to protect counter
+    var wgCounter sync.WaitGroup
+
+    increment := func() {
+        defer wgCounter.Done()
+        for i := 0; i < 1000; i++ {
+            mu.Lock()   // Acquire lock
+            counter++
+            mu.Unlock() // Release lock
+        }
+    }
+
+    wgCounter.Add(5)
+    for i := 0; i < 5; i++ {
+        go increment()
+    }
+    wgCounter.Wait()
+    fmt.Printf("Final Counter value (with Mutex): %d\n", counter) // Should be 5000
+    fmt.Println("Mutex Demo Finished.\n")
+}
+                </code></pre>
+
+                <h3>3.4. Pointers (Advanced Usage)</h3>
+                <ul>
+                    <li>Understanding when to use value vs. pointer receivers for methods.</li>
+                    <li>Passing by value vs. passing by reference.</li>
+                    <li>Pointers to structs and methods on pointer receivers.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+type Wallet struct {
+    Balance int
+}
+
+// Value receiver method: operates on a copy of the Wallet
+func (w Wallet) DepositValue(amount int) {
+    w.Balance += amount // This modifies the copy, not the original
+    fmt.Printf("Inside DepositValue (copy): Balance is %d\n", w.Balance)
+}
+
+// Pointer receiver method: operates on the original Wallet instance
+func (w *Wallet) DepositPointer(amount int) {
+    w.Balance += amount // This modifies the original
+    fmt.Printf("Inside DepositPointer (original): Balance is %d\n", w.Balance)
+}
+
+// Function accepting a value of Wallet
+func printWalletValue(w Wallet) {
+    fmt.Printf("PrintWalletValue: Balance is %d\n", w.Balance)
+}
+
+// Function accepting a pointer to Wallet
+func printWalletPointer(w *Wallet) {
+    fmt.Printf("PrintWalletPointer: Balance is %d\n", w.Balance)
+}
+
+func main() {
+    fmt.Println("--- Pointers (Advanced Usage) Demo ---")
+
+    myWallet := Wallet{Balance: 100}
+    fmt.Printf("Initial Wallet: %+v\n", myWallet)
+
+    // Calling value receiver method
+    myWallet.DepositValue(50)
+    fmt.Printf("Wallet after DepositValue (value receiver): %+v\n", myWallet) // Balance remains 100
+
+    // Calling pointer receiver method
+    myWallet.DepositPointer(50) // Go automatically takes address for pointer receiver
+    fmt.Printf("Wallet after DepositPointer (pointer receiver): %+v\n", myWallet) // Balance is 150
+
+    // Explicitly passing pointer
+    (&myWallet).DepositPointer(20) // Same as myWallet.DepositPointer(20)
+    fmt.Printf("Wallet after explicit pointer call: %+v\n", myWallet) // Balance is 170
+
+    // Function parameter passing
+    fmt.Println("\n--- Function Parameter Passing ---")
+    printWalletValue(myWallet) // Passes a copy
+    myWallet.Balance = 200
+    printWalletValue(myWallet) // Still passes a copy, current balance 200
+
+    printWalletPointer(&myWallet) // Passes a pointer to the original
+    
+    // What happens if we try to modify a wallet passed by value in a function?
+    modifyValue := func(w Wallet) {
+        w.Balance = 500
+        fmt.Printf("Inside modifyValue: Balance is %d\n", w.Balance)
+    }
+    modifyValue(myWallet)
+    fmt.Printf("Wallet after modifyValue (original): %+v\n", myWallet) // Still 200
+
+    // What happens if we modify a wallet passed by pointer in a function?
+    modifyPointer := func(w *Wallet) {
+        w.Balance = 500
+        fmt.Printf("Inside modifyPointer: Balance is %d\n", w.Balance)
+    }
+    modifyPointer(&myWallet)
+    fmt.Printf("Wallet after modifyPointer (original): %+v\n", myWallet) // Now 500
+}
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>4. Advanced Go Concepts</h2>
+                <button class="toggle-button" data-target="go-advanced-content">Expand</button>
+            </div>
+            <div id="go-advanced-content" class="collapsible-content">
+                <h3>4.1. Reflection (`reflect` package)</h3>
+                <ul>
+                    <li>The ability of a program to examine its own structure and behavior at runtime.</li>
+                    <li>Allows inspecting types, values, and even modifying them dynamically.</li>
+                    <li>Used sparingly, typically for serialization, ORMs, or generic utility functions.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "reflect"
+)
+
+type User struct {
+    Name  string `json:"user_name"` // Struct tag
+    Age   int    `json:"user_age"`
+    Email string `json:"-"` // Ignore this field for JSON
+}
+
+func main() {
+    fmt.Println("--- Reflection Demo ---")
+
+    u := User{"Alice", 30, "alice@example.com"}
+
+    // Get the reflect.Value of the struct
+    v := reflect.ValueOf(u)
+    fmt.Printf("Value: %v, Type: %T\n", v, v)
+
+    // Get the reflect.Type of the struct
+    t := reflect.TypeOf(u)
+    fmt.Printf("Type: %v, Kind: %v\n", t, t.Kind())
+
+    // Iterate over struct fields
+    fmt.Println("\n--- Struct Fields ---")
+    for i := 0; i < t.NumField(); i++ {
+        field := t.Field(i)
+        fieldValue := v.Field(i)
+        fmt.Printf("Field: %s, Type: %s, Value: %v, Kind: %v\n",
+            field.Name, field.Type, fieldValue, fieldValue.Kind())
+
+        // Access struct tags
+        tag := field.Tag.Get("json")
+        if tag != "" {
+            fmt.Printf("  JSON Tag: %s\n", tag)
+        }
+    }
+
+    // Accessing a specific field by name
+    nameField := v.FieldByName("Name")
+    if nameField.IsValid() {
+        fmt.Printf("\nName field (by name): %v\n", nameField.String())
+    }
+
+    // Modifying a field using reflection (requires a settable value - pointer to struct)
+    fmt.Println("\n--- Modifying with Reflection ---")
+    ptrToU := reflect.ValueOf(&u) // Get a pointer to the struct
+    if ptrToU.Kind() == reflect.Ptr && ptrToU.Elem().CanSet() {
+        elem := ptrToU.Elem() // Get the underlying struct value
+        nameField := elem.FieldByName("Name")
+        ageField := elem.FieldByName("Age")
+
+        if nameField.IsValid() && nameField.CanSet() {
+            nameField.SetString("Bob")
+        }
+        if ageField.IsValid() && ageField.CanSet() {
+            ageField.SetInt(35)
+        }
+        fmt.Printf("Modified User: %+v\n", u) // Original struct 'u' is modified
+    } else {
+        fmt.Println("Cannot set fields using reflection (not a settable value).")
+    }
+
+    // Calling a method using reflection
+    fmt.Println("\n--- Calling Method with Reflection ---")
+    type Calculator struct{}
+    func (c Calculator) Add(a, b int) int {
+        return a + b
+    }
+
+    calc := reflect.ValueOf(Calculator{})
+    method := calc.MethodByName("Add")
+    if method.IsValid() {
+        args := []reflect.Value{reflect.ValueOf(10), reflect.ValueOf(20)}
+        results := method.Call(args)
+        fmt.Printf("Result of Add(10, 20) via reflection: %v\n", results[0].Int())
+    }
+}
+                </code></pre>
+
+                <h3>4.2. `unsafe` Package</h3>
+                <ul>
+                    <li>Allows direct memory manipulation, bypassing Go's type safety.</li>
+                    <li>Provides functions like `Pointer` (convert any pointer to `unsafe.Pointer`), `Alignof`, `Offsetof`, `Sizeof`.</li>
+                    <li><strong>Extremely dangerous and rarely used.</strong> Primarily for low-level system programming, interacting with C libraries, or highly optimized code where performance is critical and safety guarantees are explicitly managed.</li>
+                    <li>Breaks Go's memory safety guarantees, leading to potential crashes or undefined behavior if misused.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "unsafe" // Import the unsafe package
+)
+
+type MyStruct struct {
+    A int32 // 4 bytes
+    B bool  // 1 byte
+    C int64 // 8 bytes
+}
+
+func main() {
+    fmt.Println("--- Unsafe Package Demo ---")
+
+    // 1. Sizeof: Get the size of a type or value in bytes
+    var i int32 = 10
+    fmt.Printf("Size of int32: %d bytes\n", unsafe.Sizeof(i)) // 4 bytes
+
+    var s string = "hello"
+    // Size of string header (pointer + length), not the string data itself
+    fmt.Printf("Size of string header: %d bytes\n", unsafe.Sizeof(s)) // 16 bytes (on 64-bit)
+
+    ms := MyStruct{}
+    // Sizeof returns the size of the struct including padding
+    fmt.Printf("Size of MyStruct: %d bytes\n", unsafe.Sizeof(ms)) // Should be 16 (4 + 1 + 3 (padding) + 8)
+
+    // 2. Alignof: Get the alignment of a type or field in bytes
+    fmt.Printf("Alignment of int32: %d\n", unsafe.Alignof(i)) // 4
+    fmt.Printf("Alignment of bool: %d\n", unsafe.Alignof(ms.B)) // 1
+    fmt.Printf("Alignment of int64: %d\n", unsafe.Alignof(ms.C)) // 8
+
+    // 3. Offsetof: Get the offset of a field within a struct
+    fmt.Printf("Offset of A in MyStruct: %d\n", unsafe.Offsetof(ms.A)) // 0
+    fmt.Printf("Offset of B in MyStruct: %d\n", unsafe.Offsetof(ms.B)) // 4
+    fmt.Printf("Offset of C in MyStruct: %d\n", unsafe.Offsetof(ms.C)) // 8
+
+    // 4. Pointer: Converting between different pointer types
+    // This is where type safety is bypassed.
+    data := [3]float64{1.1, 2.2, 3.3}
+    fmt.Printf("\nOriginal float64 array: %v\n", data)
+
+    // Convert pointer to float64 array to unsafe.Pointer
+    // Then convert to pointer to byte array
+    // This allows treating the float64 data as raw bytes
+    bytePtr := (*[24]byte)(unsafe.Pointer(&data)) // 3 float64 * 8 bytes/float = 24 bytes
+    fmt.Printf("Byte array representation: %v\n", bytePtr)
+
+    // Modifying through unsafe.Pointer
+    // DANGER: This is highly unsafe and can lead to crashes if types don't match
+    var x int64 = 1234567890123456789
+    intPtr := &x
+    floatPtr := (*float64)(unsafe.Pointer(intPtr)) // Treating int64 as float64
+    fmt.Printf("\nOriginal int64: %d\n", x)
+    fmt.Printf("Interpreted as float64 (DANGER!): %f\n", *floatPtr) // Will be garbage
+
+    // Example: Direct memory access (similar to C)
+    // This is illustrative and should be avoided in general Go code
+    arr := [5]int{1, 2, 3, 4, 5}
+    ptr := &arr[0] // Pointer to the first element
+
+    // Increment the value of the second element (index 1) using pointer arithmetic
+    // This relies on the knowledge that int is 8 bytes on 64-bit systems
+    secondElementPtr := (*int)(unsafe.Pointer(uintptr(unsafe.Pointer(ptr)) + unsafe.Sizeof(arr[0])))
+    *secondElementPtr = 99
+    fmt.Printf("\nArray after unsafe modification: %v\n", arr) // [1 99 3 4 5]
+
+    // Use cases:
+    // - Interacting with C code via cgo.
+    // - Highly specialized performance optimizations (e.g., zero-copy operations).
+    // - Implementing custom data structures that need precise memory layout.
+    // - Serialization/deserialization of binary data.
+
+    // Always prefer safe Go code. Use unsafe only when absolutely necessary
+    // and with a deep understanding of memory layout and potential risks.
+}
+                </code></pre>
+
+                <h3>4.3. Generics (Go 1.18+)</h3>
+                <ul>
+                    <li>Allow writing functions and types that work with any of a set of types.</li>
+                    <li>Reduces code duplication while maintaining type safety.</li>
+                    <li>Uses type parameters and type constraints.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import "fmt"
+
+// --- Generic Function Example ---
+// Sums elements of a slice of any numeric type.
+// `T` is a type parameter. `comparable` is a constraint,
+// `int | float64` is a type list constraint.
+func SumNumbers[T int | float64](numbers []T) T {
+    var sum T // Zero value of type T
+    for _, num := range numbers {
+        sum += num
+    }
+    return sum
+}
+
+// --- Generic Type (Data Structure) Example ---
+// A generic Stack that can hold elements of any type `T`.
+type Stack[T any] struct {
+    elements []T
+}
+
+// Push adds an element to the stack
+func (s *Stack[T]) Push(item T) {
+    s.elements = append(s.elements, item)
+}
+
+// Pop removes and returns the top element from the stack
+func (s *Stack[T]) Pop() (T, bool) {
+    if len(s.elements) == 0 {
+        var zero T // Return zero value of type T
+        return zero, false
+    }
+    lastIndex := len(s.elements) - 1
+    item := s.elements[lastIndex]
+    s.elements = s.elements[:lastIndex] // Shrink slice
+    return item, true
+}
+
+// IsEmpty checks if the stack is empty
+func (s *Stack[T]) IsEmpty() bool {
+    return len(s.elements) == 0
+}
+
+// --- Generic Interface Example (Go 1.18+) ---
+// Constraint interface for types that can be ordered.
+// This is a common pattern for defining constraints.
+type Ordered interface {
+    ~int | ~float64 | ~string
+}
+
+// Generic function that finds the maximum element in a slice
+func Max[T Ordered](slice []T) (T, error) {
+    if len(slice) == 0 {
+        var zero T
+        return zero, fmt.Errorf("Max: empty slice")
+    }
+    maxVal := slice[0]
+    for _, val := range slice[1:] {
+        if val > maxVal {
+            maxVal = val
+        }
+    }
+    return maxVal, nil
+}
+
+func main() {
+    fmt.Println("--- Generics Demo ---")
+
+    // Using generic SumNumbers function
+    intSlice := []int{1, 2, 3, 4, 5}
+    floatSlice := []float64{1.1, 2.2, 3.3}
+
+    fmt.Printf("Sum of intSlice: %d\n", SumNumbers(intSlice))
+    fmt.Printf("Sum of floatSlice: %.2f\n", SumNumbers(floatSlice))
+
+    // Using generic Stack
+    fmt.Println("\n--- Generic Stack Demo ---")
+    intStack := Stack[int]{} // Stack of integers
+    intStack.Push(10)
+    intStack.Push(20)
+    fmt.Printf("Stack after pushes: %v\n", intStack)
+    if val, ok := intStack.Pop(); ok {
+        fmt.Printf("Popped from intStack: %d\n", val)
+    }
+    if val, ok := intStack.Pop(); ok {
+        fmt.Printf("Popped from intStack: %d\n", val)
+    }
+    if val, ok := intStack.Pop(); !ok {
+        fmt.Println("IntStack is empty.")
+    }
+
+    stringStack := Stack[string]{} // Stack of strings
+    stringStack.Push("Hello")
+    stringStack.Push("World")
+    fmt.Printf("Stack after pushes: %v\n", stringStack)
+    if val, ok := stringStack.Pop(); ok {
+        fmt.Printf("Popped from stringStack: %s\n", val)
+    }
+
+    // Using generic Max function
+    fmt.Println("\n--- Generic Max Demo ---")
+    maxInt, err := Max([]int{10, 5, 20, 15})
+    if err != nil {
+        fmt.Println(err)
+    } else {
+        fmt.Printf("Max int: %d\n", maxInt)
+    }
+
+    maxFloat, err := Max([]float64{3.14, 2.71, 1.618})
+    if err != nil {
+        fmt.Println(err)
+    } else {
+        fmt.Printf("Max float: %.2f\n", maxFloat)
+    }
+
+    maxString, err := Max([]string{"apple", "zebra", "banana"})
+    if err != nil {
+        fmt.Println(err)
+    } else {
+        fmt.Printf("Max string: %s\n", maxString)
+    }
+}
+                </code></pre>
+
+                <h3>4.4. Context (`context` package)</h3>
+                <ul>
+                    <li>Used to carry deadlines, cancellation signals, and other request-scoped values across API boundaries and between goroutines.</li>
+                    <li>Crucial for managing long-running operations in concurrent systems (e.g., web servers, microservices).</li>
+                    <li>Prevents goroutine leaks by propagating cancellation.</li>
+                </ul>
+                <pre><code class="language-go">
+package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+// simulateWork performs some work that can be cancelled or timed out
+func simulateWork(ctx context.Context, workerID int) {
+    for i := 1; i <= 5; i++ {
+        select {
+        case &lt;-ctx.Done(): // Check for cancellation signal
+            fmt.Printf("Worker %d: Context cancelled. Exiting early.\n", workerID)
+            return
+        case &lt;-time.After(500 * time.Millisecond): // Simulate work step
+            fmt.Printf("Worker %d: Step %d completed.\n", workerID, i)
+        }
+    }
+    fmt.Printf("Worker %d: Finished all work.\n", workerID)
+}
+
+// simulateLongRunningTask with a timeout
+func simulateLongRunningTask(ctx context.Context) {
+    fmt.Println("Long running task started...")
+    select {
+    case &lt;-ctx.Done():
+        fmt.Printf("Long running task: %v\n", ctx.Err()) // Print reason for cancellation
+    case &lt;-time.After(3 * time.Second): // Simulate task taking 3 seconds
+        fmt.Println("Long running task completed successfully.")
+    }
+}
+
+func main() {
+    fmt.Println("--- Context Demo ---")
+
+    // --- 1. Context with Timeout ---
+    fmt.Println("\n--- Context with Timeout (5 seconds) ---")
+    ctxTimeout, cancelTimeout := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancelTimeout() // Always call cancel to release resources
+
+    go simulateWork(ctxTimeout, 1)
+    go simulateWork(ctxTimeout, 2)
+
+    // Wait for a bit longer than the workers to see timeout effect on main task
+    simulateLongRunningTask(ctxTimeout)
+    time.Sleep(1 * time.Second) // Give goroutines a moment to print final messages
+
+    // --- 2. Context with Cancellation ---
+    fmt.Println("\n--- Context with Cancellation ---")
+    ctxCancel, cancelCancel := context.WithCancel(context.Background())
+
+    go simulateWork(ctxCancel, 3)
+    go simulateWork(ctxCancel, 4)
+
+    time.Sleep(1500 * time.Millisecond) // Let workers run for a bit
+    fmt.Println("Main: Cancelling context...")
+    cancelCancel() // Send cancellation signal
+
+    time.Sleep(1 * time.Second) // Give goroutines time to react
+    fmt.Println("Main function finished Cancellation Demo.")
+
+    // --- 3. Context with Value (for request-scoped data) ---
+    fmt.Println("\n--- Context with Value Demo ---")
+    type userIDKeyType string // Custom type for context key to avoid collisions
+    const userIDKey userIDKeyType = "userID"
+
+    ctxWithValue := context.WithValue(context.Background(), userIDKey, "user-123")
+
+    processRequest := func(ctx context.Context) {
+        if userID, ok := ctx.Value(userIDKey).(string); ok {
+            fmt.Printf("Processing request for User ID: %s\n", userID)
+        } else {
+            fmt.Println("User ID not found in context.")
+        }
+        // You can pass this context further down to sub-functions/goroutines
+        go func(c context.Context) {
+            if id, ok := c.Value(userIDKey).(string); ok {
+                fmt.Printf("  Sub-goroutine also sees User ID: %s\n", id)
+            }
+        }(ctx)
+    }
+
+    processRequest(ctxWithValue)
+    processRequest(context.Background()) // No user ID in this context
+
+    time.Sleep(100 * time.Millisecond) // Give sub-goroutine time to run
+    fmt.Println("Context with Value Demo Finished.")
+}
+                </code></pre>
+
+                <h3>4.5. Cgo (Calling C Code)</h3>
+                <ul>
+                    <li>Go's foreign function interface (FFI) for calling C code from Go.</li>
+                    <li>Allows leveraging existing C libraries or writing performance-critical sections in C.</li>
+                    <li>Requires careful memory management and understanding of C types.</li>
+                </ul>
+                <p><strong>Example:</strong></p>
+                <p><strong>`myc.c` (C code):</strong></p>
+                <pre><code class="language-c">
+// myc.c
+#include &lt;stdio.h&gt;
+
+// A simple C function
+void greet_c(const char* name) {
+    printf("Hello from C, %s!\n", name);
+}
+
+// A C function that adds two integers
+int add_c(int a, int b) {
+    return a + b;
+}
+                </code></pre>
+                <p><strong>`main.go` (Go code):</strong></p>
+                <pre><code class="language-go">
+package main
+
+/*
+#cgo CFLAGS: -I.
+#cgo LDFLAGS: -L. -lmyc
+
+#include "myc.h" // Include the C header (or declare functions directly)
+
+// Forward declarations for C functions
+void greet_c(const char* name);
+int add_c(int a, int b);
+*/
+import "C" // This special import "C" links to C code
+
+import (
+    "fmt"
+    "unsafe" // For converting Go strings to C strings
+)
+
+func main() {
+    fmt.Println("--- Cgo Demo ---")
+
+    // Call a C function that takes a string
+    cName := C.CString("Go") // Convert Go string to C string
+    defer C.free(unsafe.Pointer(cName)) // Free the C string memory
+
+    C.greet_c(cName) // Call the C function
+
+    // Call a C function that takes integers and returns an integer
+    result := C.add_c(C.int(10), C.int(20)) // Convert Go ints to C ints
+    fmt.Printf("Result of add_c(10, 20) from C: %d\n", result)
+
+    // Building Cgo:
+    // 1. Create a C source file (e.g., myc.c) and a header (myc.h) if needed.
+    // 2. Add Cgo directives in your Go file (e.g., #cgo CFLAGS, #cgo LDFLAGS).
+    // 3. Run `go build` or `go run`. Go will compile the C code and link it.
+    //    Example: go build -o myapp main.go myc.c
+    //    Or, for a shared library:
+    //    gcc -shared -o libmyc.so myc.c
+    //    go build -o myapp main.go
+}
+                </code></pre>
+                <p class="note"><strong>To run Cgo example:</strong>
+                    1. Create `myc.c`:
+                    ```c
+                    // myc.c
+                    #include <stdio.h>
+                    void greet_c(const char* name) {
+                        printf("Hello from C, %s!\n", name);
+                    }
+                    int add_c(int a, int b) {
+                        return a + b;
+                    }
+                    ```
+                    2. Create `myc.h`:
+                    ```c
+                    // myc.h
+                    #ifndef MYC_H
+                    #define MYC_H
+                    void greet_c(const char* name);
+                    int add_c(int a, int b);
+                    #endif
+                    ```
+                    3. Run: `go run main.go myc.c` (or `go build -o myapp main.go myc.c` then `./myapp`)
+                </p>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>5. Go Ecosystem & Best Practices</h2>
+                <button class="toggle-button" data-target="go-ecosystem-content">Expand</button>
+            </div>
+            <div id="go-ecosystem-content" class="collapsible-content">
+                <h3>5.1. Go Modules</h3>
+                <p>Go's dependency management system. Replaces GOPATH for managing project dependencies.</p>
+                <ul>
+                    <li>`go.mod`: Defines module path, Go version, and dependencies.</li>
+                    <li>`go.sum`: Records cryptographic checksums of module contents for verification.</li>
+                </ul>
+                <pre><code class="language-bash">
+# Initialize a new module in your project root
+go mod init example.com/myproject
+
+# Add a dependency (e.g., Gin web framework)
+go get github.com/gin-gonic/gin
+
+# Clean up unused dependencies
+go mod tidy
+
+# Vendor dependencies (copy them into your project for isolated builds)
+go mod vendor
+
+# Verify module dependencies
+go mod verify
+                </code></pre>
+
+                <h3>5.2. Testing (`go test`)</h3>
+                <p>Go has a built-in testing framework. Test files end with `_test.go` and contain functions starting with `Test`.</p>
+                <ul>
+                    <li>Unit tests, benchmark tests, example tests.</li>
+                    <li>Table-driven tests for multiple test cases.</li>
+                </ul>
+                <pre><code class="language-go">
+// math.go
+package mymath
+
+func Add(a, b int) int {
+    return a + b
+}
+
+func Subtract(a, b int) int {
+    return a - b
+}
+
+// math_test.go
+package mymath
+
+import "testing"
+
+// Unit test function
+func TestAdd(t *testing.T) {
+    // Define test cases using a slice of structs (table-driven test)
+    tests := []struct {
+        name string
+        a, b int
+        want int
+    }{
+        {"positive numbers", 1, 2, 3},
+        {"negative numbers", -1, -1, -2},
+        {"zero", 0, 0, 0},
+        {"positive and negative", 5, -3, 2},
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) { // t.Run allows running subtests
+            got := Add(tt.a, tt.b)
+            if got != tt.want {
+                t.Errorf("Add(%d, %d) = %d; want %d", tt.a, tt.b, got, tt.want)
+            }
+        })
+    }
+}
+
+// Another unit test
+func TestSubtract(t *testing.T) {
+    if Subtract(5, 2) != 3 {
+        t.Errorf("Subtract(5, 2) was incorrect, got: %d, want: %d.", Subtract(5, 2), 3)
+    }
+}
+
+// Benchmark test (for performance measurement)
+// To run: go test -bench=.
+func BenchmarkAdd(b *testing.B) {
+    for i := 0; i < b.N; i++ {
+        Add(i, i+1)
+    }
+}
+
+// Example test (appears in godoc)
+func ExampleAdd() {
+    sum := Add(1, 2)
+    fmt.Println(sum)
+    // Output: 3
+}
+                </code></pre>
+                <p class="note"><strong>To run tests:</strong>
+                    1. Create a directory (e.g., `mymath`).
+                    2. Put `math.go` and `math_test.go` inside it.
+                    3. Run `go mod init mymath` inside `mymath` directory.
+                    4. Navigate to `mymath` directory and run `go test` for unit tests, `go test -bench=.` for benchmarks.
+                </p>
+
+                <h3>5.3. Logging</h3>
+                <p>Go's standard library `log` package provides basic logging. For more advanced features (e.g., structured logging, different levels, output formats), third-party libraries like `logrus` or `zap` are common.</p>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "log"
+    "os"
+    "time"
+)
+
+func main() {
+    // --- Standard Log Package ---
+    fmt.Println("--- Standard Log Demo ---")
+
+    // Default logger prints to stderr with timestamp and file:line
+    log.Println("This is an info message using default logger.")
+    log.Printf("A formatted message: %s %d\n", "value", 123)
+
+    // Configure a custom logger
+    // log.New(output writer, prefix, flags)
+    file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+    if err != nil {
+        log.Fatalf("Failed to open log file: %v", err)
+    }
+    defer file.Close()
+
+    customLogger := log.New(file, "APP: ", log.Ldate|log.Ltime|log.Lshortfile)
+    customLogger.Println("This message goes to app.log")
+    customLogger.Printf("User %d logged in.\n", 101)
+
+    // --- Example with a structured logging library (Zap - conceptual) ---
+    // go get go.uber.org/zap
+    // import "go.uber.org/zap"
+    //
+    // logger, _ := zap.NewProduction() // Or zap.NewDevelopment()
+    // defer logger.Sync() // Flushes any buffered log entries
+    //
+    // logger.Info("User logged in",
+    //    zap.String("user_id", "user-abc"),
+    //    zap.Int("login_attempts", 3),
+    //    zap.Duration("duration", time.Second*5),
+    // )
+    // logger.Error("Failed to connect to database",
+    //    zap.Error(fmt.Errorf("connection refused")),
+    //    zap.String("db_host", "localhost"),
+    // )
+
+    fmt.Println("Check app.log for custom logger output.")
+    time.Sleep(100 * time.Millisecond) // Give time for logs to write
+}
+                </code></pre>
+
+                <h3>5.4. Profiling (`pprof`)</h3>
+                <p>Go has excellent built-in profiling tools (`pprof`) for CPU, memory, goroutine, blocking, and mutex profiles. Essential for performance optimization in production.</p>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    _ "net/http/pprof" // Import this to register pprof handlers
+    "time"
+)
+
+// simulateCPUWork simulates a CPU-bound task
+func simulateCPUWork() {
+    sum := 0
+    for i := 0; i < 1_000_000_000; i++ {
+        sum += i // This will consume CPU
+    }
+    _ = sum // Prevent compiler optimization of sum
+}
+
+// simulateMemoryAllocation simulates memory allocation
+func simulateMemoryAllocation() {
+    _ = make([]byte, 1024*1024*10) // Allocate 10MB
+}
+
+func main() {
+    // Start pprof server on a dedicated, controlled port (e.g., 6060)
+    // IMPORTANT: Restrict access to this port in production using firewalls/VPN!
+    go func() {
+        fmt.Println("Pprof server starting on :6060...")
+        log.Fatal(http.ListenAndServe("localhost:6060", nil))
+    }()
+
+    // Your main application logic
+    http.HandleFunc("/work", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Println("Handling /work request...")
+        simulateCPUWork()
+        simulateMemoryAllocation()
+        time.Sleep(50 * time.Millisecond) // Simulate some I/O
+        fmt.Fprintf(w, "Work done!")
+    })
+
+    fmt.Println("Main application server starting on :8080...")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+// To use pprof:
+// 1. Run the Go application.
+// 2. In your browser, navigate to http://localhost:6060/debug/pprof/ to see available profiles.
+// 3. To collect a CPU profile for 30 seconds:
+//    go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
+// 4. To collect a heap (memory) profile:
+//    go tool pprof http://localhost:6060/debug/pprof/heap
+// 5. Once inside pprof, use commands like 'top' (show top N functions by samples), 'list <funcname>', 'web' (generates SVG call graph, requires graphviz).
+//    `web` command provides a visual flame graph or call graph, very helpful for understanding performance hot spots.
+                </code></pre>
+
+                <h3>5.5. Code Style (`go fmt`, `go vet`, Linters)</h3>
+                <ul>
+                    <li><strong>`go fmt`:</strong> Automatically formats Go source code according to Go's official style.</li>
+                    <li><strong>`go vet`:</strong> A static analysis tool that reports suspicious constructs, like unreachable code or unhandled errors.</li>
+                    <li><strong>Linters (e.g., `golangci-lint`):</strong> Aggregate multiple static analysis tools to enforce code quality and style.</li>
+                </ul>
+                <pre><code class="language-bash">
+# Format your Go code
+go fmt ./... # Formats all .go files in current module
+
+# Check for suspicious constructs
+go vet ./...
+
+# Install golangci-lint
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# Run golangci-lint
+golangci-lint run ./...
+                </code></pre>
+
+                <h3>5.6. Error Handling Best Practices</h3>
+                <ul>
+                    <li><strong>Return Errors Explicitly:</strong> Go's idiomatic way.</li>
+                    <li><strong>Don't Ignore Errors:</strong> Always check `err != nil`.</li>
+                    <li><strong>Add Context:</strong> Use `fmt.Errorf("message: %w", err)` to wrap errors and provide call stack context.</li>
+                    <li><strong>Sentinel Errors:</strong> Define specific errors (e.g., `var ErrNotFound = errors.New("not found")`) for callers to check with `errors.Is()`.</li>
+                    <li><strong>Custom Error Types:</strong> Create custom `struct` types that implement the `error` interface for richer error information, checked with `errors.As()`.</li>
+                    <li><strong>Panic/Recover:</strong> Reserve for truly unrecoverable errors or graceful shutdown of goroutines (not for normal control flow).</li>
+                </ul>
+
+                <h3>5.7. Build & Deployment</h3>
+                <ul>
+                    <li><strong>Cross-compilation:</strong> Go can compile binaries for different operating systems and architectures from a single machine.</li>
+                    <li><strong>Static Binaries:</strong> Go binaries are statically linked by default (except for Cgo), making them easy to deploy.</li>
+                    <li><strong>Docker:</strong> Containerizing Go applications is common for consistent environments.</li>
+                </ul>
+                <pre><code class="language-bash">
+# Cross-compile for Linux (64-bit)
+GOOS=linux GOARCH=amd64 go build -o myapp_linux main.go
+
+# Cross-compile for Windows (64-bit)
+GOOS=windows GOARCH=amd64 go build -o myapp_windows.exe main.go
+
+# Dockerfile example for a Go application
+# FROM golang:1.22-alpine AS builder
+# WORKDIR /app
+# COPY go.mod go.sum ./
+# RUN go mod download
+# COPY . .
+# RUN CGO_ENABLED=0 go build -o /dist/myapp .
+
+# FROM alpine:latest
+# WORKDIR /root/
+# COPY --from=builder /dist/myapp .
+# CMD ["./myapp"]
+
+# Build Docker image
+# docker build -t myapp-go .
+
+# Run Docker container
+# docker run -p 8080:8080 myapp-go
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>6. Next Steps: Specialization Paths</h2>
+                <button class="toggle-button" data-target="go-specialization-content">Expand</button>
+            </div>
+            <div id="go-specialization-content" class="collapsible-content">
+                <p>With a strong foundation in Go, you can explore various specialization areas:</p>
+                <ul>
+                    <li><strong>Web Development:</strong>
+                        <ul>
+                            <li><strong>Frameworks:</strong> Gin, Echo, Fiber (for REST APIs), Revel (full-stack).</li>
+                            <li><strong>Standard Library:</strong> `net/http` for building robust web services without external frameworks.</li>
+                            <li><strong>Databases:</strong> `database/sql` (standard interface), GORM (ORM), sqlx (SQL helper).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Microservices:</strong>
+                        <ul>
+                            <li><strong>RPC:</strong> gRPC, Protocol Buffers.</li>
+                            <li><strong>Message Queues:</strong> Kafka, RabbitMQ clients.</li>
+                            <li><strong>Service Discovery:</strong> Consul, etcd.</li>
+                        </ul>
+                    </li>
+                    <li><strong>DevOps & Cloud Native:</strong>
+                        <ul>
+                            <li><strong>Containerization:</strong> Docker, Kubernetes (many Kubernetes components are written in Go).</li>
+                            <li><strong>Cloud SDKs:</strong> AWS SDK for Go, Google Cloud Go client libraries.</li>
+                            <li><strong>CLI Tools:</strong> Cobra, spf13/Viper.</li>
+                        </ul>
+                    </li>
+                    <li><strong>System Programming:</strong>
+                        <ul>
+                            <li><strong>Networking:</strong> `net` package for low-level network programming.</li>
+                            <li><strong>File Systems:</strong> `os` package.</li>
+                            <li><strong>Concurrency Patterns:</strong> Deeper dive into advanced channel patterns, context usage.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Data Processing:</strong>
+                        <ul>
+                            <li>Building high-throughput data pipelines.</li>
+                            <li>Integration with big data technologies.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p class="note">Go's simplicity and performance make it an excellent choice for building scalable and reliable systems. Continuous practice and building projects are key to mastering the language.</p>
+            </div>
+        </div>
+
+        <div class="warning">
+            <p>Learning Go is a journey of understanding its philosophy: simplicity, explicit error handling, and concurrency. Embrace these principles, and you'll write powerful and efficient software.</p>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-button');
+
+            toggleButtons.forEach(button => {
+                const targetId = button.dataset.target;
+                const contentDiv = document.getElementById(targetId);
+
+                if (contentDiv) {
+                    // Initialize state: all collapsed by default
+                    contentDiv.style.display = 'none';
+                    button.textContent = 'Expand';
+                    button.classList.add('collapsed');
+
+                    button.addEventListener('click', function() {
+                        if (contentDiv.style.display === 'block') {
+                            contentDiv.style.display = 'none';
+                            button.textContent = 'Expand';
+                            button.classList.add('collapsed');
+                        } else {
+                            contentDiv.style.display = 'block';
+                            button.textContent = 'Collapse';
+                            button.classList.remove('collapsed');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+    <script>Prism.plugins.lineNumbers();</script>
+    <script>Prism.highlightAll();</script>
+</body>
+</html>

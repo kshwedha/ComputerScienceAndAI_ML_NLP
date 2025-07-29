@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Model Comparison Table</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #1f2937;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        tr:hover {
+            background-color: #f3f4f6;
+        }
+        a {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+        a:hover {
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6 max-w-7xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Language Model Comparison</h1>
+        <p class="text-gray-600 mb-8 text-center">A comparison of open-source and source-available language models, including parameters, file size, use cases, quality, and licensing.</p>
+
+        <div class="table-container bg-white rounded-lg shadow-md">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Model ID</th>
+                        <th>Params (Active)</th>
+                        <th>File Size</th>
+                        <th>Use Cases</th>
+                        <th>Quality</th>
+                        <th>Creator / Owner</th>
+                        <th>License / Access</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>TinyLlama 1.1B Chat</strong></td>
+                        <td><code>TinyLlama/TinyLlama-1.1B-Chat-v1.0</code></td>
+                        <td>~1.1 B</td>
+                        <td>~3.5 GB</td>
+                        <td>Lightweight chat, prototyping</td>
+                        <td>Moderate</td>
+                        <td>Community (Peiyuan Zhang) (<a href="https://huggingface.co/docs/transformers/en/model_doc/mixtral">Hugging Face</a>, <a href="https://arxiv.org/abs/2401.02385">arXiv</a>, <a href="https://www.databricks.com/legal/open-model-license">Databricks</a>, <a href="https://en.wikipedia.org/wiki/Mistral_AI">Wikipedia</a>, <a href="https://help.mistral.ai/en/articles/347393-under-which-license-are-the-open-models-available">Mistral AI</a>)</td>
+                        <td>Apache-2.0, fully open</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mistral 7B Instruct</strong></td>
+                        <td><code>mistralai/Mistral-7B-Instruct-v0.2</code></td>
+                        <td>~7 B</td>
+                        <td>~14 GB</td>
+                        <td>Fast chat, reasoning</td>
+                        <td>High</td>
+                        <td>Mistral AI (<a href="https://en.wikipedia.org/wiki/Mistral_AI">Wikipedia</a>, <a href="https://help.mistral.ai/en/articles/347393-under-which-license-are-the-open-models-available">Mistral AI</a>)</td>
+                        <td>Apache-2.0, fully open</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mixtral 8×7B Instruct</strong></td>
+                        <td><code>mistralai/Mixtral-8x7B-Instruct</code></td>
+                        <td>~46B (12.9B per token)</td>
+                        <td>~25 GB</td>
+                        <td>Efficient code, multilingual</td>
+                        <td>Very High</td>
+                        <td>Mistral AI (<a href="https://mistral.ai/news/mixtral-of-experts">Mistral AI</a>, <a href="https://en.wikipedia.org/wiki/Mistral_AI">Wikipedia</a>)</td>
+                        <td>Apache-2.0, fully open</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen 2.5 7B Instruct</strong></td>
+                        <td><code>Qwen/Qwen2.5-7B-Instruct</code></td>
+                        <td>~7 B</td>
+                        <td>~14 GB</td>
+                        <td>Balanced chat & reasoning</td>
+                        <td>Mid (~80%)</td>
+                        <td>Alibaba Qwen team (<a href="https://aibusiness.com/nlp/alibaba-publishes-open-source-ai-model-for-commercial-use">AI Business</a>, <a href="https://en.wikipedia.org/wiki/Qwen">Wikipedia</a>)</td>
+                        <td>Apache-2.0, open weights</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen 2.5 14B Instruct</strong></td>
+                        <td><code>Qwen/Qwen2.5-14B-Instruct</code></td>
+                        <td>~14 B</td>
+                        <td>~28 GB</td>
+                        <td>General-purpose tasks</td>
+                        <td>Mid-High</td>
+                        <td>Alibaba Qwen team (<a href="https://en.wikipedia.org/wiki/Qwen">Wikipedia</a>)</td>
+                        <td>Apache-2.0, open weights</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen 2.5 32B Instruct</strong></td>
+                        <td><code>Qwen/Qwen2.5-32B-Instruct</code></td>
+                        <td>~32.5 B</td>
+                        <td>~64 GB</td>
+                        <td>High-performance chat & reasoning</td>
+                        <td>Very High (~84%)</td>
+                        <td>Alibaba Qwen team (<a href="https://en.wikipedia.org/wiki/Qwen">Wikipedia</a>)</td>
+                        <td>Apache-2.0, open weights</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen 2.5 Coder 32B</strong></td>
+                        <td><code>Qwen/Qwen2.5-Coder-32B-Instruct</code></td>
+                        <td>~32.5 B</td>
+                        <td>~65 GB</td>
+                        <td>Code generation & reasoning</td>
+                        <td>Elite (~85-86%)</td>
+                        <td>Alibaba Qwen team (<a href="https://en.wikipedia.org/wiki/Qwen">Wikipedia</a>)</td>
+                        <td>Apache-2.0, open weights</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mistral Small 3.1 Instruct</strong></td>
+                        <td><code>mistralai/Mistral-Small-3.1-Instruct</code></td>
+                        <td>~24 B</td>
+                        <td>~48 GB</td>
+                        <td>Long-context summarization</td>
+                        <td>High</td>
+                        <td>Mistral AI (<a href="https://en.wikipedia.org/wiki/Mistral_AI">Wikipedia</a>)</td>
+                        <td>Apache-2.0, fully open</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LLaMA 3.3 70B Instruct</strong></td>
+                        <td><code>meta-llama/Llama-3-70B-Instruct</code></td>
+                        <td>~70 B</td>
+                        <td>~140 GB</td>
+                        <td>Reasoning, chat at scale</td>
+                        <td>Very High (~83%)</td>
+                        <td>Meta AI</td>
+                        <td>Open Foundation model license</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mistral Large 2</strong></td>
+                        <td><code>mistralai/Mistral-Large-2-Instruct</code></td>
+                        <td>~123 B</td>
+                        <td>~240 GB</td>
+                        <td>Multilingual, low hallucination</td>
+                        <td>Top (~85-87%)</td>
+                        <td>Mistral AI (<a href="https://en.wikipedia.org/wiki/Mistral_AI">Wikipedia</a>)</td>
+                        <td>Research license, free access¹</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DBRX (MoE, 36B active)</strong></td>
+                        <td><code>databricks/dbrx-36b</code></td>
+                        <td>132 B total, 36 B active</td>
+                        <td>~90 GB</td>
+                        <td>SOTA reasoning & code</td>
+                        <td>State-of-Art</td>
+                        <td>Databricks / MosaicML (<a href="https://en.wikipedia.org/wiki/DBRX">Wikipedia</a>, <a href="https://aimlapi.com/blog/dbrx-grok-mixtral-mixture-of-experts-is-a-trending-architecture-for-llms">AIML API</a>)</td>
+                        <td>Source-available (DOML), some restrictions²</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mixtral 8×22B Instruct</strong></td>
+                        <td><code>mistralai/Mixtral-8x22B-V0.1</code></td>
+                        <td>~141 B total, ~39 B active</td>
+                        <td>~100 GB</td>
+                        <td>Math & reasoning at scale</td>
+                        <td>Very High</td>
+                        <td>Mistral AI (<a href="https://en.wikipedia.org/wiki/Mistral_AI">Wikipedia</a>, <a href="https://mistral.ai/news/mixtral-of-experts">Mistral AI</a>)</td>
+                        <td>Apache-2.0, fully open</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen 2.5‑72B / Qwen 3</strong></td>
+                        <td><code>Qwen/Qwen2.5-72B-Instruct</code> or <code>Qwen/Qwen3-235B-A22B-Instruct</code></td>
+                        <td>72–235 B (≈37 B active)</td>
+                        <td>~180–300 GB</td>
+                        <td>Elite reasoning, multilingual tools</td>
+                        <td>SOTA (~88-90%)</td>
+                        <td>Alibaba Qwen team (<a href="https://en.wikipedia.org/wiki/Qwen">Wikipedia</a>)</td>
+                        <td>Apache-2.0 for most; 72B partially proprietary</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-gray-600 text-sm">
+            <p><strong>Notes:</strong></p>
+            <ul class="list-disc list-inside">
+                <li>¹ <strong>Mistral Large 2</strong>: Free access under research license; commercial use may require additional terms.</li>
+                <li>² <strong>DBRX</strong>: Source-available under Databricks Open Model License (DOML), with restrictions on commercial use.</li>
+            </ul>
+        </div>
+
+        <footer class="mt-8 text-center text-gray-500">
+            <p>Generated for model comparison | July 29, 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

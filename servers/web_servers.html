@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Servers: Nginx & Apache Tomcat for Live Production</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 3.2em;
+            letter-spacing: 1px;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 0;
+            font-size: 2.4em;
+            flex-grow: 1;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 35px;
+            font-size: 1.9em;
+        }
+        h4 {
+            color: #1e6d9b;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background-color: #e0e6ed;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #c0392b;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        strong {
+            color: #e74c3c;
+        }
+        .concept-section {
+            background-color: #f8fafa;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 30px 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .concept-section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .code-block {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #6a4f00;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border-left: 6px solid #dc3545;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #721c24;
+        }
+
+        /* --- Collapsible Specific Styles --- */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 20px;
+        }
+        .toggle-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            min-width: 90px;
+            text-align: center;
+        }
+        .toggle-button:hover {
+            background-color: #2980b9;
+        }
+        .toggle-button.collapsed {
+            background-color: #95a5a6;
+        }
+        .collapsible-content {
+            display: none;
+            padding-top: 10px;
+        }
+        .collapsible-content.expanded {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Web Servers: Nginx & Apache Tomcat for Live Production</h1>
+
+        <p>In a live production environment, web servers play a critical role in serving content, handling traffic, and ensuring the stability and security of web applications. This document provides a detailed overview of two widely used production web servers: Nginx and Apache Tomcat, covering their installation, core configurations, and best practices for deployment.</p>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>1. Understanding Web Servers in Production</h2>
+                <button class="toggle-button" data-target="web-servers-overview-content">Expand</button>
+            </div>
+            <div id="web-servers-overview-content" class="collapsible-content">
+                <h3>What is a Web Server?</h3>
+                <p>At its core, a web server is a computer program that accepts requests from clients (web browsers) over the internet and delivers web pages or other web content in response. Its primary function is to store, process, and deliver website content to users.</p>
+                <h3>Role in Production Environments</h3>
+                <ul>
+                    <li><strong>Serving Static Content:</strong> Efficiently delivers static files like HTML, CSS, JavaScript, images, and videos directly to clients.</li>
+                    <li><strong>Reverse Proxy:</strong> Acts as an intermediary for requests from clients to backend application servers. It forwards client requests to the appropriate backend server and then returns the server's response to the client. This hides the backend infrastructure and provides a single public endpoint.</li>
+                    <li><strong>Load Balancing:</strong> Distributes incoming network traffic across multiple backend servers to ensure no single server is overloaded, improving responsiveness and availability.</li>
+                    <li><strong>SSL/TLS Termination:</strong> Handles the encryption and decryption of traffic (HTTPS), offloading this computationally intensive task from backend application servers.</li>
+                    <li><strong>Security:</strong> Can filter malicious requests, enforce rate limits, and provide an additional layer of security before requests reach the application.</li>
+                    <li><strong>Compression & Caching:</strong> Can compress responses (e.g., Gzip) and cache frequently accessed content to reduce bandwidth usage and improve load times.</li>
+                </ul>
+                <h3>Web Server vs. Application Server vs. WSGI/ASGI Server</h3>
+                <ul>
+                    <li><strong>Web Server (e.g., Nginx, Apache HTTPD):</strong> Primarily serves static content, acts as a reverse proxy, and handles load balancing. It's the "front door" to your application.</li>
+                    <li><strong>Application Server (e.g., Apache Tomcat, JBoss, WebLogic):</strong> Designed to run dynamic application code (e.g., Java Servlets, JSP). It provides the runtime environment for your application logic. Can also serve static files, but often less efficiently than dedicated web servers.</li>
+                    <li><strong>WSGI/ASGI Server (e.g., Gunicorn, Uvicorn, uWSGI, Daphne):</strong> Specific to Python, these are application servers that implement the WSGI or ASGI specification. They run your Python web framework (Django, Flask, FastAPI) and communicate with a web server (like Nginx) via HTTP or a specialized protocol.</li>
+                </ul>
+                <p class="note"><strong>Best Practice:</strong> In a production setup, it's common to use a dedicated web server (like Nginx) as a reverse proxy in front of your application server (like Tomcat for Java, or Gunicorn/Uvicorn for Python) to leverage the strengths of each.</p>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>2. Nginx Configuration for Live Production</h2>
+                <button class="toggle-button" data-target="nginx-config-content">Expand</button>
+            </div>
+            <div id="nginx-config-content" class="collapsible-content">
+                <h3>What is Nginx?</h3>
+                <p><strong>Nginx (engine-x)</strong> is a free, open-source, high-performance HTTP server, reverse proxy, load balancer, mail proxy, and HTTP cache. It's known for its high concurrency, low memory usage, and stability, making it a popular choice for high-traffic websites and microservices architectures.</p>
+                <h3>Why use Nginx in Production?</h3>
+                <ul>
+                    <li><strong>High Performance:</strong> Event-driven architecture allows it to handle thousands of concurrent connections efficiently.</li>
+                    <li><strong>Scalability:</strong> Excellent as a load balancer for distributing traffic across multiple backend servers.</li>
+                    <li><strong>Security:</strong> Can act as a first line of defense, filtering requests and terminating SSL.</li>
+                    <li><strong>Static File Serving:</strong> Extremely efficient at serving static assets, offloading this task from slower application servers.</li>
+                    <li><strong>Flexibility:</strong> Powerful configuration language for routing, rewriting, and custom logic.</li>
+                </ul>
+
+                <h3>Installation Steps (Ubuntu/CentOS)</h3>
+                <h4>Ubuntu/Debian:</h4>
+                <pre><code class="language-bash">
+# Update package list
+sudo apt update
+
+# Install Nginx
+sudo apt install nginx
+
+# Enable Nginx to start on boot and start the service
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+# Verify status
+sudo systemctl status nginx
+# Should show 'active (running)'
+                </code></pre>
+                <h4>CentOS/RHEL:</h4>
+                <pre><code class="language-bash">
+# Install EPEL repository (for Nginx)
+sudo yum install epel-release
+
+# Install Nginx
+sudo yum install nginx
+
+# Enable Nginx to start on boot and start the service
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+# Verify status
+sudo systemctl status nginx
+# Should show 'active (running)'
+                </code></pre>
+                <p class="note"><strong>Firewall:</strong> Remember to open HTTP (port 80) and HTTPS (port 443) in your firewall (e.g., `sudo ufw allow 'Nginx HTTP'` or `sudo firewall-cmd --permanent --add-service=http`).</p>
+
+                <h3>Core Configuration (`nginx.conf`)</h3>
+                <p>Nginx's main configuration file is typically located at <code>/etc/nginx/nginx.conf</code>. It includes other configuration files from <code>/etc/nginx/conf.d/</code> or <code>/etc/nginx/sites-enabled/</code>. It's best practice to create separate configuration files for each site or application within <code>sites-available</code> and then symlink them to <code>sites-enabled</code>.</p>
+                <pre><code class="language-nginx">
+# /etc/nginx/nginx.conf (Main Nginx configuration)
+
+worker_processes auto; # Number of worker processes (usually auto or number of CPU cores)
+error_log /var/log/nginx/error.log warn; # Path to error log
+pid /var/run/nginx.pid; # Path to PID file
+
+events {
+    worker_connections 1024; # Max number of simultaneous connections per worker
+    # multi_accept on; # Uncomment to accept as many connections as possible
+}
+
+http {
+    include /etc/nginx/mime.types; # MIME types for serving files
+    default_type application/octet-stream;
+
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log main; # Path to access log
+
+    sendfile on; # Enable sendfile for efficient file transfers
+    #tcp_nopush on; # Enable to send headers and start of file in one packet
+    tcp_nodelay on; # Enable to send data immediately
+    keepalive_timeout 65; # Timeout for keep-alive connections
+    types_hash_max_size 2048;
+
+    gzip on; # Enable gzip compression
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Include virtual host configurations
+    include /etc/nginx/conf.d/*.conf; # For CentOS/RHEL
+    include /etc/nginx/sites-enabled/*; # For Ubuntu/Debian
+}
+                </code></pre>
+
+                <h3>Reverse Proxy Configuration (for Python WSGI/ASGI Apps)</h3>
+                <p>This configuration makes Nginx sit in front of your Python application server (e.g., Gunicorn or Uvicorn), forwarding requests to it.</p>
+                <p>Create a new file, e.g., <code>/etc/nginx/sites-available/my_python_app.conf</code> (Ubuntu) or <code>/etc/nginx/conf.d/my_python_app.conf</code> (CentOS).</p>
+                <pre><code class="language-nginx">
+# /etc/nginx/sites-available/my_python_app.conf (or conf.d/my_python_app.conf)
+
+server {
+    listen 80; # Listen on HTTP port
+    server_name your_domain.com www.your_domain.com; # Replace with your domain
+
+    # Redirect HTTP to HTTPS (recommended for production)
+    # return 301 https://$host$request_uri;
+
+    location / {
+        # Proxy requests to the Gunicorn/Uvicorn server
+        # Replace 127.0.0.1:8000 with your application server's address and port
+        proxy_pass http://127.0.0.1:8000; 
+
+        # Pass important headers to the backend
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Adjust proxy timeouts if your application has long-running requests
+        proxy_connect_timeout 75s;
+        proxy_send_timeout 75s;
+        proxy_read_timeout 75s;
+    }
+
+    # Serve static files directly from Nginx (highly recommended)
+    # Replace /path/to/your/app/static with the actual path to your static files
+    location /static/ {
+        alias /path/to/your/app/static/; # Use alias for directory mapping
+        expires 30d; # Cache static files for 30 days
+        add_header Cache-Control "public, must-revalidate";
+    }
+
+    # Serve media files (e.g., user-uploaded content)
+    # Replace /path/to/your/app/media with the actual path to your media files
+    location /media/ {
+        alias /path/to/your/app/media/;
+        expires 30d;
+        add_header Cache-Control "public, must-revalidate";
+    }
+
+    # Custom Error Pages
+    error_page 404 /404.html;
+    location = /404.html {
+        root /usr/share/nginx/html; # Default Nginx HTML directory
+        internal; # Only accessible via internal redirect
+    }
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+        internal;
+    }
+}
+                </code></pre>
+                <p class="note"><strong>After creating/modifying a config file:</strong>
+                    1.  If on Ubuntu, create a symlink: `sudo ln -s /etc/nginx/sites-available/my_python_app.conf /etc/nginx/sites-enabled/`
+                    2.  Test Nginx configuration for syntax errors: `sudo nginx -t`
+                    3.  Reload Nginx to apply changes: `sudo systemctl reload nginx`
+                </p>
+
+                <h3>Load Balancing Configuration</h3>
+                <p>Nginx can act as a simple load balancer, distributing requests across multiple backend application instances (e.g., multiple Gunicorn/Uvicorn workers on different ports or servers).</p>
+                <pre><code class="language-nginx">
+# /etc/nginx/sites-available/my_load_balanced_app.conf (or conf.d/my_load_balanced_app.conf)
+
+upstream my_app_backends {
+    # Define your backend application servers
+    # Replace with actual IPs/ports of your app instances
+    server 127.0.0.1:8000 weight=3; # Instance 1 (receives 3x more traffic)
+    server 127.0.0.1:8001; # Instance 2
+    server 192.168.1.10:8000 backup; # Backup server, only used when others are down
+    server 192.168.1.11:8000 down; # Temporarily mark server as unavailable
+
+    # Load balancing methods (default is round-robin)
+    # least_conn; # Send request to server with fewest active connections
+    # ip_hash;    # Ensures requests from same IP go to same server (for session stickiness)
+    # hash $request_uri consistent; # Consistent hashing based on URI
+    # sticky;     # Requires Nginx Plus or third-party module for advanced session stickiness
+
+    # Health checks for upstream servers (Nginx Plus feature, or use external health checks)
+    # health_check interval=5s passes=2 fails=3;
+}
+
+server {
+    listen 80;
+    server_name your_load_balanced_domain.com;
+
+    location / {
+        proxy_pass http://my_app_backends; # Use the upstream group name
+        
+        # Standard proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Proxy buffering (read more below)
+        proxy_buffering on;
+        proxy_buffers 4 256k; # Number and size of buffers
+        proxy_buffer_size 128k; # Size of buffer for the first part of the response
+        proxy_busy_buffers_size 256k; # Max size of buffers that can be busy sending to client
+    }
+
+    # ... static file serving locations as above ...
+}
+                </code></pre>
+
+                <h3>SSL/TLS Termination (HTTPS)</h3>
+                <p>Nginx can handle SSL certificates, encrypting traffic between clients and Nginx, while Nginx communicates with the backend over plain HTTP (or internal HTTPS if configured).</p>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li><strong>Obtain SSL Certificate:</strong> The most common and recommended way is using Let's Encrypt with Certbot.
+                        <pre><code class="language-bash">
+# Install Certbot (for Ubuntu)
+sudo apt update
+sudo apt install certbot python3-certbot-nginx
+
+# Obtain and install certificate (Certbot will auto-configure Nginx)
+sudo certbot --nginx -d your_domain.com -d www.your_domain.com
+# Follow prompts. It will typically set up redirects from HTTP to HTTPS automatically.
+                        </code></pre>
+                    </li>
+                    <li><strong>Manual Nginx SSL Configuration (if not using Certbot auto-config):</strong>
+                        <pre><code class="language-nginx">
+# /etc/nginx/sites-available/my_secure_app.conf (or conf.d/my_secure_app.conf)
+
+server {
+    listen 80;
+    server_name your_domain.com www.your_domain.com;
+    return 301 https://$host$request_uri; # Redirect HTTP to HTTPS
+}
+
+server {
+    listen 443 ssl http2; # Listen on HTTPS port, enable HTTP/2
+    server_name your_domain.com www.your_domain.com;
+
+    # SSL certificate paths
+    ssl_certificate /etc/letsencrypt/live/your_domain.com/fullchain.pem; # Path to full chain cert
+    ssl_certificate_key /etc/letsencrypt/live/your_domain.com/privkey.pem; # Path to private key
+
+    # Recommended SSL settings for security
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1.2 TLSv1.3; # Restrict to strong protocols
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+    ssl_prefer_server_ciphers on;
+    ssl_stapling on; # Enable OCSP stapling
+    ssl_stapling_verify on; # Verify OCSP response
+    resolver 8.8.8.8 8.8.4.4 valid=300s; # Google DNS or your preferred DNS
+    resolver_timeout 5s;
+
+    # Add HSTS header (HTTP Strict Transport Security)
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000; # Proxy to your backend app
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https; # Important: Tell backend it's HTTPS
+        proxy_set_header X-Forwarded-Port 443; # Tell backend the original port
+    }
+
+    # ... static/media file serving locations ...
+}
+                        </code></pre>
+                <p class="note"><strong>Important:</strong> After any Nginx config change, always run `sudo nginx -t` to test syntax and `sudo systemctl reload nginx` to apply changes.</p>
+
+                <h3>Advanced Nginx Concepts & Optimization</h3>
+                <h4>Location Block Matching Order</h4>
+                <p>Nginx processes `location` directives in a specific order. Understanding this is crucial for correct routing:</p>
+                <ol>
+                    <li><strong>Exact match (`=`):</strong> Highest priority. If an exact match is found, searching stops.</li>
+                    <li><strong>Longest prefix match (`^~`):</strong> If a prefix match is found and marked with `^~`, regular expressions are not checked.</li>
+                    <li><strong>Regular expressions (`~` or `~*`):</strong> Processed in the order they appear in the configuration file. The first matching regex is used. `~` is case-sensitive, `~*` is case-insensitive.</li>
+                    <li><strong>Prefix match (no modifier):</strong> If no exact or regex match, the longest prefix match is used.</li>
+                    <li><strong>General prefix match (`/`):</strong> Lowest priority, acts as a fallback.</li>
+                </ol>
+                <pre><code class="language-nginx">
+location = /exact/path { ... } # Exact match: highest priority
+location ^~ /static/files/ { ... } # Longest prefix, stop regex search
+location ~* \.(jpg|jpeg|gif|png)$ { ... } # Case-insensitive regex for images
+location /api/v1/ { ... } # Prefix match
+location / { ... } # General fallback
+                </code></pre>
+
+                <h4>Proxy Buffering</h4>
+                <p>Nginx buffers responses from backend servers by default. This means Nginx receives the full response from the backend before sending it to the client. This can improve performance for slow clients and allow Nginx to handle caching and compression more effectively. However, for real-time applications (e.g., SSE), you might need to disable buffering.</p>
+                <ul>
+                    <li>`proxy_buffering on;` (default) / `off;`</li>
+                    <li>`proxy_buffers`: Number and size of buffers for reading responses.</li>
+                    <li>`proxy_buffer_size`: Size of the buffer for the first part of the response.</li>
+                </ul>
+
+                <h4>Nginx Caching (Proxy Cache)</h4>
+                <p>Nginx can cache responses from upstream servers, reducing the load on backend applications and improving response times for repeated requests.</p>
+                <pre><code class="language-nginx">
+# In http block or server block:
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m max_size=10g
+                 inactive=60m use_temp_path=off;
+
+server {
+    # ...
+    location / {
+        proxy_pass http://my_app_backends;
+        proxy_set_header Host $host;
+        # ... other headers ...
+
+        proxy_cache my_cache; # Use the defined cache zone
+        proxy_cache_valid 200 302 10m; # Cache 200/302 responses for 10 minutes
+        proxy_cache_valid 404 1m; # Cache 404 responses for 1 minute
+        proxy_cache_min_uses 1; # Cache only if requested at least once
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504; # Serve stale content on errors
+        proxy_cache_revalidate on; # Revalidate cached content with If-Modified-Since/If-None-Match headers
+        add_header X-Proxy-Cache $upstream_cache_status; # Add header to see cache status
+    }
+}
+                </code></pre>
+
+                <h4>Security Hardening with Nginx</h4>
+                <ul>
+                    <li><strong>Limit Request Methods:</strong> Restrict allowed HTTP methods for certain paths.
+                        <pre><code class="language-nginx">
+location /admin/ {
+    limit_except GET POST { deny all; } # Only allow GET and POST
+    proxy_pass http://admin_backend;
+}
+                        </code></pre>
+                    </li>
+                    <li><strong>Prevent Directory Listing:</strong> Ensure `autoindex off;` is set in relevant `location` blocks for static files.</li>
+                    <li><strong>Hide Nginx Version:</strong> `server_tokens off;` in the `http` block to prevent Nginx version disclosure in error pages.</li>
+                    <li><strong>Rate Limiting:</strong> (As discussed in previous section) Use `limit_req_zone` and `limit_req` directives.
+                        <pre><code class="language-nginx">
+# In http block:
+limit_req_zone $binary_remote_addr zone=mylimit:10m rate=5r/s;
+
+# In server or location block:
+location /api/login {
+    limit_req zone=mylimit burst=10 nodelay;
+    proxy_pass http://auth_backend;
+}
+                        </code></pre>
+                    </li>
+                    <li><strong>Deny Access to Hidden Files:</strong>
+                        <pre><code class="language-nginx">
+location ~ /\.ht {
+    deny all;
+}
+                        </code></pre>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>3. Apache Tomcat Configuration for Live Production</h2>
+                <button class="toggle-button" data-target="tomcat-config-content">Expand</button>
+            </div>
+            <div id="tomcat-config-content" class="collapsible-content">
+                <h3>What is Apache Tomcat?</h3>
+                <p><strong>Apache Tomcat</strong> is an open-source implementation of the Java Servlet, JavaServer Pages (JSP), Java Expression Language, and Java WebSocket technologies. It functions as a web server and, more importantly, as an application server for Java-based web applications. It's widely used for deploying Java web applications (WAR files).</p>
+                <h3>Why use Tomcat in Production?</h3>
+                <ul>
+                    <li><strong>Java Ecosystem:</strong> The standard for deploying Java web applications.</li>
+                    <li><strong>Robustness & Stability:</strong> Mature and battle-tested in enterprise environments.</li>
+                    <li><strong>Scalability:</strong> Supports clustering and load balancing (often with Nginx or Apache HTTPD in front).</li>
+                    <li><strong>Management Tools:</strong> Comes with a web-based manager for deploying and managing applications.</li>
+                    <li><strong>Community Support:</strong> Large and active community.</li>
+                </ul>
+
+                <h3>Installation Steps (Ubuntu/CentOS)</h3>
+                <h4>Prerequisites: Java Development Kit (JDK)</h4>
+                <p>Tomcat requires Java. Ensure JDK is installed:</p>
+                <pre><code class="language-bash">
+# Ubuntu:
+sudo apt update
+sudo apt install openjdk-11-jdk # Or openjdk-17-jdk for newer versions
+
+# CentOS:
+sudo yum install java-11-openjdk-devel # Or java-17-openjdk-devel
+                </code></pre>
+                <h4>Tomcat Installation (Manual Download & Setup - Recommended for control)</h4>
+                <p>It's often better to download a specific version of Tomcat and manage it manually rather than relying on package managers for production.</p>
+                <pre><code class="language-bash">
+# 1. Create a Tomcat user (for security)
+sudo useradd -m -U -d /opt/tomcat -s /bin/false tomcat
+
+# 2. Download Tomcat (replace with desired version)
+# Find latest stable version at https://tomcat.apache.org/download-90.cgi (or 10.x, 11.x)
+TOMCAT_VERSION="9.0.80" # Example version
+wget https://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz
+
+# 3. Extract to /opt/tomcat
+sudo tar -xf apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /opt/tomcat --strip-components=1
+
+# 4. Set permissions
+sudo chown -R tomcat:tomcat /opt/tomcat
+sudo chmod -R u+x /opt/tomcat/bin # Make scripts executable
+
+# 5. Create a systemd service file for easy management
+# /etc/systemd/system/tomcat.service
+sudo nano /etc/systemd/system/tomcat.service
+                </code></pre>
+                <pre><code class="language-systemd">
+# Content for /etc/systemd/system/tomcat.service
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=network.target
+
+[Service]
+Type=forking
+User=tomcat
+Group=tomcat
+Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" # Adjust if your Java path is different
+Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+Environment="CATALINA_HOME=/opt/tomcat"
+Environment="CATALINA_BASE=/opt/tomcat"
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/opt/tomcat/bin/shutdown.sh
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+                </code></pre>
+                <pre><code class="language-bash">
+# 6. Reload systemd, enable and start Tomcat
+sudo systemctl daemon-reload
+sudo systemctl enable tomcat
+sudo systemctl start tomcat
+
+# 7. Verify status
+sudo systemctl status tomcat
+# Should show 'active (running)'
+                </code></pre>
+                <p class="note"><strong>Firewall:</strong> Open port 8080 (default Tomcat HTTP connector) if accessing directly: `sudo ufw allow 8080` or `sudo firewall-cmd --permanent --add-port=8080/tcp`.</p>
+
+                <h3>Core Configuration Files</h3>
+                <p>Tomcat's main configurations are in the <code>/opt/tomcat/conf/</code> directory:</p>
+                <ul>
+                    <li><code>server.xml</code>: Main configuration for connectors (HTTP, AJP), hosts, and engine.</li>
+                    <li><code>web.xml</code>: Global web application deployment descriptor.</li>
+                    <li><code>context.xml</code>: Default context configuration for all web applications.</li>
+                    <li><code>tomcat-users.xml</code>: User authentication for Manager/Host Manager apps (<strong>do not use in production for actual app users!</strong>).</li>
+                </ul>
+
+                <h4>`server.xml` - Key Connectors and Hosts</h4>
+                <pre><code class="language-xml">
+&lt;!-- /opt/tomcat/conf/server.xml --&gt;
+
+&lt;Server port="8005" shutdown="SHUTDOWN"&gt;
+  &lt;!-- Listener for JMX remote management --&gt;
+  &lt;Listener className="org.apache.catalina.startup.VersionLoggerListener" /&gt;
+  &lt;Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" /&gt;
+  &lt;Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" /&gt;
+  &lt;Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" /&gt;
+  &lt;Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" /&gt;
+
+  &lt;!-- Define a non-SSL HTTP/1.1 Connector on port 8080 --&gt;
+  &lt;Connector port="8080" protocol="HTTP/1.1"
+             connectionTimeout="20000"
+             redirectPort="8443"
+             maxThreads="200" # Max number of request processing threads
+             minSpareThreads="25" # Minimum number of idle threads
+             acceptCount="100" # Max queue size for incoming connections
+             URIEncoding="UTF-8" /&gt;
+
+  &lt;!-- Define an AJP 1.3 Connector on port 8009 --&gt;
+  &lt;!-- Used for integration with Apache HTTPD or Nginx for better performance and features --&gt;
+  &lt;!-- Uncomment and configure if using Nginx/Apache as front-end proxy --&gt;
+  &lt;Connector protocol="AJP/1.3"
+             address="0.0.0.0" # Listen on all interfaces
+             port="8009"
+             redirectPort="8443"
+             secretRequired="true" # IMPORTANT: Require a secret for AJP
+             secret="your_strong_ajp_secret"
+             packetSize="8192" # AJP packet size, default is 8192
+             URIEncoding="UTF-8" /&gt;
+
+
+  &lt;!-- Define an SSL/TLS HTTP/1.1 Connector on port 8443 --&gt;
+  &lt;!-- Usually handled by Nginx as a reverse proxy in production --&gt;
+  &lt;!--
+  &lt;Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+             maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
+             clientAuth="false" sslProtocol="TLS"
+             keystoreFile="/path/to/your/certificate.p12"
+             keystorePass="your_keystore_password"
+             sslEnabledProtocols="TLSv1.2,TLSv1.3" # Restrict to strong protocols
+             ciphers="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" /&gt;
+  --&gt;
+
+  &lt;Engine name="Catalina" defaultHost="localhost"&gt;
+    &lt;!-- Realm for authentication --&gt;
+    &lt;Realm className="org.apache.catalina.realm.LockOutRealm"&gt;
+      &lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+             resourceName="UserDatabase"/&gt;
+    &lt;/Realm&gt;
+
+    &lt;!-- Define the default Host for applications --&gt;
+    &lt;Host name="localhost"  appBase="webapps"
+          unpackWARs="true" autoDeploy="true"&gt;
+
+      &lt;!-- Access log Valve --&gt;
+      &lt;Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+             prefix="localhost_access_log." suffix=".txt"
+             pattern="%h %l %u %t &amp;quot;%r&amp;quot; %s %b %D %F" # Added %D (response time) and %F (time to first byte)
+             rotatable="true" # Enable log rotation
+             fileDateFormat=".yyyy-MM-dd" /&gt;
+
+    &lt;/Host&gt;
+  &lt;/Engine&gt;
+&lt;/Server&gt;
+                </code></pre>
+
+                <h3>Deploying a Web Application (WAR file)</h3>
+                <p>Java web applications are packaged as WAR (Web Application Archive) files. Tomcat can deploy them in several ways:</p>
+                <ol>
+                    <li><strong>Copying to `webapps` directory:</strong> The simplest method. Copy your <code>your_app.war</code> file to <code>/opt/tomcat/webapps/</code>. Tomcat will automatically detect and deploy it.</li>
+                    <li><strong>Using Manager App:</strong> Tomcat provides a web-based Manager application (usually at <code>http://localhost:8080/manager/html</code>). You can upload WAR files through its interface. (Requires configuring users in <code>tomcat-users.xml</code> for manager roles).</li>
+                    <li><strong>Manual Deployment with Context File:</strong> Create a context XML file (e.g., <code>/opt/tomcat/conf/Catalina/localhost/your_app.xml</code>) pointing to your WAR file or expanded web app directory.
+                        <pre><code class="language-xml">
+&lt;!-- /opt/tomcat/conf/Catalina/localhost/your_app.xml --&gt;
+&lt;Context docBase="/path/to/your/your_app.war" reloadable="false"&gt;
+  &lt;!-- Or for an exploded directory: --&gt;
+  &lt;!-- &lt;Context docBase="/path/to/your/your_app_exploded_dir" reloadable="false"&gt; --&gt;
+
+  &lt;!-- Example of a custom resource (e.g., database connection pool) --&gt;
+  &lt;Resource name="jdbc/myDB" auth="Container" type="javax.sql.DataSource"
+            factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+            driverClassName="org.postgresql.Driver"
+            url="jdbc:postgresql://localhost:5432/mydb"
+            username="dbuser" password="dbpassword"
+            maxActive="100" minIdle="10" maxIdle="30" /&gt;
+&lt;/Context&gt;
+                        </code></pre>
+                        <p class="note"><strong>`reloadable="false"`:</strong> In production, set this to `false` to prevent Tomcat from scanning for changes and reloading the app, which can cause performance issues and memory leaks. Restart Tomcat manually after deployments.</p>
+                    </li>
+                </ol>
+                <p>After deployment, your application will typically be accessible at `http://your_server_ip:8080/your_app_context_root` (e.g., `http://localhost:8080/your_app`).</p>
+
+                <h3>Virtual Hosts (for multiple applications/domains)</h3>
+                <p>To host multiple web applications or domains on a single Tomcat instance, you can define multiple <code>&lt;Host&gt;</code> elements in <code>server.xml</code>.</p>
+                <pre><code class="language-xml">
+&lt;!-- /opt/tomcat/conf/server.xml --&gt;
+&lt;Engine name="Catalina" defaultHost="localhost"&gt;
+  &lt;!-- Default Host --&gt;
+  &lt;Host name="localhost"  appBase="webapps"
+        unpackWARs="true" autoDeploy="true"&gt;
+    &lt;Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+           prefix="localhost_access_log." suffix=".txt"
+           pattern="%h %l %u %t &amp;quot;%r&amp;quot; %s %b" /&gt;
+  &lt;/Host&gt;
+
+  &lt;!-- New Virtual Host for example.com --&gt;
+  &lt;Host name="www.example.com"  appBase="/opt/tomcat/webapps_example"
+        unpackWARs="true" autoDeploy="true"&gt;
+    &lt;!-- Context for a specific app on this host --&gt;
+    &lt;Context path="/mywebapp" docBase="/path/to/mywebapp.war" reloadable="false" /&gt;
+    &lt;!-- Or if you copy WARs to appBase: --&gt;
+    &lt;!-- Your WAR files would go into /opt/tomcat/webapps_example/ --&gt;
+  &lt;/Host&gt;
+
+  &lt;!-- Another Virtual Host for another.com --&gt;
+  &lt;Host name="www.another.com"  appBase="/opt/tomcat/webapps_another"
+        unpackWARs="true" autoDeploy="true"&gt;
+    &lt;!-- ... context definitions ... --&gt;
+  &lt;/Host&gt;
+
+&lt;/Engine&gt;
+                </code></pre>
+                <p class="note"><strong>Important:</strong> You'll need to create the `appBase` directories (e.g., `/opt/tomcat/webapps_example`) and ensure Tomcat user has permissions. Also, configure your DNS and Nginx (if used) to point to these domain names.</p>
+
+                <h3>SSL/TLS Configuration in Tomcat (Less common with Nginx fronting)</h3>
+                <p>While Tomcat can handle SSL, it's generally recommended to terminate SSL at a dedicated web server like Nginx or Apache HTTPD, which are optimized for this task. However, if you need Tomcat to handle SSL directly:</p>
+                <ol>
+                    <li><strong>Generate a Keystore:</strong> Use Java's `keytool` to create a JKS (Java KeyStore) or PKCS12 file containing your private key and certificate.
+                        <pre><code class="language-bash">
+# Generate a new keystore and key pair (for self-signed or CSR)
+keytool -genkeypair -alias tomcat -keyalg RSA -keysize 2048 -keystore /opt/tomcat/conf/tomcat.keystore -validity 365
+
+# Import your CA-signed certificate into the keystore
+# (Assuming you have your_domain.crt and your_domain_chain.crt)
+keytool -import -trustcacerts -alias tomcat -file your_domain.crt -keystore /opt/tomcat/conf/tomcat.keystore
+keytool -import -trustcacerts -alias tomcat_chain -file your_domain_chain.crt -keystore /opt/tomcat/conf/tomcat.keystore
+                        </code></pre>
+                    </li>
+                    <li><strong>Configure SSL Connector in `server.xml`:</strong> Uncomment and configure the SSL connector (usually port 8443).
+                        <pre><code class="language-xml">
+&lt;!-- /opt/tomcat/conf/server.xml --&gt;
+&lt;Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+           maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
+           clientAuth="false" sslProtocol="TLS"
+           keystoreFile="/opt/tomcat/conf/tomcat.keystore"
+           keystorePass="your_keystore_password"
+           sslEnabledProtocols="TLSv1.2,TLSv1.3" # Restrict to strong protocols
+           ciphers="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" /&gt;
+                        </code></pre>
+                    </li>
+                    <li><strong>Restart Tomcat:</strong> `sudo systemctl restart tomcat`.</li>
+                </ol>
+                <p class="warning"><strong>Security:</strong> Ensure your keystore file is protected with strong permissions and a strong password. In production, always use certificates from trusted Certificate Authorities (CAs).</p>
+
+                <h3>Advanced Tomcat Concepts & Optimization</h3>
+                <h4>JVM Tuning (Java Virtual Machine)</h4>
+                <p>Tomcat runs within a JVM, and its performance is heavily influenced by JVM settings, especially memory (heap) and garbage collection (GC).</p>
+                <p>Edit `setenv.sh` (create if it doesn't exist) in `/opt/tomcat/bin/`:</p>
+                <pre><code class="language-bash">
+# /opt/tomcat/bin/setenv.sh
+# This file is sourced by startup.sh and shutdown.sh
+
+# Set initial and maximum heap size
+# Xms: initial heap size, Xmx: maximum heap size
+# Adjust based on your application's memory requirements and available RAM
+export JAVA_OPTS="-Xms2G -Xmx4G" # Example: 2GB initial, 4GB max
+
+# Choose a Garbage Collector (e.g., G1GC for modern applications)
+# -XX:+UseG1GC: Enable G1 Garbage Collector
+# -XX:MaxGCPauseMillis=200: Target max GC pause of 200ms
+# -XX:G1HeapRegionSize=16M: Size of G1 regions
+# -XX:+ParallelRefProcEnabled: Improves parallel reference processing
+# -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=10: Adjust new generation size
+# -XX:ConcGCThreads=4: Number of concurrent GC threads
+export JAVA_OPTS="$JAVA_OPTS -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+# Set character encoding (important for consistent handling of non-ASCII characters)
+export JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
+
+# Remote JMX for monitoring (enable with caution, secure it!)
+# -Dcom.sun.management.jmxremote.port=9010
+# -Dcom.sun.management.jmxremote.authenticate=true
+# -Dcom.sun.management.jmxremote.ssl=false
+# -Dcom.sun.management.jmxremote.password.file=/opt/tomcat/conf/jmxremote.password
+# -Dcom.sun.management.jmxremote.access.file=/opt/tomcat/conf/jmxremote.access
+# export JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+                </code></pre>
+                <p class="warning"><strong>JVM Tuning Caution:</strong> Incorrect JVM tuning can severely degrade performance. Monitor GC logs and application performance after changes. Use tools like VisualVM or JConsole for analysis.</p>
+
+                <h4>Connector Tuning</h4>
+                <p>The `Connector` element in `server.xml` defines how Tomcat handles incoming requests. Tuning its attributes is crucial for performance.</p>
+                <ul>
+                    <li>`maxThreads`: The maximum number of request processing threads to be created. This limits the number of concurrent requests Tomcat can handle. Too low can cause requests to queue; too high can lead to excessive context switching.</li>
+                    <li>`minSpareThreads`: The minimum number of idle threads that are kept alive.</li>
+                    <li>`acceptCount`: The maximum queue length for incoming connection requests when all `maxThreads` are busy. If the queue is full, incoming requests will be rejected.</li>
+                    <li>`connectionTimeout`: The number of milliseconds after which an accepted connection that is not receiving data will be closed.</li>
+                    <li>`URIEncoding`: Character encoding used to decode the URI. Always set to `UTF-8`.</li>
+                    <li>`protocol`: Choose between `HTTP/1.1` (blocking I/O), `org.apache.coyote.http11.Http11NioProtocol` (non-blocking I/O, recommended for high concurrency), or `AJP/1.3`.</li>
+                </ul>
+                <p>See `server.xml` example above for placement.</p>
+
+                <h4>Logging Configuration (`logging.properties` and `web.xml`)</h4>
+                <p>Tomcat uses `java.util.logging` by default, configured in `/opt/tomcat/conf/logging.properties`. You can also configure application-specific logging via `log4j` or `logback` within your WAR file.</p>
+                <ul>
+                    <li><strong>Access Logs:</strong> Configured via `AccessLogValve` in `server.xml` (see example above). Crucial for understanding traffic patterns.</li>
+                    <li><strong>Application Logs:</strong> Your Java application's logs. Configure your logging framework (Log4j, Logback, SLF4J) to write to files within your application's `WEB-INF/logs` directory (or a shared log directory).</li>
+                    <li><strong>Tomcat Internal Logs:</strong> `catalina.out`, `localhost.log`, `manager.log`, etc., in `/opt/tomcat/logs/`. Monitor these for server-level errors.</li>
+                </ul>
+                <p class="note"><strong>Log Rotation:</strong> Ensure your logging setup (both Tomcat's and your application's) includes log rotation to prevent disk space exhaustion. `logrotate` is a common OS tool for this.</p>
+
+                <h4>Security Hardening for Tomcat</h4>
+                <ul>
+                    <li><strong>Remove Unused Applications:</strong> Delete default applications like `docs`, `examples`, `host-manager`, `manager` from `/opt/tomcat/webapps/` if not needed. If `manager` is needed, secure it with strong passwords and IP restrictions in `tomcat-users.xml` and Nginx/firewall.</li>
+                    <li><strong>Disable `autoDeploy` and `unpackWARs`:</strong> In production `server.xml`, set `autoDeploy="false"` and `unpackWARs="false"` on your `Host` elements. Deploy applications manually and restart Tomcat.</li>
+                    <li><strong>Restrict Manager/Admin Access:</strong> If using the Manager app, configure strong passwords in `tomcat-users.xml` and restrict access to specific IP addresses using Nginx or firewall rules.</li>
+                    <li><strong>Remove Default Users:</strong> Change or remove default users/passwords in `tomcat-users.xml`.</li>
+                    <li><strong>Disable Shutdown Port:</strong> Change `Server port="8005"` to `-1` in `server.xml` to disable the remote shutdown port, or restrict access to it.</li>
+                    <li><strong>Secure `web.xml` and `context.xml`:</strong> Review and harden global `web.xml` and `context.xml` settings, e.g., disable directory listings, set error pages.</li>
+                    <li><strong>HTTP Strict Transport Security (HSTS):</strong> Configure Nginx to add the HSTS header, forcing browsers to use HTTPS.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>4. Nginx + Tomcat Integration</h2>
+                <button class="toggle-button" data-target="nginx-tomcat-integration-content">Expand</button>
+            </div>
+            <div id="nginx-tomcat-integration-content" class="collapsible-content">
+                <h3>Why Combine Nginx and Tomcat?</h3>
+                <p>Combining Nginx and Tomcat is a common and highly recommended production setup. It leverages the strengths of both servers:</p>
+                <ul>
+                    <li><strong>Nginx (Front-end):</strong>
+                        <ul>
+                            <li>Excellent at serving static files (HTML, CSS, JS, images) directly and efficiently.</li>
+                            <li>Handles SSL/TLS termination, offloading encryption overhead from Tomcat.</li>
+                            <li>Provides robust load balancing across multiple Tomcat instances.</li>
+                            <li>Acts as a security layer, protecting Tomcat from direct internet exposure.</li>
+                            <li>Can handle HTTP/2.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tomcat (Backend):</strong>
+                        <ul>
+                            <li>Specializes in executing Java Servlets and JSP, running your dynamic application logic.</li>
+                            <li>Focuses its resources on application processing rather than static file serving or SSL.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Integration Steps (Nginx as Reverse Proxy for Tomcat)</h3>
+                <p>This setup typically involves Nginx listening on standard HTTP/HTTPS ports (80/443) and proxying dynamic requests to Tomcat, which listens on an internal port (e.g., 8080 or 8009 for AJP).</p>
+                <ol>
+                    <li><strong>Ensure Tomcat is running:</strong> Verify Tomcat is running and accessible on its internal port (e.g., 8080).</li>
+                    <li><strong>Configure Tomcat Connector (Optional but Recommended: AJP):</strong>
+                        <p>For better performance and to pass more request attributes, you can use Tomcat's AJP (Apache JServ Protocol) connector. This is a binary protocol optimized for proxying. Uncomment the AJP connector in <code>/opt/tomcat/conf/server.xml</code> and set a strong secret.</p>
+                        <pre><code class="language-xml">
+&lt;!-- /opt/tomcat/conf/server.xml --&gt;
+&lt;Connector protocol="AJP/1.3"
+             address="0.0.0.0" # Listen on all interfaces
+             port="8009"
+             redirectPort="8443"
+             secretRequired="true" # IMPORTANT: Enable secret
+             secret="YOUR_VERY_STRONG_AJP_SECRET_HERE" /&gt;
+                        </code></pre>
+                        <p class="note"><strong>Restart Tomcat</strong> after modifying `server.xml`: `sudo systemctl restart tomcat`.</p>
+                    </li>
+                    <li><strong>Configure Nginx Reverse Proxy:</strong>
+                        <p>Create an Nginx server block (e.g., <code>/etc/nginx/sites-available/my_java_app.conf</code>) to proxy requests to Tomcat.</p>
+                        <pre><code class="language-nginx">
+# /etc/nginx/sites-available/my_java_app.conf (or conf.d/my_java_app.conf)
+
+server {
+    listen 80;
+    server_name your_java_app_domain.com www.your_java_app_domain.com;
+    # Add SSL config here if you have it
+    # return 301 https://$host$request_uri; # Redirect HTTP to HTTPS
+
+    # Define an upstream block for Tomcat instances (for load balancing)
+    upstream tomcat_backends {
+        # If using AJP:
+        server 127.0.0.1:8009 fail_timeout=0; # AJP port
+        # If using HTTP:
+        # server 127.0.0.1:8080 fail_timeout=0; # HTTP port
+
+        # Add more Tomcat instances for load balancing:
+        # server 127.0.0.1:8081 fail_timeout=0;
+        # server 192.168.1.10:8080 fail_timeout=0;
+    }
+
+    location / {
+        # Proxy to the Tomcat backend group
+        proxy_pass http://tomcat_backends;
+
+        # Standard proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme; # Tell Tomcat the original protocol (http or https)
+
+        # If using AJP, these headers are often handled by the AJP protocol itself
+        # but can be explicitly set if needed for specific application logic:
+        # proxy_set_header X-Forwarded-Port $server_port;
+        # proxy_set_header X-Forwarded-Host $host;
+        # proxy_set_header X-Forwarded-Server $host;
+    }
+
+    # Serve static content directly from Nginx (if your Java app has static files)
+    # This assumes your static files are collected into a specific directory on the server
+    # e.g., /var/www/your_java_app/static/
+    location /static/ {
+        alias /var/www/your_java_app/static/;
+        expires 30d;
+        add_header Cache-Control "public, must-revalidate";
+    }
+
+    # Serve media content directly from Nginx (if your Java app has user-uploaded media)
+    # e.g., /var/www/your_java_app/media/
+    location /media/ {
+        alias /var/www/your_java_app/media/;
+        expires 30d;
+        add_header Cache-Control "public, must-revalidate";
+    }
+
+    # If your Java app has a specific context root (e.g., /mywebapp)
+    # location /mywebapp/ {
+    #     proxy_pass http://tomcat_backends/mywebapp/;
+    #     proxy_set_header Host $host;
+    #     # ... other headers ...
+    # }
+}
+                        </code></pre>
+                    </li>
+                    <li><strong>Enable and Test Nginx Config:</strong>
+                        <pre><code class="language-bash">
+# If on Ubuntu, create symlink
+sudo ln -s /etc/nginx/sites-available/my_java_app.conf /etc/nginx/sites-enabled/
+
+# Test Nginx configuration
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx
+                        </code></pre>
+                    </li>
+                </ol>
+                <p class="note"><strong>AJP vs. HTTP Proxy:</strong> AJP is generally more efficient for proxying between Nginx/Apache and Tomcat, as it's a binary protocol designed for this. However, HTTP proxying is simpler to configure and often sufficient. Ensure `secretRequired` and `secret` are configured for AJP for security.</p>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>5. Production Best Practices for Web Servers</h2>
+                <button class="toggle-button" data-target="best-practices-content">Expand</button>
+            </div>
+            <div id="best-practices-content" class="collapsible-content">
+                <h3>Security</h3>
+                <ul>
+                    <li><strong>Firewall Rules:</strong> Only open necessary ports (80, 443, and potentially internal application ports for specific needs).</li>
+                    <li><strong>Least Privilege:</strong> Run web servers and application servers under dedicated, non-root user accounts.</li>
+                    <li><strong>Regular Updates:</strong> Keep Nginx, Tomcat, Java, and your OS updated to patch security vulnerabilities.</li>
+                    <li><strong>SSL/TLS:</strong> Always use HTTPS in production. Enforce strong SSL protocols and ciphers. Implement HSTS.</li>
+                    <li><strong>Disable Unused Features:</strong> Remove or disable default applications (e.g., Tomcat Manager, Host Manager) if not actively used, or restrict access to them.</li>
+                    <li><strong>Input Validation:</strong> While handled by your application, web servers can add basic filtering for malicious requests.</li>
+                    <li><strong>Security Headers:</strong> Configure Nginx to add security-related HTTP headers (e.g., `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Content-Security-Policy`).</li>
+                </ul>
+                <h3>Monitoring & Logging</h3>
+                <ul>
+                    <li><strong>Centralized Logging:</strong> Aggregate Nginx and Tomcat access/error logs to a centralized logging system (e.g., ELK Stack, Splunk, Grafana Loki). This is crucial for debugging and auditing. Use structured logging (JSON) where possible.</li>
+                    <li><strong>Log Rotation:</strong> Implement log rotation for all server and application logs to prevent disk space exhaustion (e.g., using `logrotate` on Linux).</li>
+                    <li><strong>Metrics:</strong> Collect performance metrics (CPU, memory, network I/O, request rates, error rates, latency) from Nginx (via stub_status or Nginx Plus) and Tomcat (via JMX, or specific exporters) using tools like Prometheus and visualize with Grafana.</li>
+                    <li><strong>Alerting:</strong> Set up alerts for critical thresholds (e.g., high error rates, low disk space, high CPU usage, high latency, unresponsive health checks).</li>
+                    <li><strong>Distributed Tracing:</strong> (As discussed in a previous section) Integrate tracing into your application and use a tracing system (Jaeger, Zipkin) to monitor request flow across services.</li>
+                </ul>
+                <h3>High Availability & Scalability</h3>
+                <ul>
+                    <li><strong>Load Balancing:</strong> Use Nginx or a dedicated load balancer (e.g., AWS ELB/ALB, HAProxy) to distribute traffic across multiple instances of your application servers.</li>
+                    <li><strong>Multiple Instances:</strong> Run multiple instances of your web server and application server for redundancy and to handle increased load.</li>
+                    <li><strong>Session Management:</strong> For stateful applications, ensure session stickiness (e.g., `ip_hash` in Nginx, or sticky sessions in load balancers) or, preferably, make your application stateless and use a shared session store (e.g., Redis).</li>
+                    <li><strong>Caching:</strong> Implement caching at various layers (Nginx cache, application-level cache, CDN) to reduce load on backend servers.</li>
+                    <li><strong>Connection Limits:</strong> Tune Nginx `worker_connections` and Tomcat `maxThreads`/`acceptCount` to match server capacity and expected load.</li>
+                </ul>
+                <h3>Deployment & Management</h3>
+                <ul>
+                    <li><strong>Automated Deployments:</strong> Use CI/CD pipelines to automate the build, test, and deployment process, reducing human error.</li>
+                    <li><strong>Configuration Management:</strong> Use tools like Ansible, Puppet, Chef, or Terraform to manage server configurations consistently across environments.</li>
+                    <li><strong>Resource Limits:</strong> Configure appropriate resource limits (CPU, memory) for your web server and application server processes, especially in containerized environments (Docker, Kubernetes). This prevents a single process from consuming all resources.</li>
+                    <li><strong>Health Checks & Graceful Shutdowns:</strong> Implement robust health check endpoints in your application that load balancers can use. Ensure your application can gracefully shut down (e.g., by finishing in-flight requests) when signaled by the orchestrator.</li>
+                    <li><strong>Containerization:</strong> Consider deploying Nginx and Tomcat in Docker containers and orchestrating them with Kubernetes for easier management, scalability, and portability.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="warning">
+            <p>Deploying web applications in production requires careful planning, robust configuration, and continuous monitoring. Always test configurations thoroughly in staging environments before applying them to live production systems.</p>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-button');
+
+            toggleButtons.forEach(button => {
+                const targetId = button.dataset.target;
+                const contentDiv = document.getElementById(targetId);
+
+                if (contentDiv) {
+                    // Initialize state: all collapsed by default
+                    contentDiv.style.display = 'none';
+                    button.textContent = 'Expand';
+                    button.classList.add('collapsed');
+
+                    button.addEventListener('click', function() {
+                        if (contentDiv.style.display === 'block') {
+                            contentDiv.style.display = 'none';
+                            button.textContent = 'Expand';
+                            button.classList.add('collapsed');
+                        } else {
+                            contentDiv.style.display = 'block';
+                            button.textContent = 'Collapse';
+                            button.classList.remove('collapsed');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

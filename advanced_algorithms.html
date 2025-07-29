@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Algorithms: Logic and Code (Python)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 3.2em;
+            letter-spacing: 1px;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 0;
+            font-size: 2.4em;
+            flex-grow: 1;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 35px;
+            font-size: 1.9em;
+        }
+        h4 {
+            color: #1e6d9b;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background-color: transparent;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #fff;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        strong {
+            color: #e74c3c;
+        }
+        .concept-section {
+            background-color: #f8fafa;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 30px 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .concept-section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .code-block {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #6a4f00;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border-left: 6px solid #dc3545;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #721c24;
+        }
+
+        /* --- Collapsible Specific Styles --- */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 20px;
+        }
+        .toggle-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            min-width: 90px;
+            text-align: center;
+        }
+        .toggle-button:hover {
+            background-color: #2980b9;
+        }
+        .toggle-button.collapsed {
+            background-color: #95a5a6;
+        }
+        .collapsible-content {
+            display: none;
+            padding-top: 10px;
+        }
+        .collapsible-content.expanded {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Advanced Algorithms: Logic and Code (Python)</h1>
+
+        <p>Building upon foundational algorithms, advanced algorithms tackle more complex problems, often involving specific data structures, optimization techniques, or probabilistic approaches. Mastering these algorithms is key to solving real-world challenges efficiently in areas like artificial intelligence, network routing, bioinformatics, and data compression. This guide delves into several important advanced algorithms, explaining their core logic and providing Python implementations.</p>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>1. Graph Search & Pathfinding Algorithms</h2>
+                <button class="toggle-button" data-target="graph-pathfinding-content">Expand</button>
+            </div>
+            <div id="graph-pathfinding-content" class="collapsible-content">
+                <h3>1.1. A* Search Algorithm</h3>
+                <p><strong>Logic:</strong> A* (pronounced "A-star") is an informed search algorithm used for pathfinding and graph traversal. It finds the shortest path from a starting node to a goal node in a weighted graph. A* combines elements of Dijkstra's algorithm (which guarantees optimality) and Greedy Best-First Search (which uses a heuristic to guide its search). It evaluates nodes using a cost function $f(n) = g(n) + h(n)$, where:</p>
+                <ul>
+                    <li>$g(n)$ is the actual cost from the start node to node $n$.</li>
+                    <li>$h(n)$ is the estimated cost (heuristic) from node $n$ to the goal node.</li>
+                </ul>
+                <p>A* explores nodes that are most likely to lead to the goal, making it more efficient than uninformed searches. For A* to guarantee the shortest path, the heuristic $h(n)$ must be <strong>admissible</strong> (never overestimates the true cost to the goal) and preferably <strong>consistent</strong> (monotone).</p>
+                <p><strong>Time Complexity:</strong> Depends on the heuristic. In worst-case, $O(E)$ or $O(E \log V)$ (similar to Dijkstra's if heuristic is bad), but often much faster with a good heuristic. Exponential in worst-case for general graphs without good heuristics. For grids, it can be $O(V \log V)$ or $O(E)$.</p>
+                <p><strong>Space Complexity:</strong> $O(V)$ (stores all visited nodes in open/closed sets)</p>
+                <pre><code class="language-python">
+import heapq # For the priority queue
+
+class Node:
+    def __init__(self, position, parent=None):
+        self.position = position
+        self.parent = parent
+        self.g = 0 # Cost from start node to current node
+        self.h = 0 # Heuristic cost from current node to end node
+        self.f = 0 # Total cost (g + h)
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+    def __lt__(self, other): # For priority queue comparison
+        return self.f &lt; other.f
+
+    def __hash__(self): # For using Node objects in sets/dictionaries
+        return hash(self.position)
+
+def astar_search(graph, start, end, heuristic_func):
+    """
+    Finds the shortest path using A* algorithm.
+    graph: dictionary representing adjacency list {node: {neighbor: weight}}
+    start, end: start and end nodes
+    heuristic_func: function(node1, node2) -&gt; estimated_cost
+    """
+    start_node = Node(start)
+    end_node = Node(end)
+
+    open_list = [] # Priority queue of nodes to be evaluated
+    heapq.heappush(open_list, start_node)
+
+    # Dictionary to store the best g-score for each node
+    # g_scores[node] = cost from start to node
+    g_scores = {node: float('inf') for node in graph}
+    g_scores[start_node.position] = 0
+
+    # Dictionary to store the node with the best f-score (used for reconstruction)
+    # This is effectively the 'closed set' for nodes already evaluated
+    came_from = {} # {current_node: previous_node}
+
+    while open_list:
+        current = heapq.heappop(open_list)
+
+        if current == end_node:
+            path = []
+            while current:
+                path.append(current.position)
+                current = current.parent
+            return path[::-1] # Return reversed path
+
+        # For each neighbor of the current node
+        for neighbor_pos, weight in graph[current.position].items():
+            # Calculate g-score for neighbor
+            tentative_g_score = g_scores[current.position] + weight
+
+            if tentative_g_score &lt; g_scores[neighbor_pos]:
+                # This path to neighbor is better, record it
+                neighbor_node = Node(neighbor_pos, current)
+                neighbor_node.g = tentative_g_score
+                neighbor_node.h = heuristic_func(neighbor_node.position, end_node.position)
+                neighbor_node.f = neighbor_node.g + neighbor_node.h
+                
+                g_scores[neighbor_pos] = tentative_g_score
+                came_from[neighbor_pos] = current.position # Store path for reconstruction
+
+                # Add neighbor to open list if not already there, or update its priority
+                # Python's heapq doesn't have an efficient update, so we might push duplicates
+                # and handle them by checking g_scores when popping.
+                heapq.heappush(open_list, neighbor_node)
+
+    return None # No path found
+
+# Example Heuristic Function (Manhattan Distance for a grid)
+def manhattan_distance(pos1, pos2):
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+
+# Example Usage:
+# Graph represented as adjacency list with weights
+# For A*, nodes can be anything hashable (e.g., tuples for grid coordinates)
+graph_astar = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'D': 2, 'E': 5},
+    'C': {'A': 4, 'F': 1},
+    'D': {'B': 2},
+    'E': {'B': 5, 'F': 1},
+    'F': {'C': 1, 'E': 1}
+}
+
+# Simple heuristic for this graph (can just return 0 for A* to behave like Dijkstra)
+# For a real graph, you'd need a meaningful heuristic (e.g., Euclidean distance for spatial graphs)
+def simple_heuristic(node, goal):
+    # This is a dummy heuristic. For A* to be effective, it needs a good estimate.
+    # For general graphs, a common admissible heuristic is 0 (making it Dijkstra's).
+    # For pathfinding on a grid, Manhattan or Euclidean distance works.
+    heuristic_values = {
+        'A': 7, 'B': 6, 'C': 4, 'D': 4, 'E': 2, 'F': 0 # Example estimates to F
+    }
+    return heuristic_values.get(node, 0) # Fallback to 0 if node not in heuristic_values
+
+print("--- A* Search Algorithm Demo ---")
+path = astar_search(graph_astar, 'A', 'F', simple_heuristic)
+print(f"Path from A to F: {path}") # Expected: ['A', 'B', 'D', 'E', 'F'] or ['A', 'C', 'F'] depending on heuristic precision
+# With simple_heuristic: A-B-D-E-F (cost 1+2+5+1=9) vs A-C-F (cost 4+1=5)
+# The simple_heuristic is not good enough here to guide it optimally for this graph.
+# A* is best demonstrated on grids with Manhattan/Euclidean distance.
+
+# Example with a grid (where Manhattan distance is a good heuristic)
+grid_graph = {
+    (0,0): {(0,1):1, (1,0):1},
+    (0,1): {(0,0):1, (1,1):1},
+    (1,0): {(0,0):1, (1,1):1},
+    (1,1): {(0,1):1, (1,0):1, (2,1):1},
+    (2,1): {(1,1):1, (2,2):1},
+    (2,2): {(2,1):1}
+}
+start_grid = (0,0)
+end_grid = (2,2)
+path_grid = astar_search(grid_graph, start_grid, end_grid, manhattan_distance)
+print(f"Path on grid from {start_grid} to {end_grid}: {path_grid}") # Expected: [(0,0), (1,0), (1,1), (2,1), (2,2)] or [(0,0), (0,1), (1,1), (2,1), (2,2)]
+                </code></pre>
+
+                <h3>1.2. Bellman-Ford Algorithm</h3>
+                <p><strong>Logic:</strong> Bellman-Ford algorithm computes shortest paths from a single source vertex to all other vertices in a weighted graph. Unlike Dijkstra's, it can handle graphs with negative edge weights. It works by relaxing all edges $V-1$ times (where $V$ is the number of vertices). After $V-1$ iterations, if any distance can still be reduced, it indicates the presence of a negative cycle reachable from the source.</p>
+                <p><strong>Time Complexity:</strong> $O(V \cdot E)$ (V = vertices, E = edges)</p>
+                <p><strong>Space Complexity:</strong> $O(V)$</p>
+                <pre><code class="language-python">
+def bellman_ford(graph, edges, start_node):
+    """
+    Finds shortest paths from start_node to all other nodes,
+    and detects negative cycles.
+    graph: set of all nodes
+    edges: list of (u, v, weight) tuples
+    start_node: the source node
+    """
+    distances = {node: float('infinity') for node in graph}
+    distances[start_node] = 0
+    
+    # Relax edges V-1 times
+    for _ in range(len(graph) - 1):
+        for u, v, weight in edges:
+            if distances[u] != float('infinity') and distances[u] + weight &lt; distances[v]:
+                distances[v] = distances[u] + weight
+    
+    # Check for negative cycles
+    for u, v, weight in edges:
+        if distances[u] != float('infinity') and distances[u] + weight &lt; distances[v]:
+            print("Graph contains a negative cycle!")
+            return None # Indicate negative cycle detected
+            
+    return distances
+
+# Example Usage:
+nodes = {'A', 'B', 'C', 'D', 'E'}
+edges_positive = [
+    ('A', 'B', 1), ('A', 'C', 4),
+    ('B', 'C', 2), ('B', 'D', 5),
+    ('C', 'D', 1), ('D', 'E', 3)
+]
+edges_negative_weight = [
+    ('A', 'B', 1), ('A', 'C', 4),
+    ('B', 'C', 2), ('B', 'D', -5), # Negative weight
+    ('C', 'D', 1), ('D', 'E', 3)
+]
+edges_negative_cycle = [
+    ('A', 'B', 1), ('A', 'C', 4),
+    ('B', 'C', -2), # B-C-D-B forms a negative cycle (2 + 1 + (-5) = -2)
+    ('C', 'D', 1),
+    ('D', 'B', -5),
+    ('D', 'E', 3)
+]
+
+print("--- Bellman-Ford Algorithm Demo ---")
+print("Positive weights:")
+paths_positive = bellman_ford(nodes, edges_positive, 'A')
+print(f"Shortest paths from A: {paths_positive}") # Expected: {'A': 0, 'B': 1, 'C': 3, 'D': 4, 'E': 7}
+
+print("\nNegative weights (no cycle):")
+paths_negative = bellman_ford(nodes, edges_negative_weight, 'A')
+print(f"Shortest paths from A: {paths_negative}") # Expected: {'A': 0, 'B': 1, 'C': 3, 'D': -4, 'E': -1}
+
+print("\nNegative cycle:")
+paths_cycle = bellman_ford(nodes, edges_negative_cycle, 'A')
+print(f"Shortest paths from A: {paths_cycle}") # Expected: Graph contains a negative cycle!
+                </code></pre>
+
+                <h3>1.3. Kruskal's Algorithm (Minimum Spanning Tree)</h3>
+                <p><strong>Logic:</strong> Kruskal's algorithm is a greedy algorithm that finds a Minimum Spanning Tree (MST) for a connected, undirected weighted graph. An MST is a subset of the edges of a connected, edge-weighted undirected graph that connects all the vertices together, without any cycles and with the minimum possible total edge weight.</p>
+                <p>Kruskal's algorithm works by:</p>
+                <ol>
+                    <li>Sorting all edges in non-decreasing order of their weights.</li>
+                    <li>Iterating through the sorted edges, adding an edge to the MST if it connects two previously disconnected components (i.e., does not form a cycle).</li>
+                    <li>This is typically managed using a Disjoint Set Union (DSU) data structure to efficiently check for cycles.</li>
+                </ol>
+                <p><strong>Time Complexity:</strong> $O(E \log E)$ or $O(E \log V)$ (dominated by sorting edges or DSU operations)</p>
+                <p><strong>Space Complexity:</strong> $O(V + E)$</p>
+                <pre><code class="language-python">
+class DisjointSetUnion:
+    def __init__(self, vertices):
+        self.parent = {v: v for v in vertices}
+        self.rank = {v: 0 for v in vertices} # For union by rank optimization
+
+    def find(self, i):
+        """Finds the representative (root) of the set containing i."""
+        if self.parent[i] == i:
+            return i
+        self.parent[i] = self.find(self.parent[i]) # Path compression
+        return self.parent[i]
+
+    def union(self, i, j):
+        """Unites the sets containing i and j."""
+        root_i = self.find(i)
+        root_j = self.find(j)
+
+        if root_i != root_j:
+            # Union by rank: attach smaller rank tree under root of higher rank tree
+            if self.rank[root_i] &lt; self.rank[root_j]:
+                self.parent[root_i] = root_j
+            elif self.rank[root_i] > self.rank[root_j]:
+                self.parent[root_j] = root_i
+            else:
+                self.parent[root_j] = root_i
+                self.rank[root_i] += 1
+            return True # Union happened
+        return False # Already in the same set (would form a cycle)
+
+def kruskals_algorithm(vertices, edges):
+    """
+    Finds the Minimum Spanning Tree (MST) of a graph using Kruskal's algorithm.
+    vertices: list of all vertices (e.g., ['A', 'B', 'C'])
+    edges: list of tuples (weight, u, v)
+    """
+    # 1. Sort all edges by weight in non-decreasing order
+    sorted_edges = sorted(edges)
+    
+    mst = []
+    dsu = DisjointSetUnion(vertices)
+    
+    for weight, u, v in sorted_edges:
+        # 2. Check if adding the edge (u, v) forms a cycle
+        # If u and v are not already in the same set, add the edge
+        if dsu.union(u, v):
+            mst.append((u, v, weight))
+            
+    return mst
+
+# Example Usage:
+vertices = ['A', 'B', 'C', 'D', 'E', 'F']
+edges = [
+    (1, 'A', 'B'),
+    (4, 'A', 'C'),
+    (2, 'B', 'D'),
+    (5, 'B', 'E'),
+    (1, 'C', 'F'),
+    (1, 'D', 'E'),
+    (3, 'E', 'F')
+]
+
+print("\n--- Kruskal's Algorithm Demo (MST) ---")
+mst_edges = kruskals_algorithm(vertices, edges)
+print(f"Edges in MST: {mst_edges}")
+# Expected: [('A', 'B', 1), ('C', 'F', 1), ('D', 'E', 1), ('B', 'D', 2), ('E', 'F', 3)]
+# Total weight: 1 + 1 + 1 + 2 + 3 = 8
+                </code></pre>
+
+                <h3>1.4. Topological Sort</h3>
+                <p><strong>Logic:</strong> A topological sort (or topological ordering) of a directed acyclic graph (DAG) is a linear ordering of its vertices such that for every directed edge $u \to v$, vertex $u$ comes before $v$ in the ordering. Topological sort is not unique for a given DAG. It has applications in scheduling tasks, course prerequisites, and dependency resolution.</p>
+                <p>Two common algorithms:</p>
+                <ul>
+                    <li><strong>Kahn's Algorithm (BFS-based):</strong>
+                        <ol>
+                            <li>Compute in-degrees (number of incoming edges) for all vertices.</li>
+                            <li>Initialize a queue with all vertices having an in-degree of 0.</li>
+                            <li>While the queue is not empty:
+                                <ol type="a">
+                                    <li>Dequeue a vertex $u$ and add it to the topological order.</li>
+                                    <li>For each neighbor $v$ of $u$: decrement $v$'s in-degree. If $v$'s in-degree becomes 0, enqueue $v$.</li>
+                                </ol>
+                            </li>
+                            <li>If the number of vertices in the topological order is less than the total number of vertices, the graph contains a cycle.</li>
+                        </ol>
+                    </li>
+                    <li><strong>DFS-based Algorithm:</strong>
+                        <ol>
+                            <li>Perform a DFS traversal.</li>
+                            <li>When a node's DFS traversal is complete (i.e., all its neighbors and their subtrees have been visited), push it onto a stack.</li>
+                            <li>The topological order is the reverse of the elements in the stack.</li>
+                        </ol>
+                    </li>
+                </ul>
+                <p><strong>Time Complexity:</strong> $O(V + E)$</p>
+                <p><strong>Space Complexity:</strong> $O(V)$</p>
+                <pre><code class="language-python">
+from collections import deque
+
+def topological_sort_kahn(graph):
+    """
+    Performs topological sort using Kahn's algorithm (BFS-based).
+    graph: dictionary representing adjacency list {node: [neighbors]}
+    Returns a list of nodes in topological order, or None if a cycle is detected.
+    """
+    in_degree = {node: 0 for node in graph}
+    # Calculate in-degrees for all nodes
+    for node in graph:
+        for neighbor in graph[node]:
+            in_degree[neighbor] += 1
+
+    # Initialize queue with all nodes having in-degree 0
+    queue = deque([node for node in graph if in_degree[node] == 0])
+    
+    topological_order = []
+    count_visited_nodes = 0
+
+    while queue:
+        u = queue.popleft()
+        topological_order.append(u)
+        count_visited_nodes += 1
+
+        # For each neighbor of u, decrement its in-degree
+        for v in graph[u]:
+            in_degree[v] -= 1
+            # If in-degree becomes 0, add to queue
+            if in_degree[v] == 0:
+                queue.append(v)
+    
+    # Check for cycle
+    if count_visited_nodes != len(graph):
+        return None # Cycle detected, not a DAG
+    
+    return topological_order
+
+# Example Usage:
+# Graph representing course prerequisites
+# A -&gt; B (A must be taken before B)
+graph_courses = {
+    'A': ['B', 'C'],
+    'B': ['D'],
+    'C': ['D', 'E'],
+    'D': ['F'],
+    'E': [],
+    'F': []
+}
+# Graph with a cycle (e.g., A -&gt; B -&gt; A)
+graph_cycle = {
+    'A': ['B'],
+    'B': ['A'],
+    'C': ['A']
+}
+
+print("--- Topological Sort (Kahn's Algorithm) Demo ---")
+order = topological_sort_kahn(graph_courses)
+print(f"Topological order for courses: {order}") # Expected: ['A', 'C', 'B', 'E', 'D', 'F'] (or similar valid order)
+
+order_cycle = topological_sort_kahn(graph_cycle)
+print(f"Topological order for cycle graph: {order_cycle}") # Expected: None (cycle detected)
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>2. String Matching Algorithms</h2>
+                <button class="toggle-button" data-target="string-matching-content">Expand</button>
+            </div>
+            <div id="string-matching-content" class="collapsible-content">
+                <h3>2.1. Knuth-Morris-Pratt (KMP) Algorithm</h3>
+                <p><strong>Logic:</strong> The KMP algorithm is an efficient string-searching algorithm that finds occurrences of a "word" (pattern) within a "text" by avoiding re-examining characters. It achieves this by pre-processing the pattern to build a "Longest Proper Prefix which is also a Suffix" (LPS) array (also known as the "failure function" or "prefix function"). The LPS array tells us how many characters to shift the pattern when a mismatch occurs, based on the longest suffix of the pattern that is also a prefix of the pattern.</p>
+                <p><strong>Time Complexity:</strong> $O(N + M)$ (N = length of text, M = length of pattern)</p>
+                <p><strong>Space Complexity:</strong> $O(M)$ (for LPS array)</p>
+                <pre><code class="language-python">
+def compute_lps_array(pattern):
+    """
+    Computes the Longest Proper Prefix which is also a Suffix (LPS) array.
+    lps[i] stores the length of the longest proper prefix of pattern[0...i]
+    that is also a suffix of pattern[0...i].
+    """
+    m = len(pattern)
+    lps = [0] * m
+    length = 0 # Length of the previous longest prefix suffix
+    i = 1
+
+    while i &lt; m:
+        if pattern[i] == pattern[length]:
+            length += 1
+            lps[i] = length
+            i += 1
+        else:
+            if length != 0:
+                length = lps[length - 1] # Fallback to previous longest prefix suffix
+            else: # If length is 0, no common prefix/suffix
+                lps[i] = 0
+                i += 1
+    return lps
+
+def kmp_search(text, pattern):
+    """
+    Searches for all occurrences of pattern in text using KMP algorithm.
+    Returns a list of starting indices where pattern is found.
+    """
+    n = len(text)
+    m = len(pattern)
+
+    if m == 0: return [i for i in range(n + 1)] # Empty pattern matches everywhere
+    if n == 0: return [] # Empty text, no matches
+
+    lps = compute_lps_array(pattern)
+    
+    i = 0 # Index for text
+    j = 0 # Index for pattern
+    
+    occurrences = []
+
+    while i &lt; n:
+        if pattern[j] == text[i]:
+            i += 1
+            j += 1
+        
+        if j == m: # Pattern found
+            occurrences.append(i - j)
+            j = lps[j - 1] # Shift pattern
+        
+        elif i &lt; n and pattern[j] != text[i]: # Mismatch after j matches
+            if j != 0:
+                j = lps[j - 1] # Shift pattern using LPS array
+            else:
+                i += 1 # No prefix to match, just move to next char in text
+                
+    return occurrences
+
+# Example Usage:
+text1 = "ABABDABACDABABCABAB"
+pattern1 = "ABABCABAB"
+print("--- KMP Search Algorithm Demo ---")
+print(f"Text: '{text1}'")
+print(f"Pattern: '{pattern1}'")
+print(f"Occurrences at indices: {kmp_search(text1, pattern1)}") # Expected: [10]
+
+text2 = "AAAAAA"
+pattern2 = "AA"
+print(f"\nText: '{text2}'")
+print(f"Pattern: '{pattern2}'")
+print(f"Occurrences at indices: {kmp_search(text2, pattern2)}") # Expected: [0, 1, 2, 3, 4]
+
+text3 = "THIS IS A TEST TEXT"
+pattern3 = "TEST"
+print(f"\nText: '{text3}'")
+print(f"Pattern: '{pattern3}'")
+print(f"Occurrences at indices: {kmp_search(text3, pattern3)}") # Expected: [10]
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>3. Optimization Algorithms</h2>
+                <button class="toggle-button" data-target="optimization-algorithms-content">Expand</button>
+            </div>
+            <div id="optimization-algorithms-content" class="collapsible-content">
+                <h3>3.1. Simulated Annealing (Conceptual)</h3>
+                <p><strong>Logic:</strong> Simulated Annealing is a probabilistic technique for approximating the global optimum of a given function. It is inspired by the annealing process in metallurgy, where a material is heated and then slowly cooled to increase the size of its crystals and reduce their defects. The slow cooling allows the material to reach a state of lower internal energy.</p>
+                <p>In the algorithm:</p>
+                <ul>
+                    <li>It starts with a random solution and iteratively moves to a neighboring solution.</li>
+                    <li>Moves that improve the solution are always accepted.</li>
+                    <li>Moves that worsen the solution are accepted with a certain probability, which decreases over time (simulating cooling). This allows the algorithm to escape local optima.</li>
+                    <li>The "temperature" parameter controls the probability of accepting worse solutions. High temperature means higher probability; low temperature means lower probability.</li>
+                </ul>
+                <p>Simulated Annealing is a metaheuristic, meaning it's a high-level algorithmic framework that can be applied to a wide range of optimization problems (e.g., Traveling Salesperson Problem, circuit design, scheduling).</p>
+                <p><strong>Time Complexity:</strong> Highly dependent on the problem, cooling schedule, and stopping criteria. Generally, it's a heuristic, so no strict polynomial time guarantees for finding the global optimum for NP-hard problems.</p>
+                <p><strong>Space Complexity:</strong> $O(1)$ (stores current solution and best solution)</p>
+                <pre><code class="language-python">
+import random
+import math
+import time
+
+def simulated_annealing(problem_state_generator, cost_function, neighbor_function, 
+                        initial_temp, cooling_rate, max_iterations):
+    """
+    A generic implementation of Simulated Annealing.
+    
+    problem_state_generator: A function that generates an initial random state.
+    cost_function: A function that takes a state and returns its cost (lower is better).
+    neighbor_function: A function that takes a state and returns a randomly chosen neighbor state.
+    initial_temp: Starting temperature (e.g., 1000.0)
+    cooling_rate: Rate at which temperature decreases (e.g., 0.99 for geometric cooling)
+    max_iterations: Maximum number of iterations to run
+    """
+    current_state = problem_state_generator()
+    current_cost = cost_function(current_state)
+    
+    best_state = current_state
+    best_cost = current_cost
+    
+    temperature = initial_temp
+
+    print(f"Initial state cost: {current_cost}")
+
+    for i in range(max_iterations):
+        if temperature &lt;= 0.001: # Stop if temperature is too low
+            break
+
+        next_state = neighbor_function(current_state)
+        next_cost = cost_function(next_state)
+
+        # Calculate energy difference
+        delta_e = next_cost - current_cost
+
+        # If the new state is better, accept it
+        if delta_e &lt; 0:
+            current_state = next_state
+            current_cost = next_cost
+            if current_cost &lt; best_cost:
+                best_state = current_state
+                best_cost = current_cost
+        else:
+            # If the new state is worse, accept it with a probability
+            # based on temperature and energy difference
+            probability = math.exp(-delta_e / temperature)
+            if random.random() &lt; probability:
+                current_state = next_state
+                current_cost = next_cost
+        
+        # Decrease temperature (cooling schedule)
+        temperature *= cooling_rate
+
+        if i % 1000 == 0:
+            print(f"Iteration {i}, Temp: {temperature:.2f}, Current Cost: {current_cost:.2f}, Best Cost: {best_cost:.2f}")
+
+    print(f"\nSimulated Annealing finished. Best cost found: {best_cost:.2f}")
+    return best_state, best_cost
+
+# --- Example Problem: Finding the minimum of a complex function ---
+# Target function: f(x) = x^2 + 10*sin(x)
+# We want to find x that minimizes f(x) within a range.
+# This is a simple 1D problem, but SA applies to multi-dimensional problems too.
+
+def problem_cost_function(x):
+    return x**2 + 10 * math.sin(x)
+
+def problem_state_generator(min_val=-10, max_val=10):
+    return random.uniform(min_val, max_val)
+
+def problem_neighbor_function(x, step_size=0.5):
+    # Generate a neighbor by adding a small random step
+    return x + random.uniform(-step_size, step_size)
+
+if __name__ == "__main__":
+    print("--- Simulated Annealing Demo ---")
+    
+    # Parameters for SA
+    initial_temp = 100.0
+    cooling_rate = 0.995
+    max_iterations = 20000
+
+    best_x, min_cost = simulated_annealing(
+        problem_state_generator,
+        problem_cost_function,
+        problem_neighbor_function,
+        initial_temp,
+        cooling_rate,
+        max_iterations
+    )
+
+    print(f"\nApproximate minimum x: {best_x:.4f}")
+    print(f"Approximate minimum cost: {min_cost:.4f}")
+
+    # For comparison, the true global minimum of x^2 + 10*sin(x) is around x = -1.114, cost = -8.16
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>4. Randomized Algorithms</h2>
+                <button class="toggle-button" data-target="randomized-algorithms-content">Expand</button>
+            </div>
+            <div id="randomized-algorithms-content" class="collapsible-content">
+                <p><strong>Logic:</strong> Randomized algorithms use random numbers as part of their logic. This randomness can lead to better average-case performance, simpler implementations, or the ability to solve problems that are otherwise intractable deterministically.</p>
+                <p>Two main types:</p>
+                <ul>
+                    <li><strong>Las Vegas Algorithms:</strong> Always produce correct results, but their running time varies (e.g., Randomized Quicksort, Quickselect).</li>
+                    <li><strong>Monte Carlo Algorithms:</strong> May produce incorrect results with a certain (usually small) probability, but their running time is deterministic (e.g., Miller-Rabin primality test).</li>
+                </ul>
+
+                <h3>4.1. Randomized Quickselect (Finding K-th Smallest Element)</h3>
+                <p><strong>Logic:</strong> Quickselect is an algorithm to find the k-th smallest element in an unsorted list. It is a selection algorithm related to Quicksort. Instead of sorting the entire list, Quickselect partitions the list around a pivot and then recursively searches only the partition that contains the k-th element. Randomizing the pivot selection helps ensure good average-case performance and avoids worst-case $O(n^2)$ behavior for specific input distributions.</p>
+                <p><strong>Time Complexity:</strong>
+                    <ul>
+                        <li>Worst-case: $O(n^2)$ (if pivot selection is consistently bad)</li>
+                        <li>Average-case: $O(n)$</li>
+                    </ul>
+                </p>
+                <p><strong>Space Complexity:</strong> $O(\log n)$ (for recursion stack in average case), $O(n)$ (in worst case)</p>
+                <pre><code class="language-python">
+import random
+
+def partition(arr, low, high):
+    """
+    Partitions the array around a pivot.
+    Places pivot at its correct sorted position,
+    all elements smaller than pivot to its left,
+    and all greater elements to its right.
+    """
+    # Choose a random pivot and swap it with the last element
+    pivot_idx = random.randint(low, high)
+    arr[pivot_idx], arr[high] = arr[high], arr[pivot_idx]
+    
+    pivot = arr[high]
+    i = low - 1 # Index of smaller element
+
+    for j in range(low, high):
+        if arr[j] &lt;= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1 # Return the pivot's final position
+
+def randomized_quickselect(arr, low, high, k):
+    """
+    Finds the k-th smallest element in arr[low...high].
+    k is 0-indexed (e.g., k=0 for smallest, k=len-1 for largest).
+    """
+    if low &lt;= high:
+        pivot_index = partition(arr, low, high)
+
+        if pivot_index == k:
+            return arr[pivot_index]
+        elif pivot_index &lt; k:
+            # k-th element is in the right partition
+            return randomized_quickselect(arr, pivot_index + 1, high, k)
+        else:
+            # k-th element is in the left partition
+            return randomized_quickselect(arr, low, pivot_index - 1, k)
+    return None # Should not happen if k is valid
+
+# Example Usage:
+my_list = [7, 10, 4, 3, 20, 15, 1, 12]
+k_val = 3 # Find the 3rd smallest element (0-indexed, so it's the 4th value)
+# Sorted: [1, 3, 4, 7, 10, 12, 15, 20]
+# 3rd smallest (index 3) is 7
+
+print("--- Randomized Quickselect Demo ---")
+print(f"Original list: {my_list}")
+# Make a copy because Quickselect modifies the list in-place
+list_copy = my_list[:] 
+kth_smallest = randomized_quickselect(list_copy, 0, len(list_copy) - 1, k_val)
+print(f"The {k_val}-th smallest element is: {kth_smallest}") # Expected: 7
+
+my_list_2 = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+k_val_2 = 0 # Find the 0th smallest (smallest)
+list_copy_2 = my_list_2[:]
+kth_smallest_2 = randomized_quickselect(list_copy_2, 0, len(list_copy_2) - 1, k_val_2)
+print(f"The {k_val_2}-th smallest element is: {kth_smallest_2}") # Expected: 1
+
+my_list_3 = [100, 50, 200, 20, 150]
+k_val_3 = len(my_list_3) - 1 # Find the largest element
+list_copy_3 = my_list_3[:]
+kth_smallest_3 = randomized_quickselect(list_copy_3, 0, len(list_copy_3) - 1, k_val_3)
+print(f"The {k_val_3}-th smallest element is: {kth_smallest_3}") # Expected: 200
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>5. Cryptographic Algorithms</h2>
+                <button class="toggle-button" data-target="cryptographic-algorithms-content">Expand</button>
+            </div>
+            <div id="cryptographic-algorithms-content" class="collapsible-content">
+                <p><strong>Logic:</strong> Cryptographic algorithms are mathematical procedures used for secure communication in the presence of adversaries. They are fundamental to data privacy, integrity, and authenticity. Python's `hashlib` module provides common hashing algorithms, and external libraries like `cryptography` provide more advanced cryptographic primitives.</p>
+
+                <h3>5.1. Hashing Algorithms (SHA-256)</h3>
+                <p><strong>Logic:</strong> A cryptographic hash function takes an input (or 'message') and returns a fixed-size string of bytes, typically a hexadecimal number, called a hash value (or 'digest'). Key properties:</p>
+                <ul>
+                    <li><strong>Deterministic:</strong> The same input always produces the same output.</li>
+                    <li><strong>One-way (Pre-image resistance):</strong> Computationally infeasible to reverse the hash function (i.e., to find the input given only the hash output).</li>
+                    <li><strong>Collision Resistance:</strong> Computationally infeasible to find two different inputs that produce the same hash output.</li>
+                </ul>
+                <p>SHA-256 (Secure Hash Algorithm 256-bit) is a member of the SHA-2 family of cryptographic hash functions. It produces a 256-bit (32-byte) hash value.</p>
+                <p><strong>Time Complexity:</strong> $O(L)$ (where L is the length of the input data)</p>
+                <p><strong>Space Complexity:</strong> $O(1)$</p>
+                <pre><code class="language-python">
+import hashlib
+
+def calculate_sha256(data_string):
+    """Calculates the SHA-256 hash of a given string."""
+    # Encode the string to bytes, as hash functions operate on bytes
+    data_bytes = data_string.encode('utf-8')
+    
+    # Create a SHA-256 hash object
+    sha256_hash = hashlib.sha256()
+    
+    # Update the hash object with the data
+    sha256_hash.update(data_bytes)
+    
+    # Get the hexadecimal representation of the hash
+    return sha256_hash.hexdigest()
+
+# Example Usage:
+print("--- Hashing Algorithms (SHA-256) Demo ---")
+text1 = "Hello, world!"
+text2 = "Hello, world!" # Same as text1
+text3 = "hello, world!" # Different case
+text4 = "Hello, world!!" # Slightly different
+
+hash1 = calculate_sha256(text1)
+hash2 = calculate_sha256(text2)
+hash3 = calculate_sha256(text3)
+hash4 = calculate_sha256(text4)
+
+print(f"Hash of '{text1}': {hash1}")
+print(f"Hash of '{text2}': {hash2}")
+print(f"Hash of '{text3}': {hash3}")
+print(f"Hash of '{text4}': {hash4}")
+
+print(f"\nAre hash1 and hash2 equal? {hash1 == hash2}") # True
+print(f"Are hash1 and hash3 equal? {hash1 == hash3}") # False
+print(f"Are hash1 and hash4 equal? {hash1 == hash4}") # False
+
+# Example for password hashing (conceptually, use bcrypt/argon2 for real passwords)
+password = "mysecretpassword123"
+salt = os.urandom(16) # A random salt for each password
+# For real world, use libraries like bcrypt or argon2 which handle salting and stretching
+# hashed_password = hashlib.sha256(salt + password.encode('utf-8')).hexdigest()
+# print(f"\nHashed password (with simple salt): {hashed_password}")
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>6. Approximation Algorithms (Conceptual)</h2>
+                <button class="toggle-button" data-target="approximation-algorithms-content">Expand</button>
+            </div>
+            <div id="approximation-algorithms-content" class="collapsible-content">
+                <p><strong>Logic:</strong> Approximation algorithms are used for NP-hard optimization problems, for which finding an exact optimal solution in polynomial time is believed to be impossible. Instead, these algorithms aim to find a solution that is "close" to optimal within a guaranteed factor (the approximation ratio or factor). They are crucial when exact solutions are too computationally expensive to find in practical time.</p>
+                <p><strong>Key Characteristics:</strong></p>
+                <ul>
+                    <li><strong>Polynomial Time:</strong> They must run in polynomial time.</li>
+                    <li><strong>Guaranteed Performance:</strong> They provide a provable guarantee on how far the found solution is from the optimal one (e.g., "the solution found will be no more than twice the optimal solution").</li>
+                </ul>
+
+                <h3>6.1. Traveling Salesperson Problem (TSP) Approximation (Nearest Neighbor Heuristic)</h3>
+                <p><strong>Problem:</strong> Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city exactly once and returns to the origin city?</p>
+                <p><strong>Logic (Nearest Neighbor Heuristic - a simple approximation):</strong> This is a greedy heuristic, not a guaranteed approximation algorithm in terms of ratio, but it's simple and often used as a baseline.
+                    <ol>
+                        <li>Start at an arbitrary city.</li>
+                        <li>From the current city, visit the nearest unvisited city.</li>
+                        <li>Repeat until all cities have been visited.</li>
+                        <li>Return to the starting city.</li>
+                    </ol>
+                </p>
+                <p>This heuristic does not guarantee an optimal solution, nor does it have a good approximation ratio in the worst case, but it's a common example of an approach for NP-hard problems.</p>
+                <p><strong>Time Complexity:</strong> $O(N^2)$ (N = number of cities)</p>
+                <p><strong>Space Complexity:</strong> $O(N)$</p>
+                <pre><code class="language-python">
+import math
+import random
+
+def euclidean_distance(point1, point2):
+    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
+
+def nearest_neighbor_tsp(cities_coords):
+    """
+    Approximates the TSP solution using the Nearest Neighbor heuristic.
+    cities_coords: A dictionary {city_name: (x, y) coordinates}
+    """
+    if not cities_coords:
+        return [], 0
+
+    num_cities = len(cities_coords)
+    cities = list(cities_coords.keys())
+    
+    # Start from a random city
+    start_city = random.choice(cities)
+    
+    current_path = [start_city]
+    visited = {start_city}
+    total_distance = 0
+
+    current_city = start_city
+
+    while len(visited) &lt; num_cities:
+        nearest_city = None
+        min_distance = float('infinity')
+
+        for neighbor in cities:
+            if neighbor not in visited:
+                dist = euclidean_distance(cities_coords[current_city], cities_coords[neighbor])
+                if dist &lt; min_distance:
+                    min_distance = dist
+                    nearest_city = neighbor
+        
+        if nearest_city:
+            current_path.append(nearest_city)
+            visited.add(nearest_city)
+            total_distance += min_distance
+            current_city = nearest_city
+        else:
+            # Should not happen in a connected graph with unvisited nodes
+            break
+    
+    # Return to the starting city to complete the cycle
+    if current_path and len(current_path) == num_cities:
+        total_distance += euclidean_distance(cities_coords[current_path[-1]], cities_coords[start_city])
+        current_path.append(start_city)
+
+    return current_path, total_distance
+
+# Example Usage:
+cities = {
+    'A': (0, 0),
+    'B': (1, 3),
+    'C': (4, 1),
+    'D': (5, 4),
+    'E': (2, 5)
+}
+
+print("--- Traveling Salesperson Problem (Nearest Neighbor Heuristic) Demo ---")
+path, distance = nearest_neighbor_tsp(cities)
+print(f"Approximate TSP path: {path}")
+print(f"Approximate total distance: {distance:.2f}")
+
+# Run multiple times to see different results due to random start city
+# For a more robust approximation algorithm (e.g., Christofides for metric TSP),
+# the implementation would be significantly more complex.
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>7. Other Advanced Topics (Conceptual)</h2>
+                <button class="toggle-button" data-target="other-advanced-content">Expand</button>
+            </div>
+            <div id="other-advanced-content" class="collapsible-content">
+                <h3>7.1. Network Flow Algorithms (Max Flow Min Cut)</h3>
+                <p><strong>Logic:</strong> Network flow problems involve finding the maximum possible flow from a source node to a sink node in a flow network (a directed graph where each edge has a capacity). The Max-Flow Min-Cut theorem states that the maximum flow through a network is equal to the capacity of a minimum cut (a partition of vertices that separates the source from the sink).</p>
+                <p><strong>Ford-Fulkerson Algorithm (and Edmonds-Karp):</strong> A common approach. It repeatedly finds an "augmenting path" (a path from source to sink in the residual graph where flow can be increased) and pushes flow along it, until no more augmenting paths can be found.</p>
+                <p><strong>Applications:</strong> Bipartite matching, image segmentation, airline scheduling, project management.</p>
+                <p><strong>Time Complexity:</strong> Ford-Fulkerson can be exponential in worst-case. Edmonds-Karp (a specific implementation of Ford-Fulkerson using BFS for augmenting paths) is $O(VE^2)$. More advanced algorithms like Dinic's or ISAP are faster (e.g., $O(V^2 E)$ or $O(V^3)$).</p>
+                <p><strong>Space Complexity:</strong> $O(V + E)$</p>
+                <p class="note"><strong>Note:</strong> A full implementation of Max Flow algorithms like Edmonds-Karp is quite involved and typically requires a dedicated graph library or a more extensive code example. The core idea revolves around building a residual graph and repeatedly finding augmenting paths using BFS/DFS.</p>
+
+                <h3>7.2. Divide and Conquer (Strassen's Algorithm for Matrix Multiplication)</h3>
+                <p><strong>Logic:</strong> Strassen's algorithm is a divide-and-conquer algorithm for matrix multiplication. It reduces the number of recursive multiplications from 8 (in the naive approach) to 7, leading to a lower asymptotic time complexity. While it has a better theoretical complexity, its constant factors are larger, so it typically outperforms naive multiplication only for very large matrices.</p>
+                <p><strong>Time Complexity:</strong> $O(N^{\log_2 7}) \approx O(N^{2.807})$</p>
+                <p><strong>Space Complexity:</strong> $O(\log N)$ (for recursion stack) + $O(N^2)$ (for temporary matrices)</p>
+                <p class="note"><strong>Note:</strong> Implementing Strassen's algorithm requires careful handling of matrix partitioning and additions/subtractions, making it a complex example for a concise guide. It's a prime example of how reducing the number of recursive calls can improve asymptotic complexity.</p>
+
+                <h3>7.3. Data Compression Algorithms (Huffman Coding)</h3>
+                <p><strong>Logic:</strong> Huffman coding is a lossless data compression algorithm. It builds a variable-length code table for source characters based on their frequency of occurrence. The idea is to assign shorter codes to more frequent characters and longer codes to less frequent characters, resulting in a shorter total length for the compressed data.</p>
+                <p>It works by building a binary tree (Huffman tree) from the bottom up. Each leaf node represents a character and its frequency. Internal nodes represent the sum of frequencies of their children. The path from the root to a leaf defines the codeword for that character.</p>
+                <p><strong>Time Complexity:</strong> $O(N \log N)$ (where N is the number of unique characters, dominated by building the priority queue/heap)</p>
+                <p><strong>Space Complexity:</strong> $O(N)$</p>
+                <p class="note"><strong>Note:</strong> A full Huffman coding implementation involves building the Huffman tree using a min-priority queue, then traversing the tree to generate codes, and finally encoding/decoding the data. It's a multi-step process that would require a substantial code block.</p>
+            </div>
+        </div>
+
+        <div class="warning">
+            <p>This guide provides an introduction to several advanced algorithms. The field of algorithms is vast, with ongoing research and new discoveries. For a deeper understanding and practical application, it is highly recommended to:</p>
+            <ul>
+                <li><strong>Study theoretical foundations:</strong> Understand the mathematical proofs and analysis behind these algorithms.</li>
+                <li><strong>Practice implementation:</strong> Implement them yourself to solidify your understanding.</li>
+                <li><strong>Explore variations:</strong> Many algorithms have variations optimized for specific use cases or data characteristics.</li>
+                <li><strong>Utilize libraries:</strong> In real-world projects, leverage highly optimized and tested implementations from standard libraries or well-known third-party packages (e.g., NumPy, SciPy for numerical algorithms; networkx for graph algorithms).</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-button');
+
+            toggleButtons.forEach(button => {
+                const targetId = button.dataset.target;
+                const contentDiv = document.getElementById(targetId);
+
+                if (contentDiv) {
+                    // Initialize state: all collapsed by default
+                    contentDiv.style.display = 'none';
+                    button.textContent = 'Expand';
+                    button.classList.add('collapsed');
+
+                    button.addEventListener('click', function() {
+                        if (contentDiv.style.display === 'block') {
+                            contentDiv.style.display = 'none';
+                            button.textContent = 'Expand';
+                            button.classList.add('collapsed');
+                        } else {
+                            contentDiv.style.display = 'block';
+                            button.textContent = 'Collapse';
+                            button.classList.remove('collapsed');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+    <script>Prism.plugins.lineNumbers();</script>
+    <script>Prism.highlightAll();</script>
+</body>
+</html>

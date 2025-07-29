@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Code Editor</title>
+    <title>Python & Go Code Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
-    <!-- Add Prism.js CSS for syntax highlighting (using a dark theme) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
         body {
@@ -110,6 +109,36 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        /* Language selector styling */
+        .selector {
+            display: flex;
+            align-items: center;
+        }
+
+        #languageSelector {
+            padding: 6px 10px;
+            background-color: #21252b;
+            border: 1px solid #61afef;
+            color: #61afef;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+            font-family: 'Consolas', 'Monaco', monospace;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        #languageSelector:hover {
+            background-color: #61afef;
+            color: #21252b;
+        }
+
+        #languageSelector option {
+            background-color: #21252b;
+            color: #61afef;
         }
 
         /* Container for code editor with highlighting */
@@ -221,6 +250,21 @@
             margin-right: 5px;
         }
 
+        /* Loading indicator */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(33, 37, 43, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            color: #61afef;
+            font-size: 1.1em;
+            z-index: 10;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .editor-app-container {
                 flex-direction: column;
@@ -274,37 +318,49 @@
                 flex-wrap: wrap;
                 justify-content: flex-end;
             }
+            
+            .selector {
+                margin-right: 10px;
+            }
+            
+            .control-button {
+                margin-left: 5px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="editor-app-container">
+        <div class="loading-indicator" id="loadingIndicator">Loading Python runtime...</div>
         <div class="main-content">
             <!-- Left Pane: Code Editor -->
             <div class="pane left-pane">
                 <div class="pane-header">
                     <span>Code Editor</span>
                     <div class="pane-header-controls">
-                        <span class="python-label">PYTHON</span>
+                        <div class="selector">
+                            <select id="languageSelector">
+                                <option value="python">Python</option>
+                                <option value="go">Go</option>
+                            </select>
+                        </div>
                         <button id="runButton" class="control-button" onclick="runCode()">
                             <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M8 5V19L19 12L8 5Z"/>
                             </svg>
                             Run
                         </button>
-                        <button id="clearButton" class="control-button" onclick="clearInput()">
+                        <button id="clearButton" class="control-button" onclick="clearOutput()">
                             <i class="fa fa-refresh"></i>
                         </button>
                     </div>
                 </div>
                 <div class="code-editor-container">
-                    <textarea id="code-editor" spellcheck="false">
-def greet(name):
+                    <textarea id="code-editor" spellcheck="false">def greet(name):
     return f"Hello, {name}!"
 
 user_name = "World"
 print(greet(user_name))
-
 </textarea>
                     <pre class="prism-code language-python"><code id="highlight-code"></code></pre>
                 </div>
@@ -330,10 +386,12 @@ print(greet(user_name))
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
     <script type="text/javascript">
         let pyodide;
         let isDragging = false;
         const TAB_SIZE = 4;
+        let currentLanguage = 'python';
 
         const splitter = document.querySelector('.splitter');
         const leftPane = document.querySelector('.left-pane');
@@ -341,9 +399,32 @@ print(greet(user_name))
         const outputConsole = document.getElementById('outputConsole');
         const toggleBtn = document.getElementById('toggleOutputBtn');
         const toggleIcon = document.getElementById('toggleOutputIcon');
+        const languageSelector = document.getElementById('languageSelector');
+        const loadingIndicator = document.getElementById('loadingIndicator');
 
         const codeEditor = document.getElementById('code-editor');
         const highlightCode = document.getElementById('highlight-code');
+
+        // Language templates
+        const codeTemplates = {
+            python: `def greet(name):
+    return f"Hello, {name}!"
+
+user_name = "World"
+print(greet(user_name))`,
+            go: `package main
+
+import "fmt"
+
+func greet(name string) string {
+    return fmt.Sprintf("Hello, %s!", name)
+}
+
+func main() {
+    userName := "World"
+    fmt.Println(greet(userName))
+}`
+        };
 
         function syncScroll() {
             highlightCode.parentElement.scrollTop = codeEditor.scrollTop;
@@ -352,8 +433,21 @@ print(greet(user_name))
 
         function updateHighlighting() {
             highlightCode.textContent = codeEditor.value;
+            const prismCode = highlightCode.parentElement;
+            prismCode.className = `prism-code language-${currentLanguage}`;
             Prism.highlightElement(highlightCode);
         }
+
+        function switchLanguage(language) {
+            clearOutput();
+            currentLanguage = language;
+            codeEditor.value = codeTemplates[language];
+            updateHighlighting();
+        }
+
+        languageSelector.addEventListener('change', (e) => {
+            switchLanguage(e.target.value);
+        });
 
         codeEditor.addEventListener('input', updateHighlighting);
 
@@ -364,35 +458,115 @@ print(greet(user_name))
 
         async function loadPyodideAndPackages() {
             console.log("Loading Pyodide and packages...");
-            pyodide = await loadPyodide();
-            await pyodide.loadPackage(["numpy", "pandas"]);
-            runButton.disabled = false;
-            setTimeout(() => { loadingDiv.style.display = "none"; }, 1000);
+            loadingIndicator.style.display = 'block';
+            try {
+                pyodide = await loadPyodide();
+                await pyodide.loadPackage(["numpy", "pandas"]);
+                document.getElementById('runButton').disabled = false;
+                loadingIndicator.style.display = 'none';
+                console.log("Pyodide loaded successfully");
+            } catch (error) {
+                console.error("Error loading Pyodide:", error);
+                loadingIndicator.textContent = "Error loading Python runtime";
+                setTimeout(() => { loadingIndicator.style.display = 'none'; }, 3000);
+            }
+        }
+
+        async function runPythonCode(code) {
+            const outputElement = document.getElementById('output');
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    from io import StringIO
+                    sys.stdout = StringIO()
+                    sys.stderr = StringIO()
+                `);
+                
+                await pyodide.runPythonAsync(code);
+                
+                let output = pyodide.runPython("sys.stdout.getvalue()");
+                let error = pyodide.runPython("sys.stderr.getvalue()");
+                
+                if (error) {
+                    outputElement.classList.add('error');
+                    outputElement.innerText = "Error: " + error;
+                } else {
+                    outputElement.classList.remove('error');
+                    outputElement.innerText = output || "No output";
+                }
+            } catch (err) {
+                outputElement.classList.add('error');
+                outputElement.innerText = "Error: " + err.message;
+            }
+        }
+
+        async function runGoCode(code) {
+            const outputElement = document.getElementById('output');
+            
+            try {
+                // Using Go playground API for Go code execution
+                const response = await fetch('https://play.golang.org/compile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        version: 2,
+                        body: code,
+                        withVet: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.Errors) {
+                    outputElement.classList.add('error');
+                    outputElement.innerText = "Compilation Error:\n" + result.Errors;
+                } else if (result.Events) {
+                    outputElement.classList.remove('error');
+                    let output = '';
+                    result.Events.forEach(event => {
+                        if (event.Kind === 'stdout' || event.Kind === 'stderr') {
+                            output += event.Message;
+                        }
+                    });
+                    outputElement.innerText = output || "No output";
+                } else {
+                    outputElement.classList.remove('error');
+                    outputElement.innerText = "No output";
+                }
+            } catch (err) {
+                outputElement.classList.add('error');
+                outputElement.innerText = "Error: Failed to execute Go code. This requires an internet connection to use the Go playground API.\n\nError details: " + err.message;
+            }
         }
 
         async function runCode() {
             maximizeOutputConsole();
             const code = document.getElementById('code-editor').value;
             const outputElement = document.getElementById('output');
-            outputElement.innerHTML = '';
+            
+            outputElement.innerHTML = 'Running...';
             outputElement.classList.remove('error');
 
-            try {
-                await pyodide.runPythonAsync(`
-                    import sys
-                    from io import StringIO
-                    sys.stdout = StringIO()
-                `);
-                await pyodide.runPythonAsync(code);
-                let output = pyodide.runPython("sys.stdout.getvalue()");
-                outputElement.innerText = output || "No output";
-            } catch (err) {
-                outputElement.classList.add("border-red-500", "text-red-600", "dark:text-red-400");
-                outputElement.innerText = "Error: " + err.message;
+            if (currentLanguage === 'python') {
+                if (!pyodide) {
+                    outputElement.classList.add('error');
+                    outputElement.innerText = "Error: Python runtime is still loading. Please wait...";
+                    return;
+                }
+                await runPythonCode(code);
+            } else if (currentLanguage === 'go') {
+                await runGoCode(code);
             }
         }
 
-        function clearInput() {
+        function clearOutput() {
             const outputElement = document.getElementById('output');
             outputElement.innerHTML = '';
             outputElement.classList.remove('error');
@@ -464,7 +638,7 @@ print(greet(user_name))
 
             // --- Tab / Shift+Tab for Indentation ---
             if (event.key === 'Tab') {
-                event.preventDefault(); // Prevent default tab behavior (losing focus)
+                event.preventDefault();
 
                 if (event.shiftKey) {
                     // De-indent (Shift+Tab)
@@ -507,15 +681,21 @@ print(greet(user_name))
 
             // --- Enter for Auto-Indentation ---
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent default enter behavior
+                event.preventDefault();
 
                 const prevLine = value.substring(0, selectionStart).split('\n').pop();
                 const leadingSpaces = prevLine.match(/^\s*/)[0];
                 let newIndentation = leadingSpaces;
 
-                // Increase indentation if previous line ends with a colon
-                if (prevLine.trim().endsWith(':')) {
-                    newIndentation += ' '.repeat(TAB_SIZE);
+                // Language-specific auto-indentation
+                if (currentLanguage === 'python') {
+                    if (prevLine.trim().endsWith(':')) {
+                        newIndentation += ' '.repeat(TAB_SIZE);
+                    }
+                } else if (currentLanguage === 'go') {
+                    if (prevLine.trim().endsWith('{')) {
+                        newIndentation += ' '.repeat(TAB_SIZE);
+                    }
                 }
 
                 const newValue = value.substring(0, selectionStart) + '\n' + newIndentation + value.substring(selectionEnd);
@@ -529,18 +709,18 @@ print(greet(user_name))
             if ((event.ctrlKey || event.metaKey) && event.key === '/') {
                 event.preventDefault();
 
+                const commentChar = currentLanguage === 'python' ? '#' : '//';
                 const lines = value.split('\n');
                 let startLineIndex = value.substring(0, selectionStart).split('\n').length - 1;
                 let endLineIndex = value.substring(0, selectionEnd).split('\n').length - 1;
 
-                // Adjust endLineIndex if selection is at the very beginning of a new line
                 if (selectionStart === selectionEnd && selectionStart > 0 && value[selectionStart - 1] === '\n') {
                     startLineIndex = endLineIndex;
                 }
 
                 let allLinesAreCommented = true;
                 for (let i = startLineIndex; i <= endLineIndex; i++) {
-                    if (!lines[i].trim().startsWith('#')) {
+                    if (!lines[i].trim().startsWith(commentChar)) {
                         allLinesAreCommented = false;
                         break;
                     }
@@ -553,28 +733,27 @@ print(greet(user_name))
                 for (let i = startLineIndex; i <= endLineIndex; i++) {
                     const line = lines[i];
                     if (allLinesAreCommented) {
-                        // Uncomment: remove '#' and a space if present
-                        if (line.startsWith('# ')) {
-                            lines[i] = line.substring(2);
-                            charDiff -= 2;
-                        } else if (line.startsWith('#')) {
-                            lines[i] = line.substring(1);
-                            charDiff -= 1;
+                        // Uncomment
+                        if (line.startsWith(commentChar + ' ')) {
+                            lines[i] = line.substring(commentChar.length + 1);
+                            charDiff -= (commentChar.length + 1);
+                        } else if (line.startsWith(commentChar)) {
+                            lines[i] = line.substring(commentChar.length);
+                            charDiff -= commentChar.length;
                         }
                     } else {
-                        // Comment: add '# '
-                        lines[i] = '# ' + line;
-                        charDiff += 2;
+                        // Comment
+                        lines[i] = commentChar + ' ' + line;
+                        charDiff += (commentChar.length + 1);
                     }
                 }
 
                 codeEditor.value = lines.join('\n');
 
-                // Adjust selection after modification
-                if (selectionStart <= currentLineStart) { // If selection starts at or before the current line's start
+                if (selectionStart <= currentLineStart) {
                     newSelectionStart = selectionStart + charDiff;
                 } else {
-                    newSelectionStart = selectionStart; // Selection start within the line, don't move it
+                    newSelectionStart = selectionStart;
                 }
                 newSelectionEnd = selectionEnd + charDiff;
 
@@ -601,14 +780,17 @@ print(greet(user_name))
             try {
                 loadPyodideAndPackages();
                 updateHighlighting();
-                codeEditor.addEventListener('input', updateHighlighting); // Update highlighting on every input
-                codeEditor.addEventListener('scroll', syncScroll); // Sync scrolling of textarea and pre
+                codeEditor.addEventListener('input', updateHighlighting);
+                codeEditor.addEventListener('scroll', syncScroll);
                 codeEditor.addEventListener('keydown', handleKeyDown);
+                
+                // Initialize with Python
+                switchLanguage('python');
             } catch (e) {
-                console.error("Error loading Pyodide and packages:", e);
+                console.error("Error initializing editor:", e);
                 const outputElement = document.getElementById('output');
                 if (outputElement) {
-                    outputElement.textContent = "Error: Failed to load Pyodide and packages. Please check your internet connection and try refreshing the page.";
+                    outputElement.textContent = "Error: Failed to initialize editor. Please refresh the page.";
                     outputElement.classList.add('error');
                 }
             }

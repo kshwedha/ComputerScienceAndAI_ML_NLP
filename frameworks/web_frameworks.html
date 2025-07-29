@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django, Flask, FastAPI with WSGI and ASGI Servers</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 3.2em;
+            letter-spacing: 1px;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 0; /* Reset margin for h2 inside collapsible-header */
+            font-size: 2.4em;
+            flex-grow: 1; /* Allows h2 to take available space in flex container */
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 35px;
+            font-size: 1.9em;
+        }
+        h4 {
+            color: #1e6d9b;
+            margin-top: 25px;
+            font-size: 1.5em;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 35px;
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background-color: #e0e6ed;
+            padding: 2px 5px;
+            border-radius: 4px;
+            color: #c0392b; /* Darker red for inline code */
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        strong {
+            color: #e74c3c;
+        }
+        .concept-section {
+            background-color: #f8fafa;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 30px 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .concept-section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .code-block {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #6a4f00;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border-left: 6px solid #dc3545;
+            padding: 15px 25px;
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #721c24;
+        }
+
+        /* --- Collapsible Specific Styles --- */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 20px;
+        }
+        .toggle-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            min-width: 90px;
+            text-align: center;
+        }
+        .toggle-button:hover {
+            background-color: #2980b9;
+        }
+        .toggle-button.collapsed {
+            background-color: #95a5a6;
+        }
+        .collapsible-content {
+            display: none; /* Initially hidden */
+            padding-top: 10px;
+        }
+        .collapsible-content.expanded {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Django, Flask, FastAPI with WSGI and ASGI Servers</h1>
+
+        <p>Python offers a rich ecosystem of web frameworks, each catering to different needs and architectural styles. Understanding how these frameworks interact with web servers is crucial for deploying performant and scalable applications. This document explores three popular Python web frameworks – Django, Flask, and FastAPI – and their respective server gateway interfaces: WSGI (Web Server Gateway Interface) and ASGI (Asynchronous Server Gateway Interface).</p>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>1. WSGI (Web Server Gateway Interface)</h2>
+                <button class="toggle-button" data-target="wsgi-content">Expand</button>
+            </div>
+            <div id="wsgi-content" class="collapsible-content">
+                <h3>What is it?</h3>
+                <p><strong>WSGI (Web Server Gateway Interface)</strong> is a standard Python interface between web servers (like Gunicorn, uWSGI, Apache mod_wsgi) and Python web applications or frameworks (like Django, Flask). It defines a simple and universal API that allows web servers to communicate with Python web applications, decoupling them and enabling flexibility in deployment.</p>
+                <h3>Why is it used?</h3>
+                <ul>
+                    <li><strong>Standardization:</strong> Provides a common ground, so any WSGI-compatible server can run any WSGI-compatible application.</li>
+                    <li><strong>Deployment Flexibility:</strong> Developers can write applications without worrying about the specific web server, and operations teams can choose the best server for their infrastructure.</li>
+                    <li><strong>Modularity:</strong> Allows for middleware components to be easily inserted between the server and the application to handle tasks like logging, authentication, or compression.</li>
+                    <li><strong>Synchronous Nature:</strong> Designed for traditional, synchronous request-response cycles. Each request typically blocks a worker process/thread until its response is ready.</li>
+                </ul>
+                <h3>How it works?</h3>
+                <p>A WSGI application is a callable (a function or an object with a <code>__call__</code> method) that accepts two arguments:</p>
+                <ol>
+                    <li><code>environ</code>: A dictionary containing CGI-like environment variables and other request-specific information.</li>
+                    <li><code>start_response</code>: A callable that the application uses to send the HTTP status and response headers to the server.</li>
+                </ol>
+                <p>The application then returns an iterable (e.g., a list of strings or a generator) representing the response body.</p>
+                <h3>Common WSGI Servers</h3>
+                <ul>
+                    <li><strong>Gunicorn (Green Unicorn):</strong> A popular, robust, and easy-to-use WSGI HTTP server for Unix. It's a pre-fork worker model, meaning it forks multiple worker processes to handle requests concurrently.</li>
+                    <li><strong>uWSGI:</strong> A highly performant and feature-rich server that supports WSGI, PSGI, Rack, and more. It's known for its flexibility and extensive configuration options.</li>
+                    <li><strong>mod_wsgi (Apache):</strong> An Apache HTTP Server module that allows hosting Python web applications using the WSGI interface.</li>
+                </ul>
+
+                <h4>Python Code: Simple WSGI Application</h4>
+                <pre><code class="language-python">
+# my_wsgi_app.py
+
+def application(environ, start_response):
+    """
+    A simple WSGI application callable.
+    """
+    status = '200 OK'
+    headers = [('Content-type', 'text/plain')]
+    start_response(status, headers)
+    
+    # Get path from environ
+    path = environ.get('PATH_INFO', '/')
+    
+    if path == '/':
+        return [b"Hello, WSGI World!"]
+    elif path == '/info':
+        response_body = f"Request Path: {path}\n"
+        response_body += f"Request Method: {environ.get('REQUEST_METHOD')}\n"
+        response_body += f"Server Name: {environ.get('SERVER_NAME')}\n"
+        response_body += f"Server Port: {environ.get('SERVER_PORT')}\n"
+        return [response_body.encode('utf-8')]
+    else:
+        status = '404 Not Found'
+        start_response(status, headers)
+        return [b"404 - Not Found"]
+
+# How to run (conceptually, you'd use a WSGI server like Gunicorn):
+# Save this file as my_wsgi_app.py
+# Install Gunicorn: pip install gunicorn
+# Run: gunicorn my_wsgi_app:application -b 0.0.0.0:8000
+# Then visit http://localhost:8000/ or http://localhost:8000/info
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>2. ASGI (Asynchronous Server Gateway Interface)</h2>
+                <button class="toggle-button" data-target="asgi-content">Expand</button>
+            </div>
+            <div id="asgi-content" class="collapsible-content">
+                <h3>What is it?</h3>
+                <p><strong>ASGI (Asynchronous Server Gateway Interface)</strong> is a spiritual successor to WSGI, designed to support asynchronous operations and new web protocols beyond traditional HTTP, such as WebSockets and HTTP/2. It allows Python web applications to handle multiple requests concurrently without blocking, making them highly efficient for I/O-bound tasks.</p>
+                <h3>Why is it used?</h3>
+                <ul>
+                    <li><strong>Asynchronous Support:</strong> Enables the use of Python's <code>async/await</code> syntax for non-blocking I/O operations, improving concurrency and performance.</li>
+                    <li><strong>WebSockets:</strong> Provides a standard way for applications to handle long-lived WebSocket connections.</li>
+                    <li><strong>HTTP/2 & Server-Sent Events (SSE):</strong> Supports modern web protocols that require persistent connections and bidirectional communication.</li>
+                    <li><strong>High Concurrency:</strong> Ideal for applications with many concurrent connections, especially those involving real-time features or long-polling.</li>
+                </ul>
+                <h3>How it works?</h3>
+                <p>An ASGI application is an <code>async</code> callable that accepts three arguments:</p>
+                <ol>
+                    <li><code>scope</code>: A dictionary containing the connection's scope (similar to WSGI's <code>environ</code>, but also includes protocol-specific details like <code>type='http'</code> or <code>type='websocket'</code>).</li>
+                    <li><code>receive</code>: An <code>async</code> callable that allows the application to receive events from the server (e.g., incoming request body chunks, WebSocket messages).</li>
+                    <li><code>send</code>: An <code>async</code> callable that allows the application to send events to the server (e.g., HTTP response headers, response body chunks, WebSocket messages).</li>
+                </ol>
+                <p>The application typically awaits on <code>receive</code> and <code>send</code> operations.</p>
+                <h3>Common ASGI Servers</h3>
+                <ul>
+                    <li><strong>Uvicorn:</strong> A lightning-fast ASGI server, built on uvloop and httptools. It's the recommended server for FastAPI.</li>
+                    <li><strong>Daphne:</strong> The ASGI HTTP and WebSocket protocol server for Django Channels.</li>
+                    <li><strong>Hypercorn:</strong> Another ASGI server, compatible with HTTP/1, HTTP/2, and WebSockets.</li>
+                </ul>
+
+                <h4>Python Code: Simple ASGI Application</h4>
+                <pre><code class="language-python">
+# my_asgi_app.py
+
+async def application(scope, receive, send):
+    """
+    A simple ASGI application callable.
+    """
+    assert scope['type'] == 'http' # This example only handles HTTP requests
+
+    # Receive the request body (if any)
+    # This loop is typically used for streaming request bodies or WebSocket messages
+    # For simple GET requests, you might not need to receive anything.
+    async def get_body():
+        body_chunks = []
+        while True:
+            message = await receive()
+            if message['type'] == 'http.request':
+                body_chunks.append(message['body'])
+                if not message['more_body']:
+                    break
+            elif message['type'] == 'http.disconnect':
+                # Client disconnected prematurely
+                break
+        return b''.join(body_chunks)
+
+    # Prepare response headers and status
+    status = 200
+    headers = [
+        [b'content-type', b'text/plain'],
+    ]
+
+    path = scope.get('path', '/')
+
+    if path == '/':
+        response_body = b"Hello, ASGI World!"
+    elif path == '/info':
+        # Example of accessing scope info
+        response_body = f"Request Path: {path}\n"
+        response_body += f"Request Method: {scope.get('method')}\n"
+        response_body += f"HTTP Version: {scope.get('http_version')}\n"
+        response_body += f"Client IP: {scope.get('client')[0] if scope.get('client') else 'N/A'}\n"
+        response_body = response_body.encode('utf-8')
+    else:
+        status = 404
+        response_body = b"404 - Not Found"
+
+    # Send response headers
+    await send({
+        'type': 'http.response.start',
+        'status': status,
+        'headers': headers,
+    })
+
+    # Send response body
+    await send({
+        'type': 'http.response.body',
+        'body': response_body,
+        'more_body': False, # Indicate that this is the last part of the body
+    })
+
+# How to run (conceptually, you'd use an ASGI server like Uvicorn):
+# Save this file as my_asgi_app.py
+# Install Uvicorn: pip install uvicorn
+# Run: uvicorn my_asgi_app:application --host 0.0.0.0 --port 8000
+# Then visit http://localhost:8000/ or http://localhost:8000/info
+                </code></pre>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>3. Django</h2>
+                <button class="toggle-button" data-target="django-content">Expand</button>
+            </div>
+            <div id="django-content" class="collapsible-content">
+                <h3>What is it?</h3>
+                <p><strong>Django</strong> is a high-level Python web framework that encourages rapid development and clean, pragmatic design. It's often referred to as a "batteries-included" framework because it comes with a vast array of built-in features and tools for common web development tasks, allowing developers to focus on their application's unique aspects rather than reinventing the wheel.</p>
+                <h3>Key Features</h3>
+                <ul>
+                    <li><strong>ORM (Object-Relational Mapper):</strong> A powerful and flexible ORM that allows developers to interact with their database using Python objects, abstracting away SQL.</li>
+                    <li><strong>Admin Interface:</strong> Automatically generated, customizable administrative interface for managing application data.</li>
+                    <li><strong>Templating Engine:</strong> A robust and extensible templating system (Django Template Language - DTL) for rendering dynamic HTML.</li>
+                    <li><strong>URL Router:</strong> A powerful URL dispatcher that maps URLs to Python functions or class-based views.</li>
+                    <li><strong>Authentication System:</strong> Built-in user authentication, permissions, and session management.</li>
+                    <li><strong>Form Handling:</strong> Comprehensive tools for creating, validating, and processing web forms.</li>
+                    <li><strong>Security Features:</strong> Built-in protections against common web vulnerabilities (CSRF, XSS, SQL injection).</li>
+                    <li><strong>Scalability:</strong> Designed to be scalable, supporting various caching mechanisms, database sharding, and asynchronous tasks.</li>
+                </ul>
+                <h3>WSGI/ASGI Integration</h3>
+                <p>Historically, Django has been a WSGI-compatible framework. Since Django 3.0, it gained native asynchronous capabilities and can run on ASGI servers via <a href="https://channels.readthedocs.io/en/latest/installation.html" target="_blank">Django Channels</a> or directly with ASGI servers like Uvicorn (though Channels is more common for WebSockets).</p>
+                <ul>
+                    <li><strong>WSGI:</strong> Django provides a <code>wsgi.py</code> file in each project, which contains the WSGI application callable. This is the standard way to deploy Django with WSGI servers like Gunicorn or uWSGI.</li>
+                    <li><strong>ASGI:</strong> Django provides an <code>asgi.py</code> file (since Django 3.0) for ASGI compatibility. This allows Django to handle asynchronous requests, including WebSockets, when run with an ASGI server like Uvicorn or Daphne.</li>
+                </ul>
+
+                <h4>Python Code: Simple Django Project Structure & App</h4>
+                <p>First, create a Django project and app:</p>
+                <pre><code class="language-bash">
+# Install Django
+pip install django
+
+# Create a new project
+django-admin startproject myproject .
+
+# Create a new app within the project
+python manage.py startapp myapp
+                </code></pre>
+                <p>Then, modify the files:</p>
+                <pre><code class="language-python">
+# myproject/settings.py (Relevant part)
+# Add 'myapp' to INSTALLED_APPS
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myapp', # &lt;-- Add your app here
+]
+
+# myproject/urls.py (Project-level URL configuration)
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('myapp/', include('myapp.urls')), # &lt;-- Include app's URLs
+]
+
+# myapp/views.py (Your app's views)
+from django.http import HttpResponse
+from django.shortcuts import render
+
+def hello_django(request):
+    return HttpResponse("Hello from Django!")
+
+def show_info(request):
+    context = {
+        'method': request.method,
+        'path': request.path,
+        'user_agent': request.META.get('HTTP_USER_AGENT', 'N/A')
+    }
+    # For a real app, you'd use a template: return render(request, 'myapp/info.html', context)
+    return HttpResponse(f"Request Method: {context['method']}&lt;br&gt;"
+                        f"Request Path: {context['path']}&lt;br&gt;"
+                        f"User Agent: {context['user_agent']}")
+
+# myapp/urls.py (Your app's URL configuration)
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('hello/', views.hello_django, name='hello_django'),
+    path('info/', views.show_info, name='show_info'),
+]
+                </code></pre>
+                <h4>Running Django with WSGI (Gunicorn)</h4>
+                <pre><code class="language-bash">
+# Ensure you are in the directory containing manage.py (myproject/)
+# Install Gunicorn:
+pip install gunicorn
+
+# Run Gunicorn, pointing to your project's wsgi.py file
+gunicorn myproject.wsgi:application --bind 0.0.0.0:8000
+
+# Then visit http://localhost:8000/myapp/hello/ or http://localhost:8000/myapp/info/
+                </code></pre>
+                <h4>Running Django with ASGI (Uvicorn - for basic HTTP, or Daphne for Channels)</h4>
+                <p>For basic HTTP, Django 3.0+ can be served by Uvicorn. For WebSockets or more advanced async features, Django Channels with Daphne is typically used.</p>
+                <pre><code class="language-bash">
+# Ensure you are in the directory containing manage.py (myproject/)
+# Install Uvicorn:
+pip install uvicorn
+
+# Run Uvicorn, pointing to your project's asgi.py file
+uvicorn myproject.asgi:application --host 0.0.0.0 --port 8000
+
+# Then visit http://localhost:8000/myapp/hello/ or http://localhost:8000/myapp/info/
+                </code></pre>
+                <p class="note"><strong>Note:</strong> While Django can run on ASGI for HTTP, its ORM and many built-in features are still synchronous. For true end-to-end async, you'd need to use <code>async def</code> views and async-compatible database drivers or libraries.</p>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>4. Flask</h2>
+                <button class="toggle-button" data-target="flask-content">Expand</button>
+            </div>
+            <div id="flask-content" class="collapsible-content">
+                <h3>What is it?</h3>
+                <p><strong>Flask</strong> is a lightweight Python web microframework. Unlike Django, it does not include an ORM, admin panel, or other "batteries included" features by default. Instead, it provides a simple core and relies on extensions to add functionality like database integration, form validation, and authentication. This minimalist approach makes Flask highly flexible and suitable for smaller applications, APIs, or when developers prefer to choose their own components.</p>
+                <h3>Key Features</h3>
+                <ul>
+                    <li><strong>Microframework:</strong> Small core, easy to get started.</li>
+                    <li><strong>Routing:</strong> Simple and intuitive URL routing using decorators.</li>
+                    <li><strong>Jinja2 Templating:</strong> Integrated with Jinja2 for powerful and secure templating.</li>
+                    <li><strong>Werkzeug WSGI Toolkit:</strong> Built on Werkzeug, which provides WSGI utilities.</li>
+                    <li><strong>Extensible:</strong> A large ecosystem of Flask extensions for various needs (Flask-SQLAlchemy, Flask-Login, Flask-RESTful, etc.).</li>
+                    <li><strong>HTTP Method Handling:</strong> Easy handling of different HTTP methods (GET, POST, PUT, DELETE).</li>
+                </ul>
+                <h3>WSGI Integration</h3>
+                <p>Flask is fundamentally a WSGI application. The <code>Flask</code> object itself is a WSGI callable. This means it can be served by any WSGI server directly.</p>
+
+                <h4>Python Code: Simple Flask Application</h4>
+                <pre><code class="language-python">
+# my_flask_app.py
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_flask():
+    return "Hello from Flask!"
+
+@app.route('/api/info', methods=['GET', 'POST'])
+def api_info():
+    if request.method == 'GET':
+        return jsonify({
+            "message": "This is a GET request to /api/info",
+            "path": request.path,
+            "method": request.method,
+            "user_agent": request.headers.get('User-Agent', 'N/A')
+        })
+    elif request.method == 'POST':
+        data = request.json # Assumes JSON payload
+        return jsonify({
+            "message": "This is a POST request to /api/info",
+            "received_data": data
+        })
+
+# How to run (for development, Flask has a built-in server):
+# FLASK_APP=my_flask_app.py flask run --port 5000
+# Then visit http://localhost:5000/ or http://localhost:5000/api/info
+                </code></pre>
+                <h4>Running Flask with WSGI (Gunicorn)</h4>
+                <pre><code class="language-bash">
+# Install Gunicorn:
+pip install gunicorn
+
+# Run Gunicorn, pointing to your Flask app instance
+# 'my_flask_app' is the Python module name, 'app' is the Flask application instance
+gunicorn my_flask_app:app --bind 0.0.0.0:8000
+
+# Then visit http://localhost:8000/ or http://localhost:8000/api/info
+                </code></pre>
+                <p class="note"><strong>Note:</strong> Flask's built-in development server is not suitable for production. Always use a production-ready WSGI server like Gunicorn or uWSGI for deployment.</p>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>5. FastAPI</h2>
+                <button class="toggle-button" data-target="fastapi-content">Expand</button>
+            </div>
+            <div id="fastapi-content" class="collapsible-content">
+                <h3>What is it?</h3>
+                <p><strong>FastAPI</strong> is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. It leverages ASGI for asynchronous capabilities, Pydantic for data validation and serialization, and OpenAPI (formerly Swagger) for automatic API documentation. FastAPI is designed for building robust, production-ready APIs quickly.</p>
+                <h3>Key Features</h3>
+                <ul>
+                    <li><strong>Asynchronous Support:</strong> Fully supports <code>async/await</code>, allowing for high concurrency and efficient handling of I/O-bound tasks.</li>
+                    <li><strong>High Performance:</strong> Built on Starlette (a lightweight ASGI framework) and Pydantic, making it comparable to Node.js and Go in terms of performance.</li>
+                    <li><strong>Data Validation & Serialization:</strong> Uses Pydantic models for automatic request body parsing, validation, and response serialization, reducing boilerplate code and ensuring data integrity.</li>
+                    <li><strong>Automatic API Docs:</strong> Generates interactive API documentation (Swagger UI and ReDoc) directly from your code using OpenAPI standards.</li>
+                    <li><strong>Dependency Injection:</strong> A powerful and easy-to-use dependency injection system for managing complex application logic and testing.</li>
+                    <li><strong>Type Hints:</strong> Leverages standard Python type hints for better code completion, static analysis, and reduced debugging time.</li>
+                    <li><strong>Security:</strong> Built-in utilities for OAuth2, JWT, and API Key authentication.</li>
+                </ul>
+                <h3>ASGI Integration</h3>
+                <p>FastAPI is an ASGI framework. The <code>FastAPI</code> application instance is an ASGI callable, meaning it must be served by an ASGI server like Uvicorn.</p>
+
+                <h4>Python Code: Simple FastAPI Application</h4>
+                <pre><code class="language-python">
+# my_fastapi_app.py
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import uvicorn
+import asyncio
+import time
+
+app = FastAPI()
+
+# Define a Pydantic model for request body validation
+class Item(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello from FastAPI!"}
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: int, q: str | None = None):
+    """
+    Example of path parameters and query parameters.
+    """
+    return {"item_id": item_id, "q": q}
+
+@app.post("/items/")
+async def create_item(item: Item):
+    """
+    Example of request body validation using Pydantic.
+    """
+    return {"message": "Item received", "item": item}
+
+@app.get("/async_task")
+async def run_async_task():
+    """
+    Demonstrates asynchronous operation.
+    """
+    print("Starting async task...")
+    await asyncio.sleep(2) # Simulate an I/O bound operation that doesn't block the event loop
+    print("Async task finished.")
+    return {"message": "Async task completed after 2 seconds"}
+
+# How to run (FastAPI requires an ASGI server like Uvicorn):
+# Save this file as my_fastapi_app.py
+# Install FastAPI and Uvicorn: pip install fastapi "uvicorn[standard]"
+# Run: uvicorn my_fastapi_app:app --host 0.0.0.0 --port 8000 --reload
+# Then visit http://localhost:8000/ or http://localhost:8000/docs (for API docs)
+# Test async: http://localhost:8000/async_task
+# Test POST: curl -X POST -H "Content-Type: application/json" -d '{"name": "Laptop", "price": 1200.0}' http://localhost:8000/items/
+                </code></pre>
+                <h4>Running FastAPI with ASGI (Uvicorn)</h4>
+                <pre><code class="language-bash">
+# Install FastAPI and Uvicorn:
+pip install fastapi "uvicorn[standard]"
+
+# Run Uvicorn, pointing to your FastAPI app instance
+# 'my_fastapi_app' is the Python module name, 'app' is the FastAPI application instance
+uvicorn my_fastapi_app:app --host 0.0.0.0 --port 8000 --reload
+
+# The --reload flag enables auto-reloading on code changes (for development)
+# For production, remove --reload and potentially specify more workers:
+# uvicorn my_fastapi_app:app --host 0.0.0.0 --port 8000 --workers 4
+                </code></pre>
+                <p class="note"><strong>Note:</strong> FastAPI's performance benefits come from its asynchronous nature and efficient data validation. It's an excellent choice for building modern, high-performance APIs.</p>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>6. Framework Comparison: Django vs. Flask vs. FastAPI</h2>
+                <button class="toggle-button" data-target="comparison-content">Expand</button>
+            </div>
+            <div id="comparison-content" class="collapsible-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Django</th>
+                            <th>Flask</th>
+                            <th>FastAPI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Type</strong></td>
+                            <td>Full-stack framework</td>
+                            <td>Microframework</td>
+                            <td>Modern API framework</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Philosophy</strong></td>
+                            <td>"Batteries-included", opinionated, rapid development of complex web apps.</td>
+                            <td>Minimalist, flexible, "do it yourself" philosophy.</td>
+                            <td>High-performance APIs, async-first, type-hint driven, automatic docs.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primary Use Case</strong></td>
+                            <td>Complex web applications, CMS, CRM, large-scale projects, projects requiring ORM/Admin.</td>
+                            <td>Small to medium-sized web apps, simple APIs, rapid prototyping, custom solutions.</td>
+                            <td>High-performance APIs, microservices, real-time applications (with async), data science APIs.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Synchronous/Asynchronous</strong></td>
+                            <td>Primarily synchronous (WSGI). ASGI support (Django 3.0+) for async views and WebSockets.</td>
+                            <td>Synchronous (WSGI). Async can be achieved with extensions like Flask-SocketIO or libraries like Gevent/Eventlet.</td>
+                            <td>Asynchronous-first (ASGI), built for <code>async/await</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Server Interface</strong></td>
+                            <td>WSGI (default), ASGI (via <code>asgi.py</code>)</td>
+                            <td>WSGI</td>
+                            <td>ASGI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ORM</strong></td>
+                            <td>Built-in powerful ORM</td>
+                            <td>No built-in (Flask-SQLAlchemy is common extension)</td>
+                            <td>No built-in (SQLModel, SQLAlchemy are common choices)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Admin Panel</strong></td>
+                            <td>Built-in, highly customizable</td>
+                            <td>No built-in (requires extensions)</td>
+                            <td>No built-in (requires custom implementation or extensions)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Validation</strong></td>
+                            <td>Django Forms, ORM validation</td>
+                            <td>Manual or via extensions (e.g., Marshmallow, Pydantic)</td>
+                            <td>Built-in via Pydantic (automatic, robust)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>API Documentation</strong></td>
+                            <td>Manual or via extensions (e.g., Django REST Framework)</td>
+                            <td>Manual or via extensions (e.g., Flask-RESTful)</td>
+                            <td>Automatic OpenAPI (Swagger UI, ReDoc)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Learning Curve</strong></td>
+                            <td>Moderate to High (due to many built-in concepts)</td>
+                            <td>Low to Moderate (easy to start, complexity grows with extensions)</td>
+                            <td>Low to Moderate (intuitive once async/type hints are understood)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Good for synchronous workloads, can be bottlenecked by I/O if not using async.</td>
+                            <td>Good for synchronous workloads, similar performance to Django in sync mode.</td>
+                            <td>Excellent for I/O-bound workloads due to async, generally very fast.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="concept-section">
+            <div class="collapsible-header">
+                <h2>7. Database Concepts in Python Web Frameworks</h2>
+                <button class="toggle-button" data-target="db-concepts-content">Expand</button>
+            </div>
+            <div id="db-concepts-content" class="collapsible-content">
+                <p>Database interaction is a core component of most web applications. Python web frameworks provide various tools and patterns to manage data persistence, schema evolution, and data representation.</p>
+
+                <h3>7.1. Serialization</h3>
+                <p><strong>Serialization</strong> is the process of converting complex data types (like Python objects, database model instances) into a format that can be easily stored, transmitted over a network, or consumed by other applications (e.g., JSON, XML). <strong>Deserialization</strong> is the reverse process, converting the external format back into Python objects.</p>
+                <p>In the context of web APIs, serialization is crucial for transforming database records into API responses and for validating and converting incoming request bodies into Python objects.</p>
+
+                <h4>Why is it used?</h4>
+                <ul>
+                    <li><strong>API Data Exchange:</strong> APIs primarily communicate using formats like JSON or XML. Serialization bridges the gap between your application's internal data structures and these external formats.</li>
+                    <li><strong>Data Validation:</strong> Deserializers often include validation logic to ensure incoming data conforms to expected types and constraints.</li>
+                    <li><strong>Data Transformation:</strong> Allows for shaping data, excluding sensitive fields, or adding computed properties before sending a response.</li>
+                    <li><strong>Inter-service Communication:</strong> Used when passing complex data between microservices via message queues or RPC.</li>
+                </ul>
+
+                <h4>Implementation in Frameworks</h4>
+                <ul>
+                    <li><strong>Django (with Django REST Framework - DRF):</strong>
+                        <p>DRF provides powerful <code>Serializers</code> that work much like Django's <code>Forms</code>. They define how model instances are converted to Python native types and then rendered to JSON/XML, and how incoming data is validated and converted back to model instances.</p>
+                        <pre><code class="language-python">
+# myapp/models.py (Example Django Model)
+from django.db import models
+
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+# myapp/serializers.py (DRF Serializer)
+from rest_framework import serializers
+from .models import Product
+
+class ProductSerializer(serializers.ModelSerializer):
+    # You can add custom fields or override existing ones
+    is_in_stock = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'stock', 'created_at', 'is_in_stock']
+        read_only_fields = ['created_at'] # These fields can be read but not updated via API
+
+    def get_is_in_stock(self, obj):
+        return obj.stock > 0
+
+# myapp/views.py (DRF ViewSet for API)
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Product
+from .serializers import ProductSerializer
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    # Example of custom action (e.g., /products/{id}/increase_stock/)
+    from rest_framework.decorators import action
+    @action(detail=True, methods=['post'])
+    def increase_stock(self, request, pk=None):
+        product = self.get_object()
+        amount = request.data.get('amount', 1)
+        try:
+            amount = int(amount)
+            if amount <= 0:
+                return Response({'detail': 'Amount must be positive.'}, status=status.HTTP_400_BAD_REQUEST)
+            product.stock += amount
+            product.save()
+            serializer = self.get_serializer(product)
+            return Response(serializer.data)
+        except ValueError:
+            return Response({'detail': 'Invalid amount.'}, status=status.HTTP_400_BAD_REQUEST)
+
+# myproject/urls.py (Add DRF router)
+# from rest_framework.routers import DefaultRouter
+# from myapp.views import ProductViewSet
+# router = DefaultRouter()
+# router.register(r'products', ProductViewSet)
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('myapp/', include('myapp.urls')),
+#     path('api/', include(router.urls)), # &lt;-- API endpoints
+# ]
+                        </code></pre>
+                    </li>
+                    <li><strong>Flask (with Marshmallow or Pydantic):</strong>
+                        <p>Flask itself is minimalist, so you'd use external libraries. Marshmallow is a popular choice for object serialization/deserialization, independent of any ORM. Pydantic is also increasingly used, especially for request body validation.</p>
+                        <pre><code class="language-python">
+# app.py (Flask example with Marshmallow)
+from flask import Flask, jsonify, request
+from marshmallow import Schema, fields, validate
+
+app = Flask(__name__)
+
+# Simulate a database model or plain Python object
+class User:
+    def __init__(self, id, name, email, is_active=True):
+        self.id = id
+        self.name = name
+        self.email = email
+        self.is_active = is_active
+
+# Marshmallow Schema for User
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True) # dump_only means it's only for serialization (output)
+    name = fields.Str(required=True, validate=validate.Length(min=3))
+    email = fields.Email(required=True)
+    is_active = fields.Bool(load_default=True) # load_default means it's for deserialization (input)
+
+    # You can add a method field for computed values
+    full_info = fields.Method("get_full_info")
+
+    def get_full_info(self, obj):
+        return f"{obj.name} ({obj.email})"
+
+# Create a schema instance
+user_schema = UserSchema()
+users_schema = UserSchema(many=True) # For lists of users
+
+# Dummy data
+users_db = [
+    User(1, "Alice", "alice@example.com"),
+    User(2, "Bob", "bob@example.com", False)
+]
+
+@app.route("/users", methods=["GET"])
+def get_users():
+    result = users_schema.dump(users_db) # Serialize a list of User objects
+    return jsonify(result)
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    try:
+        # Deserialize and validate incoming JSON data
+        # load_only=('id',) means 'id' is only for input, not output
+        user_data = user_schema.load(request.json) 
+        
+        # Simulate saving to DB and getting a new ID
+        new_id = max([u.id for u in users_db]) + 1 if users_db else 1
+        new_user = User(new_id, user_data['name'], user_data['email'], user_data['is_active'])
+        users_db.append(new_user)
+
+        result = user_schema.dump(new_user) # Serialize the created user
+        return jsonify(result), 201
+    except Exception as err:
+        return jsonify({"errors": err.messages}), 400
+
+# To run: pip install Flask marshmallow
+# FLASK_APP=app.py flask run
+# GET http://localhost:5000/users
+# POST http://localhost:5000/users with JSON: {"name": "Charlie", "email": "charlie@example.com"}
+                        </code></pre>
+                    </li>
+                    <li><strong>FastAPI (with Pydantic):</strong>
+                        <p>FastAPI leverages Pydantic for automatic data validation, serialization, and deserialization. This is a core part of its design and provides excellent developer experience and performance.</p>
+                        <pre><code class="language-python">
+# main.py (FastAPI example with Pydantic)
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional
+import uuid
+
+app = FastAPI()
+
+# Pydantic Model for input (request body) and output (response model)
+class UserIn(BaseModel):
+    name: str
+    email: EmailStr # Pydantic provides built-in email validation
+    password: str
+
+class UserOut(BaseModel):
+    id: uuid.UUID # UUID type
+    name: str
+    email: EmailStr
+    is_active: bool = True # Default value for output
+
+# Simulate a database
+users_db = {} # {uuid: UserOut instance}
+
+@app.post("/users/", response_model=UserOut, status_code=201)
+async def create_user(user_in: UserIn):
+    """
+    Creates a new user.
+    FastAPI automatically validates user_in against UserIn model.
+    response_model=UserOut ensures the output is serialized to UserOut.
+    """
+    user_id = uuid.uuid4()
+    # In a real app, hash password and save to DB
+    new_user = UserOut(id=user_id, name=user_in.name, email=user_in.email)
+    users_db[user_id] = new_user
+    return new_user
+
+@app.get("/users/", response_model=List[UserOut])
+async def get_users():
+    """
+    Retrieves all users.
+    """
+    return list(users_db.values())
+
+@app.get("/users/{user_id}", response_model=UserOut)
+async def get_user(user_id: uuid.UUID):
+    """
+    Retrieves a single user by ID.
+    """
+    user = users_db.get(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+# To run: pip install fastapi "uvicorn[standard]" pydantic
+# uvicorn main:app --reload --port 8000
+# Access http://localhost:8000/docs for interactive API.
+                        </code></pre>
+                    </li>
+                </ul>
+
+                <h3>7.2. Migrations</h3>
+                <p><strong>Database Migrations</strong> are a way to manage changes to your database schema over time in a version-controlled manner. As your application evolves, you'll add new models, change existing fields, or remove old ones. Migrations provide a structured way to apply these changes to your database without losing existing data.</p>
+                <h4>Why are they used?</h4>
+                <ul>
+                    <li><strong>Schema Evolution:</strong> Allows you to evolve your database schema as your application's data requirements change.</li>
+                    <li><strong>Version Control:</strong> Database schema changes are treated as code, allowing them to be versioned, reviewed, and deployed alongside your application code.</li>
+                    <li><strong>Collaboration:</strong> Facilitates teamwork by providing a consistent way for multiple developers to work on the same database schema.</li>
+                    <li><strong>Rollback Capability:</strong> Most migration tools allow you to revert schema changes to a previous state.</li>
+                    <li><strong>Reproducibility:</strong> Ensures that your database schema can be consistently recreated in different environments (dev, test, prod).</li>
+                </ul>
+
+                <h4>Implementation in Frameworks</h4>
+                <ul>
+                    <li><strong>Django:</strong>
+                        <p>Django has a powerful, built-in migration system. When you make changes to your models (e.g., in <code>myapp/models.py</code>), Django can automatically detect these changes and generate migration files (Python files that describe the schema modifications). These files are then applied to the database.</p>
+                        <pre><code class="language-bash">
+# 1. Make changes to your models.py (e.g., add a new field to Product model)
+# myapp/models.py
+# class Product(models.Model):
+#     name = models.CharField(max_length=100)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+#     stock = models.IntegerField(default=0)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     # NEW FIELD
+#     category = models.CharField(max_length=50, blank=True, null=True)
+
+# 2. Create migration files (detects changes and writes Python files)
+python manage.py makemigrations myapp
+
+# Example output:
+# Migrations for 'myapp':
+#   myapp/migrations/0002_product_category.py
+#     - Add field category to product
+
+# 3. Apply migrations to the database (executes SQL defined in migration files)
+python manage.py migrate
+
+# Example output:
+# Operations to perform:
+#   Apply all migrations: admin, auth, contenttypes, messages, myapp, sessions
+# Running migrations:
+#   Applying myapp.0002_product_category... OK
+
+# 4. To revert a migration:
+python manage.py migrate myapp 0001 # Reverts to the state after migration 0001
+# Or to revert all migrations for an app:
+python manage.py migrate myapp zero
+                        </code></pre>
+                    </li>
+                    <li><strong>Flask (with Flask-Migrate / Alembic):</strong>
+                        <p>Flask, being a microframework, doesn't have built-in migrations. The most common solution is Flask-Migrate, which is a wrapper around Alembic, a standalone database migration tool for SQLAlchemy.</p>
+                        <pre><code class="language-bash">
+# Install Flask-Migrate and Flask-SQLAlchemy (if using SQLAlchemy)
+pip install Flask-Migrate Flask-SQLAlchemy
+
+# In your Flask app.py:
+# from flask import Flask
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_migrate import Migrate
+
+# app = Flask(__name__)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+# db = SQLAlchemy(app)
+# migrate = Migrate(app, db)
+
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(80), unique=True, nullable=False)
+#     email = db.Column(db.String(120), unique=True, nullable=False)
+#     # NEW FIELD
+#     bio = db.Column(db.Text, nullable=True)
+
+# 1. Initialize migration environment (run once per project)
+flask db init
+
+# 2. Create a new migration script (detects changes in models.py)
+flask db migrate -m "Add bio field to User"
+
+# Example output:
+# INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+# INFO  [alembic.runtime.migration] Will compare database with current models.
+# INFO  [alembic.autogenerate.compare] Detected added column 'user.bio'
+#   Generating /path/to/migrations/versions/<hash>_add_bio_field_to_user.py ... done
+
+# 3. Apply the migration to the database
+flask db upgrade
+
+# 4. To revert:
+flask db downgrade
+
+# 5. To stamp the database with a revision without running upgrade/downgrade:
+flask db stamp head
+                        </code></pre>
+                    </li>
+                    <li><strong>FastAPI (with Alembic / SQLModel):</strong>
+                        <p>FastAPI itself doesn't come with an ORM or migration system. When using an ORM like SQLAlchemy (or SQLModel, which builds on Pydantic and SQLAlchemy), Alembic is the standard choice for migrations.</p>
+                        <pre><code class="language-bash">
+# Install SQLAlchemy and Alembic
+pip install sqlalchemy alembic
+
+# 1. Initialize Alembic for your project (run once)
+# This creates an 'alembic' directory and alembic.ini config file.
+alembic init -t async # Use 'async' template if your DB driver is async
+
+# 2. Configure alembic.ini and env.py to point to your database and models.
+#    (This step is manual and crucial, pointing to your SQLAlchemy Base/metadata)
+
+# 3. Create a new migration script (autogenerate based on model changes)
+alembic revision --autogenerate -m "Add new_field to MyModel"
+
+# 4. Apply migrations
+alembic upgrade head
+
+# 5. To revert:
+alembic downgrade -1 # Revert one step
+alembic downgrade base # Revert all
+                        </code></pre>
+                    </li>
+                </ul>
+
+                <h3>7.3. QuerySets (Django) / ORM Queries (Flask/FastAPI with SQLAlchemy)</h3>
+                <p>An **ORM (Object-Relational Mapper)** allows you to interact with your database using object-oriented code instead of raw SQL. This makes database operations more intuitive, less error-prone, and often more portable across different database systems.</p>
+
+                <h4>Django QuerySets</h4>
+                <p>In Django, a <strong>QuerySet</strong> is an object that represents a collection of database queries. It's returned by Django's ORM methods (e.g., <code>.all()</code>, <code>.filter()</code>, <code>.exclude()</code>) and is "lazy" – meaning the database query isn't executed until the QuerySet is evaluated (e.g., when you iterate over it, slice it, or call <code>len()</code>).</p>
+                <ul>
+                    <li><strong>Lazy Evaluation:</strong> Queries are only executed when needed, allowing you to chain multiple filters without hitting the database repeatedly.</li>
+                    <li><strong>Chaining:</strong> You can chain multiple methods (e.g., <code>.filter().order_by().values()</code>) to build complex queries.</li>
+                    <li><strong>Readability:</strong> Object-oriented syntax is often more readable than raw SQL.</li>
+                    <li><strong>Security:</strong> Built-in protection against SQL injection.</li>
+                </ul>
+                <pre><code class="language-python">
+# Example Django QuerySet operations (assuming Product model from above)
+from myapp.models import Product
+from django.db.models import Q, F, Sum, Avg
+
+# All products
+all_products = Product.objects.all()
+print(f"All products: {[p.name for p in all_products]}")
+
+# Filter products by price (less than 100)
+cheap_products = Product.objects.filter(price__lt=100)
+print(f"Cheap products: {[p.name for p in cheap_products]}")
+
+# Filter by name containing 'laptop' (case-insensitive)
+laptops = Product.objects.filter(name__icontains='laptop')
+print(f"Laptops: {[p.name for p in laptops]}")
+
+# Get a single product by ID
+try:
+    product_5 = Product.objects.get(id=5)
+    print(f"Product with ID 5: {product_5.name}")
+except Product.DoesNotExist:
+    print("Product with ID 5 not found.")
+
+# Order by price (ascending) then name (descending)
+ordered_products = Product.objects.order_by('price', '-name')
+print(f"Ordered products: {[p.name for p in ordered_products]}")
+
+# Select specific fields (returns dictionaries instead of model instances)
+product_names_prices = Product.objects.values('name', 'price')
+print(f"Names and prices: {list(product_names_prices)}")
+
+# Annotate with a new field (e.g., total value of stock)
+annotated_products = Product.objects.annotate(total_value=F('price') * F('stock'))
+for p in annotated_products:
+    print(f"{p.name}: Total Value = {p.total_value}")
+
+# Aggregate data
+total_stock = Product.objects.aggregate(Sum('stock'))
+average_price = Product.objects.aggregate(Avg('price'))
+print(f"Total Stock: {total_stock['stock__sum']}, Average Price: {average_price['price__avg']:.2f}")
+
+# Complex queries using Q objects (OR, AND, NOT)
+expensive_or_low_stock = Product.objects.filter(Q(price__gte=500) | Q(stock__lt=10))
+print(f"Expensive or low stock: {[p.name for p in expensive_or_low_stock]}")
+
+# Update multiple objects at once
+Product.objects.filter(stock__lt=5).update(stock=5)
+print("Updated stock for low-stock products.")
+
+# Delete multiple objects
+# Product.objects.filter(name__icontains='old_item').delete()
+                        </code></pre>
+
+                <h4>Flask/FastAPI with SQLAlchemy ORM Queries</h4>
+                <p>Flask and FastAPI don't come with a built-in ORM. SQLAlchemy is the most popular choice, providing a powerful and flexible ORM for Python. It allows you to define models and perform database operations using a Pythonic API.</p>
+                <p>SQLAlchemy's core concept for querying is the <code>Query</code> object (in its ORM extension) or direct usage of its Core expression language.</p>
+                <pre><code class="language-python">
+# app_sqlalchemy.py (Flask/FastAPI compatible SQLAlchemy example)
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, func
+from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime
+
+# Database setup
+DATABASE_URL = "sqlite:///./test.db" # SQLite for simplicity
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False}) # For SQLite in async context
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# Define a SQLAlchemy model
+class Item(Base):
+    __tablename__ = "items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    description = Column(String, nullable=True)
+    price = Column(Float)
+    created_at = Column(DateTime, default=datetime.now)
+
+    def __repr__(self):
+        return f"&lt;Item(id={self.id}, name='{self.name}', price={self.price})&gt;"
+
+# Create tables (usually done via Alembic migrations in production)
+Base.metadata.create_all(bind=engine)
+
+# --- Example SQLAlchemy ORM Query Operations ---
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    # Populate some dummy data
+    db = SessionLocal()
+    if db.query(Item).count() == 0:
+        db.add_all([
+            Item(name="Laptop", description="Powerful laptop", price=1200.0),
+            Item(name="Mouse", description="Wireless mouse", price=25.50),
+            Item(name="Keyboard", description="Mechanical keyboard", price=75.00),
+            Item(name="Monitor", description="4K display", price=350.00),
+            Item(name="USB Drive", description="128GB USB 3.0", price=15.00),
+        ])
+        db.commit()
+        print("Dummy data added.")
+    db.close()
+
+    # Get a new session for queries
+    db_session = next(get_db()) # Simulate dependency injection for a session
+
+    print("\n--- SQLAlchemy ORM Query Examples ---")
+
+    # All items
+    all_items = db_session.query(Item).all()
+    print(f"All items: {all_items}")
+
+    # Filter by price (less than 100)
+    cheap_items = db_session.query(Item).filter(Item.price < 100).all()
+    print(f"Cheap items: {cheap_items}")
+
+    # Filter by name containing 'o' (case-insensitive might need specific DB functions)
+    items_with_o = db_session.query(Item).filter(Item.name.ilike('%o%')).all()
+    print(f"Items with 'o': {items_with_o}")
+
+    # Get a single item by ID
+    item_by_id = db_session.query(Item).get(3) # .get() for primary key
+    print(f"Item with ID 3: {item_by_id}")
+
+    # Order by price (descending)
+    ordered_items = db_session.query(Item).order_by(Item.price.desc()).all()
+    print(f"Ordered items (desc price): {ordered_items}")
+
+    # Limit and Offset (Pagination)
+    paginated_items = db_session.query(Item).offset(1).limit(2).all()
+    print(f"Paginated items (offset 1, limit 2): {paginated_items}")
+
+    # Aggregate functions
+    total_price = db_session.query(func.sum(Item.price)).scalar()
+    average_price = db_session.query(func.avg(Item.price)).scalar()
+    print(f"Total Price: {total_price:.2f}, Average Price: {average_price:.2f}")
+
+    # Update an item
+    item_to_update = db_session.query(Item).filter_by(name="Mouse").first()
+    if item_to_update:
+        item_to_update.price = 30.00
+        db_session.add(item_to_update)
+        db_session.commit()
+        print(f"Updated Mouse price: {db_session.query(Item).filter_by(name='Mouse').first()}")
+
+    # Delete an item
+    item_to_delete = db_session.query(Item).filter_by(name="USB Drive").first()
+    if item_to_delete:
+        db_session.delete(item_to_delete)
+        db_session.commit()
+        print("Deleted USB Drive.")
+    
+    db_session.close()
+
+# To run: pip install sqlalchemy
+# python app_sqlalchemy.py
+                        </code></pre>
+                    </li>
+                </ul>
+
+                <h3>7.4. Other Database Considerations</h3>
+                <ul>
+                    <li><strong>ORM vs. Raw SQL:</strong>
+                        <ul>
+                            <li><strong>ORM:</strong> Provides an object-oriented abstraction over the database, improving developer productivity, portability, and security (SQL injection protection). Great for most CRUD operations.</li>
+                            <li><strong>Raw SQL:</strong> Sometimes necessary for highly optimized queries, complex joins, database-specific features, or when an ORM query becomes too complex or inefficient. All frameworks allow dropping down to raw SQL when needed.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Database Drivers:</strong>
+                        <ul>
+                            <li>Python frameworks connect to databases via database drivers (e.g., <code>psycopg2</code> for PostgreSQL, <code>mysqlclient</code> for MySQL, <code>sqlite3</code> for SQLite).</li>
+                            <li>For asynchronous applications (FastAPI, async Django), you need asynchronous database drivers (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL) and async-compatible ORMs (e.g., SQLAlchemy 2.0+ with `asyncio` support, SQLModel).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Transaction Management:</strong>
+                        <ul>
+                            <li>Ensuring data consistency by grouping multiple database operations into a single atomic unit. If any operation fails, the entire transaction is rolled back.</li>
+                            <li>ORMs provide context managers or explicit methods for transaction control (e.g., <code>db.session.begin()</code>, <code>db.session.commit()</code>, <code>db.session.rollback()</code> in SQLAlchemy; Django's <code>transaction.atomic()</code>).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Connection Pooling:</strong>
+                        <ul>
+                            <li>(As discussed in a previous section) Essential for managing database connections efficiently, reducing overhead and preventing resource exhaustion. Handled by ORMs or database drivers.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="warning">
+            <h3>Choosing the Right Framework</h3>
+            <ul>
+                <li><strong>Choose Django if:</strong> You need a full-featured framework for a complex web application, prefer convention over configuration, and want a robust ORM and admin panel out-of-the-box.</li>
+                <li><strong>Choose Flask if:</strong> You need a lightweight framework for a smaller web application or API, prefer more control over components, and enjoy building solutions from scratch with specific libraries.</li>
+                <li><strong>Choose FastAPI if:</strong> You are building high-performance APIs, microservices, or real-time applications, prioritize speed, automatic documentation, and leverage modern Python features like type hints and async/await.</li>
+            </ul>
+            <p>Ultimately, the "best" framework depends on your project's specific requirements, team's expertise, and desired development speed vs. control.</p>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-button');
+
+            toggleButtons.forEach(button => {
+                const targetId = button.dataset.target;
+                const contentDiv = document.getElementById(targetId);
+
+                // Set initial state for buttons based on content visibility (optional, but good for consistency)
+                if (contentDiv && contentDiv.style.display === 'block') {
+                    button.textContent = 'Collapse';
+                } else {
+                    button.textContent = 'Expand';
+                    button.classList.add('collapsed');
+                }
+
+                button.addEventListener('click', function() {
+                    if (contentDiv) {
+                        if (contentDiv.style.display === 'block') {
+                            contentDiv.style.display = 'none';
+                            button.textContent = 'Expand';
+                            button.classList.add('collapsed');
+                        } else {
+                            contentDiv.style.display = 'block';
+                            button.textContent = 'Collapse';
+                            button.classList.remove('collapsed');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

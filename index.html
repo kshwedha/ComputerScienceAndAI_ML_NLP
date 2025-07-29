@@ -3,2240 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skip-gram Mathematical Computation</title>
+    <title>Dynamic Page Loader with Iframe</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+        body, html {
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            color: #333;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #201e1d, #413c39);
         }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .step-section > div[style] {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            border: 2px solid #3498db;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .step-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        .step-number {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-weight: bold;
-        }
-        .matrix {
-            background: white;
-            border: 2px solid #3498db;
-            border-radius: 10px;
-            width: 95%;
-            max-width: 500px;
-            padding: 15px;
-            margin: 0;
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
-            box-sizing: border-box; 
-            overflow-x: auto; 
-        }
-        .matrix h4 {
-            text-align: center;
-            width: 100%; 
-            white-space: normal; 
-            word-break: break-word; 
-            margin-top: 0; 
-            margin-bottom: 10px; 
-        }
-
-        .matrix pre {   
-            text-align: left; 
-            white-space: pre; 
-            word-wrap: normal; 
-            overflow-x: auto; 
-            padding: 0; 
-            margin: 0; 
-        }
-        .computation {
-            background: #e8f6ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #74b9ff;
-        }
-        .formula {
-            background: #fff5f5;
-            border: 2px solid #e74c3c;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            font-size: 1em;
-        }
-        .vocab-table {
+        #container {
+            margin-top: 4rem;
+            position: fixed;
             width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .vocab-table th, .vocab-table td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-        .vocab-table th {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            font-weight: bold;
-        }
-        .vocab-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        .highlight-center {
-            background: #ffe6e6 !important;
-            font-weight: bold;
-            color: #e74c3c;
-        }
-        .highlight-context {
-            background: #e6f3ff !important;
-            font-weight: bold;
-            color: #3498db;
-        }
-        .vector-display {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-            margin: 15px 0;
-        }
-        .vector-element {
-            background: #3498db;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            min-width: 50px;
-            text-align: center;
-        }
-        .probability-calculation {
-            background: #f0f8ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #87ceeb;
-        }
-        .gradient-box {
-            background: #fff8dc;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #daa520;
-        }
-        .training-pair {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin: 20px 0;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
+            height: 100vh;
             box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow-x: auto;
         }
-        .word-box {
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-        .center-box {
-            background: #ffebee;
-            border: 2px solid #e74c3c;
-            color: #e74c3c;
-        }
-        .context-box {
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
-            color: #2196f3;
-        }
-        .arrow {
-            font-size: 2em;
-            color: #3498db;
-        }
-        .softmax-calc {
-            background: #f5f5f5;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-        }
-        .interactive-section {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-        }
-        .calc-button {
-            background: white;
-            color: #667eea;
+        #contentFrame {
+            width: 100%;
+            height: 100%;
             border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-weight: bold;
+            display: block;
+        }
+        #nav {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+        }
+        #nav button {
+            margin-right: 10px;
+            padding: 10px;
             cursor: pointer;
-            margin: 10px 5px;
-            transition: all 0.3s ease;
         }
-        .calc-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        #sidebar {
+            position: fixed;
+            background-color: #1d2226;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            box-sizing: border-box;
         }
-        .result-display {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            display: none;
-            color: #2196f3;
+        #sidebar.active {
+            left: 0;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+        #sidebar button {
+            display: block;
+            width: 100%;
+            /* padding: 10px; */
+            margin-bottom: 10px;
+            background-color: transparent;
+            color: rgb(132, 125, 125);
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 16px;
+        }
+        #sidebar button:hover {
+            background-color: #777;
+        }
+        .fixed-menubar {
+            position: fixed;
+            margin-top: 1.5rem;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: block;
+            text-transform: uppercase;
             font-weight: bold;
-        }
-        #pair-content {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            padding: 5px;
-        }
-        .math-expression {
-            display: inline-flex; 
-            flex-direction: column; 
             align-items: center; 
             justify-content: center;
-            font-family: 'Times New Roman', serif; 
-            font-size: 1.5em; 
-            margin-top: 20px;
-            text-align: center; 
-            color: #2c3e50;
-            font-weight: bold;
-            font-style: italic;
-            vertical-align: middle; 
-        }
-
-        .math-expression .numerator,
-        .math-expression .denominator {
-            padding: 0 5px; 
-            line-height: 1; 
-        }
-
-        .math-expression .fraction-line {
-            width: 100%; 
-            height: 2px;
-            background-color: #2c3e50;
-            margin: 2px 0; 
-        }
-        .matrixn-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 1rem;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .matrixn-equation {
             display: flex;
+            flex-direction: row;
+            width: 100%;
+        }
+        #menuToggle {
+            position: fixed;
+            display: block;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+        }
+        .fixed-menubar h1 {
+            position: fixed;
             align-items: center;
-            gap: 1rem;
-            font-size: .5rem;
-            color: #2c3e50;
-            box-sizing: border-box;
-            overflow-x: auto;
-        }
-        
-        .variable {
-            font-style: italic;
-            font-weight: bold;
-            font-size: 1.25rem;
-            color: #6b6c73;
-        }
-        
-        .equals {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #34495e;
-        }
-        
-        .matrixn {
-            display: inline-block;
-            position: relative;
-            padding: 0 1.25rem;
-        }
-        
-        .matrixn::before,
-        .matrixn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(to bottom, #2c3e50, #34495e);
-            border-radius: 2px;
-        }
-        
-        .matrixn::before {
-            left: 0;
-        }
-        
-        .matrixn::after {
-            right: 0;
-        }
-        
-        .matrixn-content {
-            display: grid;
-            grid-template-rows: repeat(3, 1fr);
-            gap: 15px;
-            padding: 20px 0;
-        }
-        
-        .matrixn-row {
-            display: flex;
-            align-items: center;
-            font-size: 18px;
-            line-height: 1.4;
-            color: #2c3e50;
-            min-height: 30px;
-        }
-        
-        .term {
-            margin: 0 2px;
-            font-weight: 200;
-        }
-        
-        .coefficient {
-            color: #e74c3c;
-            font-weight: 200;
-        }
-        
-        .operator {
-            color: #34495e;
-            font-weight: 200 bold;
-            margin: 0 4px;
-        }
-        
-        .parentheses {
-            color: #8e44ad;
-            font-weight: bold;
-        }
-        
-        .multiplication {
-            color: #27ae60;
-        }
-        
-        .number {
-            color: #2980b9;
-            font-weight: 200;
-        }
-        
-        .matrixn-row:hover {
-            background: rgba(52, 152, 219, 0.1);
-            border-radius: 8px;
-            padding: 5px;
-            margin: -5px;
-            transition: all 0.3s ease;
-        }
-
-        #embeddings-output, #prediction-output {
-            margin-top: 10px;
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #ddd;
-            font-family: monospace;
-            height: 200px; 
-            overflow-y: auto; 
-            width: 100%; 
-            max-width: 500px; 
-            border-radius: 8px; 
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); 
-            box-sizing: border-box;
-            display: none;
-        }
-        #embeddingscontext, #predictionscontext {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f0f0f0; 
-            border-radius: 5px;
+            justify-content: center;
             font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
-            color: #333;
+            font-size: 1.7rem;
+            color: white
         }
-        .word-embedding {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            background: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .word-embedding .word {
+        #codebox {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            padding: .3rem .3rem;
+            background: none;
+            border: 2px solid #525d66;
+            font-size: 24px;
+            cursor: pointer;
+            display: block;
+            color: #47b49d;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
             font-weight: bold;
-            color: #007bff;
-            font-size: 1.1em;
+            background-color: #1d2226;
         }
-        .word-embedding .embedding {
-            color: #333;
-            font-size: 0.95em;
-        }
-        .compute-embedding-button {
-            /* Basic Styling */
-                display: inline-flex; /* Allows icon/text alignment */
-                align-items: center;
-                justify-content: center;
-                padding: 12px 28px;
-                border: none;
-                border-radius: 8px; /* Slightly rounded corners */
-                cursor: pointer;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
-                font-size: 16px;
-                font-weight: 600; /* Slightly bolder text */
-                text-decoration: none; /* Remove underline for anchor tags */
-                white-space: nowrap; /* Prevent text wrapping */
-
-                color: #ffffff; 
-                background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); 
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-                transition: all 0.3s ease;
-        }
-
-        .compute-embedding-button:hover {
-            background: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%); 
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); 
-            transform: translateY(-2px); 
-        }
-
-        .compute-embedding-button:active {
-            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); 
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-            transform: translateY(0); 
-        }
-
-        .compute-embedding-button:disabled {
-            background: #cccccc;
-            color: #666666;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .modern-input {
-            width: 60%; 
-            padding: 12px 15px;
-            margin-bottom: 20px; 
-            border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4); 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 16px;
-            color: #333; 
-            background-color: #f8f8f8; 
-
-            backdrop-filter: blur(5px); 
-            -webkit-backdrop-filter: blur(5px); 
-            border-radius: 8px; 
-            text-indent: 10px; 
-
-            transition: all 0.3s ease;
-        }
-
-        .modern-input::placeholder {
-            color: #8e7e7e; 
-            opacity: 1; 
-        }
-
-        .modern-input:hover {
-            border-color: #999; 
-        }
-
-        .modern-input:focus {
-            border-color: #00bcd4;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); 
-            outline: none; 
-            background-color: #fff; 
-        }
-
-        .modern-input:disabled {
-            background-color: #e9e9e9;
-            color: #777;
-            cursor: not-allowed;
-            border-color: #ddd;
-        }
-        
-        .number-input-container {
+        #topics {
+            font-size: 1.7rem;
+            color: #beb4b4;
+            font-weight: bold;
+            font-family:'Times New Roman', Times, serif;
+            text-transform: uppercase;
+            align-items: center; 
+            justify-content: center;
             display: flex;
-            align-items: center;
-            gap: 10px; 
-            margin-bottom: 20px;
+            flex-direction: row;
+            width: 100%;
         }
-
-        .number-input-container label {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 16px;
-            color: #333;
-            white-space: nowrap; 
-        }
-
-        .custom-number-input {
-            width: 10%; 
-            padding: 12px 15px;
-            border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4); 
-            border-radius: 8px; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 16px;
-            color: #333;
-            background-color: #f8f8f8;
-            text-align: center; 
-
-            transition: all 0.3s ease;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .custom-number-input:hover {
-            border-color: #999;
-        }
-
-        .custom-number-input:focus {
-            border-color: #00bcd4; 
-            box-shadow: 0 0 0 3px rgba(76, 80, 175, 0.2);
-            outline: none;
-            background-color: #fff;
-        }
-
-        .custom-number-input::-webkit-outer-spin-button,
-        .custom-number-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
+        #topicList {
+            list-style-type: none;
+            padding: 0;
             margin: 0;
         }
-
-        .custom-number-input[type=number] {
-            -moz-appearance: textfield;
-        }
-
-        .equation {
-            margin: 10px 0;
-        }
-        ul {
-            list-style-type: none;
-        }
-        li {
-            margin: 5px 0;
-        }
-
-        a {
-                text-decoration: none; 
-                color: #1a73e8; 
-                font-weight: 500; 
-                padding: 4px 8px; 
-                border-radius: 4px; 
-                transition: all 0.3s ease; 
-                position: relative; 
-                display: inline-flex; 
-                align-items: center; 
-        }
-
-        a:hover {
-            color: #135ab6;
-            background-color: rgba(26, 115, 232, 0.1);
-            text-decoration: none; 
-        }
-
-        a:visited {
-            color: #6200ea; 
-        }
-
-        a:active {
-            color: #0d47a1; 
-            background-color: rgba(26, 115, 232, 0.2);
-        }
-
-        a:focus {
-            outline: 2px solid #1a73e8;
-            outline-offset: 2px; 
-        }
-
-        a[disabled] {
-            color: #b0bec5; 
-            cursor: not-allowed; 
-            pointer-events: none; 
-        }
-
-        a:not([disabled]):hover::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 8px;
-            width: calc(100% - 16px);
-            height: 2px;
-            background-color: #1a73e8;
-            transform: scaleX(0);
-            transform-origin: bottom right;
-            transition: transform 0.3s ease-out;
-        }
-
-        a:not([disabled]):hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-
-        .fixed-top-right-button {
-            position: fixed;
-            top: 3rem;
-            right: 3rem;
-            z-index: 1000;
-
-            width: 10rem;
-            color: #fff;
-            padding: .6rem .6rem;
-            border: none;
-            border-radius: 12px;
+        #topicList li {
+            padding: 10px;
             cursor: pointer;
-            font-size: 1.8rem;
-            font-weight: 1000;
-            font-style: italic;
-            text-transform: uppercase;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            background: linear-gradient(to right, #cf7332, #f98c3f);
-            transition: text-transform 0.2s ease-in-out;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease;
+            border-bottom: 1px solid #415461;
+            border-radius: .3rem;
         }
-
-        .fixed-top-right-button:hover {
-            background-color: #f98c3f;
-            /* background-color: #20a58b; */
-            transform: translateY(-2px);
+        #topicList li:hover {
+            background-color: #3498db;
+            color: white;
         }
-
-        @media (prefers-color-scheme: dark) {
-            a {
-                color: #8ab4f8;
-            }
-            a:visited {
-                color: #bb86fc;
-            }
-            a:hover {
-                color: #c9d1f9;
-                background-color: rgba(138, 180, 248, 0.2);
-            }
-            a:active {
-                color: #a1c4fd;
-                background-color: rgba(138, 180, 248, 0.3);
-            }
-            a:focus {
-                outline-color: #8ab4f8;
-            }
-            a:not([disabled]):hover::after {
-                background-color: #8ab4f8;
-            }
+        #topicList li.active {
+            background-color: #3498db;
+            color: rgb(9, 9, 9);
         }
-
-        @media (min-width: 768px) {
-            .step-section > div[style] {
-            }
-
-            .matrix {
-                width: 60%;
-                max-width: none;
-                padding: 20px;
-            }
-
-            .matrix h4 {
-                white-space: nowrap;
-            }
-            #embeddings-output {
-                width: auto;
-                flex-basis: 100%;
-                max-width: 700px;
-            }
+        .sidebar-content {
+            background-color: #1d2226;
+            border-radius: 10px;
         }
-
-        @media (min-width: 1024px) {
-            .container {
-                padding: 40px;
-            }
-            .step-section {
-                padding: 30px;
-            }
-        }
-
     </style>
 </head>
 <body>
-    <button class="fixed-top-right-button" onclick="window.location.href='sandbox.html'">
-        Code
-    </button>
-    <div class="container">
-        <h1>Skip-gram Mathematical Computation</h1>
-        <p style="text-align: center; font-size: 1.2em; color: #666;">
-            Complete step-by-step mathematical computation for sentence: <strong>"The quick brown fox jumps over"</strong>
-        </p>
-
-        <!-- Step 1: Setup and Vocabulary -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">1</div>
-                Setup: Vocabulary and Parameters
+    <div class="fixed-menubar">
+        <div id="menuToggle" onclick="toggleMenu()">☰</div>
+        <h1 class="fixed-menubar">Computer Science Concepts</h1>
+        <div id="codebox" onclick="window.location.href='sandbox.html'">Code./></div>
+    </div>
+    <div id="sidebar">
+        <div class="sidebar-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div id="topics">Topics</div>
+                <div style="color: #beb4b4; font-size: 3rem; padding: .5rem .5rem; cursor: pointer;" onclick="toggleMenu()">
+                    -
+                </div>
             </div>
-            
-            <div class="computation">
-                <h4>Sentence:</h4>
-                <p>"The quick brown fox jumps over"</p>
-                
-                <h4>Vocabulary Creation:</h4>
-                <table class="vocab-table">
-                    <tr><th>Word</th><th>Index</th><th>One-hot Position</th></tr>
-                    <tr><td>the</td><td>0</td><td>[1, 0, 0, 0, 0, 0]</td></tr>
-                    <tr><td>quick</td><td>1</td><td>[0, 1, 0, 0, 0, 0]</td></tr>
-                    <tr><td>brown</td><td>2</td><td>[0, 0, 1, 0, 0, 0]</td></tr>
-                    <tr class="highlight-center"><td>fox</td><td>3</td><td>[0, 0, 0, 1, 0, 0]</td></tr>
-                    <tr><td>jumps</td><td>4</td><td>[0, 0, 0, 0, 1, 0]</td></tr>
-                    <tr><td>over</td><td>5</td><td>[0, 0, 0, 0, 0, 1]</td></tr>
-                </table>
-            </div>
-
-            <div class="computation">
-                <h4>Model Parameters:</h4>
-                <ul>
-                    <li><strong>Vocabulary size (|V|):</strong> 6</li>
-                    <li><strong>Embedding dimension (D):</strong> 3</li>
-                    <li><strong>Window size (m):</strong> 2</li>
-                    <li><strong>Learning rate (α):</strong> 0.1</li>
-                </ul>
-            </div>
+            <ul id="topicList" onclick="toggleMenu()">
+                <li onclick="loadPage('python_guide.html')">Python</li>
+                <li onclick="loadPage('golang_guide.html')">Golang</li>
+                <li onclick="loadPage('algorithms.html')">Algorithms</li>
+                <li onclick="loadPage('advanced_algorithms.html')">Advanced Algorithms</li>
+                <li onclick="loadPage('solving_patterns.html')">Solving Patterns</li>
+                <li onclick="loadPage('system_design.html')">System Designs</li>
+                <li onclick="loadPage('design_patterns.html')">Design Patterns</li>
+                <li onclick="loadPage('business_system_model.html')">Business System Model</li>
+                <li onclick="loadPage('ai/ms_arch_large_scale_1.html')">MS Arch - 1</li>
+                <li onclick="loadPage('ai/ms_arch_large_scale_2.html')">MS Arch - 2</li>
+                <li onclick="loadPage('ai/vector_db.html')">Scalars & Vectors - DB</li>
+                <li onclick="loadPage('ai/AI.html')">AI</li>
+                <li onclick="loadPage('ai/ML.html')">ML</li>
+                <li onclick="loadPage('ai/ML_2.html')">ML-RL</li>
+                <li onclick="loadPage('ai/NLP.html')">NLP</li>
+                <li onclick="loadPage('ai/NLP_2.html')">NLP-RL</li>
+                <li onclick="loadPage('ai/large_dataset_model.html')">Large Dataset Model</li>
+                <li onclick="loadPage('ai/Skipgram.html')">NLP-Skipgram</li>
+                <li onclick="loadPage('dynamic_nodes.html')">Dynamic Nodes</li>
+                <li onclick="loadPage('ai/why_import_another_model.html')">Why Import Another Model?</li>
+                <li onclick="loadPage('ai/key_operations.html')">Key Operations</li>
+            </ul>
         </div>
-
-        <!-- Step 2: Weight Matrices Initialization -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">2</div>
-                Weight Matrices Initialization
-            </div>
-            
-            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; border: 2px solid #3498db;">
-            <div class="matrixn">
-                <h4 >Input Weight Matrix W_in (6 × 3):</h4>
-                <pre>
-W_in = [[ 0.1, -0.2,  0.3]     ← the (index 0)
-        [-0.1,  0.4,  0.2]     ← quick (index 1)  
-        [ 0.3,  0.1, -0.4]     ← brown (index 2)
-        [ 0.2, -0.1,  0.5]     ← fox (index 3)
-        [-0.3,  0.2,  0.1]     ← jumps (index 4)
-        [ 0.4, -0.3,  0.2]]    ← over (index 5)
-                </pre>
-            </div>
-            <div class="matrixn">
-                <h4>Output Weight Matrix W_out (3 × 6):</h4>
-                <pre>
-W_out = [[ 0.2, -0.1,  0.3,  0.1, -0.2,  0.4]
-         [-0.3,  0.2, -0.1,  0.4,  0.1, -0.2]
-         [ 0.1,  0.3, -0.2, -0.1,  0.3,  0.2]]
-                </pre>
-            </div>
-            </div>
-        </div>
-
-        <!-- Step 3: Training Pairs Generation -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">3</div>
-                Training Pairs Generation (Window = 2)
-            </div>
-            
-            <div class="computation">
-                <h4>For center word "fox" (index 3):</h4>
-                <p>Context window spans 2 words on each side</p>
-                
-                <div class="training-pair">
-                    <div class="word-box context-box">quick (1)</div>
-                    <div class="word-box context-box">brown (2)</div>
-                    <div class="word-box center-box">FOX (3)</div>
-                    <div class="word-box context-box">jumps (4)</div>
-                    <div class="word-box context-box">over (5)</div>
-                </div>
-                
-                <h4>Training pairs for "fox":</h4>
-                <ul>
-                    <li>(fox, quick) → (center=3, context=1)</li>
-                    <li>(fox, brown) → (center=3, context=2)</li>
-                    <li>(fox, jumps) → (center=3, context=4)</li>
-                    <li>(fox, over) → (center=3, context=5)</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Step 4: Forward Pass -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">4</div>
-                Forward Pass: Processing (fox, quick) pair
-            </div>
-            
-            <div class="computation">
-                <h4>Step 4.1: One-hot encoding of center word "fox"</h4>
-                <div class="formula">
-                    x_c = [0, 0, 0, 1, 0, 0]ᵀ
-                </div>
-            </div>
-
-            <div class="computation">
-                <h4>Step 4.2: Get center word embedding</h4>
-                <div class="formula">
-                    h = W_in^T × x_c
-                </div>
-                
-                <div class="matrixn-container">
-                    <div class="matrixn-equation">
-                        <span class="variable">h</span>
-                        <span class="equals">=</span>
-                        <div class="matrixn">
-                            <div class="matrixn-content">
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">−0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">1</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">−0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                </div>
-                                
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">−0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">−0.1</span> <span class="multiplication">×</span> <span class="number">1</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">−0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                </div>
-                                
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">−0.4</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.5</span> <span class="multiplication">×</span> <span class="number">1</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                    <span class="operator">+</span>
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0</span><span class="parentheses">)</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="vector-display">
-                    <span>h = </span>
-                    <div class="vector-element">0.2</div>
-                    <div class="vector-element">-0.1</div>
-                    <div class="vector-element">0.5</div>
-                </div>
-            </div>
-
-            <div class="computation">
-                <h4>Step 4.3: Compute output scores</h4>
-                <div class="formula">
-                    u = W_out^T × h
-                </div>
-
-                <div class="matrixn-container">
-                    <div class="matrixn-equation">
-                        <span class="variable">u</span>
-                        <span class="equals">=</span>
-                        <div class="matrixn">
-                            <div class="matrixn-content">
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">-0.3</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
-                                            <span class="operator">+</span>
-                                            <span class="term">
-                                                <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">-0.1</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
-                                        </span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">-0.1</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
-                                        </span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">-0.2</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
-                                            <span class="operator">+</span>
-                                            <span class="term">
-                                                <span class="parentheses">(</span><span class="coefficient">-0.1</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">-0.2</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">0.1</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
-                                            <span class="operator">+</span>
-                                            <span class="term">
-                                                <span class="parentheses">(</span><span class="coefficient">0.3</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">
-                                        <span class="parentheses">(</span><span class="coefficient">0.4</span> <span class="multiplication">×</span> <span class="number">0.2</span><span class="parentheses">)</span>
-                                        <span class="operator">+</span>
-                                        <span class="term">
-                                            <span class="parentheses">(</span><span class="coefficient">-0.2</span> <span class="multiplication">×</span> <span class="number">-0.1</span><span class="parentheses">)</span>
-                                            <span class="operator">+</span>
-                                            <span class="term">
-                                                <span class="parentheses">(</span><span class="coefficient">0.2</span> <span class="multiplication">×</span> <span class="number">0.5</span><span class="parentheses">)</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="vector-display">
-                    <span>u = </span>
-                    <div class="vector-element">0.12</div>
-                    <div class="vector-element">0.11</div>
-                    <div class="vector-element">-0.03</div>
-                    <div class="vector-element">-0.07</div>
-                    <div class="vector-element">0.10</div>
-                    <div class="vector-element">0.20</div>
-                </div>
-            </div>
-
-            <div class="computation">
-                <h4>Step 4.4: Apply Softmax</h4>
-                <div class="formula">
-                    P(w_o | w_c) = exp(u_o) / Σ exp(u_w)
-                </div>
-                
-                <div class="softmax-calc">
-                    <strong>Exponentials:</strong>
-                    <p>exp(0.12) = 1.127</p>
-                    <p>exp(0.11) = 1.116  </p>
-                    <p>exp(-0.03) = 0.970</p>
-                    <p>exp(-0.07) = 0.932</p>
-                    <p>exp(0.10) = 1.105</p>
-                    <p>exp(0.20) = 1.221</p>
-
-                    <br>
-                    <strong>Sum:</strong>
-                    <p>Σ exp(u_w) = 1.127 + 1.116 + 0.970 + 0.932 + 1.105 + 1.221 = 6.471</p>
-                    <br>
-                    <strong>Probabilities:</strong>
-                    <p>P(the|fox) = 1.127 / 6.471 = 0.174</p>
-                    <p>P(quick|fox) = 1.116 / 6.471 = 0.172</p>
-                    <p>P(brown|fox) = 0.970 / 6.471 = 0.150</p>
-                    <p>P(fox|fox) = 0.932 / 6.471 = 0.144</p>
-                    <p>P(jumps|fox) = 1.105 / 6.471 = 0.171</p>
-                    <p>P(over|fox) = 1.221 / 6.471 = 0.189</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 5: Loss Calculation -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">5</div>
-                Loss Calculation for (fox, quick) pair
-            </div>
-            
-            <div class="probability-calculation">
-                <h4>Cross-entropy Loss:</h4>
-                <div class="formula">
-                    L = -log P(quick | fox) = -log(0.172) = 1.760
-                </div>
-                
-                <p><strong>Target:</strong> quick (index 1) should have probability 1.0</p>
-                <p><strong>Predicted:</strong> P(quick|fox) = 0.172</p>
-                <p><strong>Loss:</strong> High loss indicates poor prediction</p>
-            </div>
-        </div>
-
-        <!-- Step 6: Backward Pass -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">6</div>
-                Backward Pass: Gradient Calculation
-            </div>
-            
-            <div class="gradient-box">
-                <h4>Step 6.1: Output layer gradient</h4>
-                <div class="formula">
-                    ∂L/∂u = ŷ - y_true
-                </div>
-                
-                <div class="softmax-calc">
-                    <strong>Target vector y_true for "quick":<a href="probability_information.html" style="margin-left: auto;">learn the probability of quick</a></strong>
-                    <p><b>y_true</b> = [0, 1, 0, 0, 0, 0]  (one-hot for index 1)</p>
-
-                    <strong>Predicted probabilities ŷ:</strong>
-                    <p><b>ŷ</b> = [0.174, 0.172, 0.150, 0.144, 0.171, 0.189]</p>
-
-                    <strong>Gradient:</strong>
-                    <p><b>∂L/∂u</b> = <b>ŷ - y_true</b> = [0.174, 0.172, 0.150, 0.144, 0.171, 0.189] - [0, 1, 0, 0, 0, 0]
-                                        = [0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</p>
-                </div>
-            </div>
-
-            <div class="gradient-box">
-                <h4>Step 6.2: Output weight gradient</h4>
-                <div class="formula">
-                    ∂L/∂W_out = h × (∂L/∂u)ᵀ
-                </div>
-
-                <div class="matrixn-container">
-                    <div class="matrixn-equation">
-                        <p class="math-expression">
-                            <span class="numerator">&#x2202;L</span>
-                            <span class="fraction-line"></span>
-                            <span class="denominator">&#x2202;W<sub>out</sub></span>
-                        </p>
-                        <span class="equals">=</span>
-                        <span class="matrixn">
-                            <div class="matrixn-content">
-                                <div class="matrixn-row">
-                                    <span class="number">0.2</span>
-                                    <span class="operator">×</span>
-                                    <span class="coefficient">[0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="number">-0.1</span>
-                                    <span class="operator">×</span>
-                                    <span class="coefficient">[0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="number">0.5</span>
-                                    <span class="operator">×</span>
-                                    <span class="coefficient">[0.174, -0.828, 0.150, 0.144, 0.171, 0.189]</span>
-                                </div>
-                            </div>
-                        </span>
-                    </div>
-                    <br/>
-                    <div class="matrixn-equation">
-                        <p class="math-expression">
-                            <span class="numerator">&#x2202;L</span>
-                            <span class="fraction-line"></span>
-                            <span class="denominator">&#x2202;W<sub>out</sub></span>
-                        </p>
-                        <span class="equals">=</span>
-                        <span class="matrixn">
-                            <div class="matrixn-content">
-                                <div class="matrixn-row">
-                                    <span class="term">[ 0.035, -0.166,  0.030,  0.029,  0.034,  0.038]</span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">[-0.017,  0.083, -0.015, -0.014, -0.017, -0.019]</span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">[ 0.087, -0.414,  0.075,  0.072,  0.086,  0.095]</span>
-                                </div>
-                            </div>
-                        </span>
-                        </div>
-                    </div>
-            </div>
-
-            <div class="gradient-box">
-                <h4>Step 6.3: Hidden layer gradient</h4>
-                <div class="formula">
-                    ∂L/∂h = W_out × (∂L/∂u)
-                </div>
-
-                <div class="matrixn-container">  
-                    <div class="matrixn-equation">
-                        <p class="math-expression">
-                            <span class="numerator">&#x2202;L</span>
-                            <span class="fraction-line"></span>
-                            <span class="denominator">&#x2202;h</span>
-                        </p>
-                        <span class="equals">=</span>
-                        <span class="matrixn">
-                            <div class="matrixn-row">
-                                <span class="parentheses">(</span>
-                                <span class="term">0.2</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.174</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.1</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">-0.828</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.3</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.150</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.1</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.144</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.2</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">-0.171</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.4</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.189</span>
-                                <span class="parentheses">)</span>
-                            </div>
-                            <div class="matrixn-row">
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.3</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.174</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.2</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.828</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.1</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.150</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.4</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">-0.144</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.1</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.171</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.2</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.189</span>
-                                <span class="parentheses">)</span>
-                            </div>
-                            <div class="matrixn-row">
-                                <span class="parentheses">(</span>
-                                <span class="term">0.1</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.174</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.3</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">-0.828</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.2</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.150</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.1</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">-0.144</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">0.3</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.171</span>
-                                <span class="parentheses">)</span>
-                                <span class="operator">+</span>
-                                <span class="parentheses">(</span>
-                                <span class="term">-0.2</span>
-                                <span class="coefficient">×</span>
-                                <span class="term">0.189</span>
-                                <span class="parentheses">)</span>
-                            </div>
-                        </span>
-                    </div>
-                    <div class="matrixn-equation">
-                        <p class="math-expression">
-                            <span class="numerator">&#x2202;L</span>
-                            <span class="fraction-line"></span>
-                            <span class="denominator">&#x2202;h</span>
-                        </p>
-                        <span class="equals">=</span>
-                        <span class="matrixn">
-                            <div class="matrixn-content">
-                                <div class="matrixn-row">
-                                    <span class="term">0.2184</span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">-0.1959</span>
-                                </div>
-                                <div class="matrixn-row">
-                                    <span class="term">-0.1863</span>
-                                </div>
-                            </div>
-                        </span>
-
-                </div>
-                </div>
-            </div>
-
-            <div class="gradient-box">
-                <h4>Step 6.4: Input weight gradient</h4>
-                <div class="formula">
-                    ∂L/∂W_in = x_c × (∂L/∂h)ᵀ
-                </div>
-
-            <div class="matrixn-container">
-                <div class="matrixn-equation">
-                <p class="math-expression">
-                    <span class="numerator">&#x2202;L</span>
-                    <span class="fraction-line"></span>
-                    <span class="denominator">&#x2202;W<sub>in</sub></span>
-                </p>
-                <span class="equals">=</span>
-                <div class="matrixn">
-                    <div class="matrixn-content">
-                        <div class="matrixn-row">
-                            <span class="term">0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">1</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0</span>
-                        </div>
-                    </div>
-                </div>
-                <span class="equals">X</span>
-                <div class="matrixn">
-                        <div class="matrixn-row">
-                            <span class="term">0.2184</span>
-                            <span class="term">-0.1959</span>
-                            <span class="term">-0.1863</span>
-                        </div>
-                </div>
-            </div>
-            </div>
-
-            <br>
-            <div class="matrixn-container">
-                <div class="matrixn-equation">
-                <p class="math-expression">
-                    <span class="numerator">&#x2202;L</span>
-                    <span class="fraction-line"></span>
-                    <span class="denominator">&#x2202;W<sub>in</sub></span>
-                </p>
-                <span class="equals">=</span>
-                <div class="matrixn">
-                    <div class="matrixn-content">
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.2184</span>
-                            <span class="term">-0.1959</span>
-                            <span class="term">-0.1863</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        </div>
-                </div>
-            </div>
-            </div>
-            </div>
-        </div>
-
-        <!-- Step 7: Weight Update -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">7</div>
-                Weight Update (Learning Rate α = 0.1)
-            </div>
-            
-            <div class="computation">
-                <h4>Update Rule:</h4>
-                <div class="formula">
-                    W_new = W_old - α × ∂L/∂W
-                </div>
-                
-            </div>
-            <div></div>
-            <div class="matrixn-container">
-                <div class="matrix-title"><b>W_IN_UPDATED</b></div>
-                <div class="matrixn-equation">
-                    <p class="math-expression">
-                        <span class="denominator">W<sub>in_updated</sub></span>
-                    </p>
-                    <span class="equals">=</span>
-                    <div class="matrixn">
-                        <div class="matrixn-row">
-                            <span class="term">0.1</span>
-                            <span class="term">-0.2</span>
-                            <span class="term">0.3</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">-0.1</span>
-                            <span class="term">0.4</span>
-                            <span class="term">0.2</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.3</span>
-                            <span class="term">0.1</span>
-                            <span class="term">-0.4</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.2</span>
-                            <span class="term">-0.1</span>
-                            <span class="term">0.5</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">-0.3</span>
-                            <span class="term">0.2</span>
-                            <span class="term">0.1</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.4</span>
-                            <span class="term">-0.3</span>
-                            <span class="term">0.2</span>
-                        </div>
-                    </div>
-                    <span class="equals">-</span>
-                    <div class="matrixn">
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.02184</span>
-                            <span class="term">-0.01959</span>
-                            <span class="term">-0.01863</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <div class="matrixn-container">
-                <div class="matrixn-equation">
-                    <p class="math-expression">
-                        <span class="denominator">W<sub>in_updated</sub></span>
-                    </p>
-                    <span class="equals">=</span>
-                    <div class="matrixn">
-                        <div class="matrixn-row">
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.1</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">-0.2</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.3</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">-0.1</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.4</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.2</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.3</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.1</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">-0.4</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="parentheses">(</span>
-                            <span class="term">0.2</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.02184</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">(</span>
-                            <span class="term">-0.3</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">(-0.01959)</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">(</span>
-                            <span class="term">0.5</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">(-0.01863)</span>
-                            <span class="parentheses">)</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">-0.3</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.2</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.1</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.4</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">-0.3</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                            <span class="parentheses">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(</span>
-                            <span class="term">0.2</span>
-                            <span class="operator">-</span>
-                            <span class="coefficient">0.0</span>
-                            <span class="parentheses">)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <div class="matrixn-container">
-                <div class="matrixn-equation">
-                    <p class="math-expression">
-                        <span class="denominator">W<sub>in_updated</sub></span>
-                    </p>
-                    <span class="equals">=</span>
-                    <div class="matrixn">
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.1</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;-0.2</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.3</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;-0.1</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.4</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.2</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.3</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.1</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;-0.4</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.17816</span>
-                            <span class="term">-0.08041</span>
-                            <span class="term">0.51863</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;-0.3</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.2</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.1</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.4</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;-0.3</span>
-                            <span class="term">&nbsp;&nbsp;&nbsp;0.2</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <div class="matrixn-container">
-                <div class="matrix-title"><b>W_OUT_UPDATED</b></div>
-                <div class="matrixn-equation">
-                    <p class="math-expression">
-                        <span class="denominator">W<sub>out_updated</sub></span>
-                    </p>
-                    <span class="equals">=</span>
-                <div class="matrixn">
-                    <div class="matrixn-row">
-                        <span class="term">0.2</span>
-                        <span class="term">-0.1</span>
-                        <span class="term">0.3</span>
-                        <span class="term">0.1</span>
-                        <span class="term">-0.2</span>
-                        <span class="term">0.4</span>
-                    </div>
-                    <div class="matrixn-row">
-                        <span class="term">-0.3</span>
-                        <span class="term">0.2</span>
-                        <span class="term">-0.1</span>
-                        <span class="term">0.4</span>
-                        <span class="term">0.1</span>
-                        <span class="term">-0.2</span>
-                    </div>
-                    <div class="matrixn-row">
-                        <span class="term">0.1</span>
-                        <span class="term">0.3</span>
-                        <span class="term">-0.2</span>
-                        <span class="term">-0.1</span>
-                        <span class="term">0.3</span>
-                        <span class="term">0.2</span>
-                    </div>
-                </div>
-                <span class="equals">-</span>
-                <div class="matrixn">
-                    <div class="matrixn-row">
-                        <span class="term">0.0035</span>
-                        <span class="term">-0.0166</span>
-                        <span class="term">0.003</span>
-                        <span class="term">0.029</span>
-                        <span class="term">0.034</span>
-                        <span class="term">0.038</span>
-                    </div>
-                    <div class="matrixn-row">
-                        <span class="term">-0.0017</span>
-                        <span class="term">0.0083</span>
-                        <span class="term">-0.0015</span>
-                        <span class="term">-0.0014</span>
-                        <span class="term">-0.0017</span>
-                        <span class="term">-0.0019</span>
-                    </div>
-                    <div class="matrixn-row">
-                        <span class="term">0.0087</span>
-                        <span class="term">-0.0414</span>
-                        <span class="term">0.0075</span>
-                        <span class="term">0.0072</span>
-                        <span class="term">0.0086</span>
-                        <span class="term">0.0095</span>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-            <br>
-            <div class="matrixn-container">
-                <div class="matrixn-equation">
-                    <p class="math-expression">
-                        <span class="denominator">W<sub>out_updated</sub></span>
-                    </p>
-                    <span class="equals">=</span>
-                    <div class="matrixn">
-                        <div class="matrixn-row">
-                            <span class="term">0.19652</span>
-                            <span class="coefficient">&nbsp;-0.08344</span>
-                            <span class="term">&nbsp;0.29700</span>
-                            <span class="coefficient">&nbsp;0.09712</span>
-                            <span class="term">&nbsp;-0.20342</span>
-                            <span class="coefficient">&nbsp;0.39622</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">-0.29826</span>
-                            <span class="coefficient">&nbsp;0.19172</span>
-                            <span class="term">&nbsp;-0.09850</span>
-                            <span class="coefficient">&nbsp;0.40144</span>
-                            <span class="term">&nbsp;0.10171</span>
-                            <span class="coefficient">&nbsp;-0.19811</span>
-                        </div>
-                        <div class="matrixn-row">
-                            <span class="term">0.09130</span>
-                            <span class="coefficient">&nbsp;0.34140</span>
-                            <span class="term">&nbsp;-0.20750</span>
-                            <span class="coefficient">&nbsp;-0.10720</span>
-                            <span class="term">&nbsp;0.29145</span>
-                            <span class="coefficient">&nbsp;0.19055</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Step 8: Complete Training Iteration -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">8</div>
-                Complete Training Process
-            </div>
-            
-            <div class="interactive-section">
-                <h3>Training Summary for "fox"</h3>
-                <p>Process all context pairs for center word "fox":</p>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
-                    <div class="calc-button" onclick="showPairCalc(0)">(fox, quick)</div>
-                    <div class="calc-button" onclick="showPairCalc(1)">(fox, brown)</div>
-                    <div class="calc-button" onclick="showPairCalc(2)">(fox, jumps)</div>
-                    <div class="calc-button" onclick="showPairCalc(3)">(fox, over)</div>
-                </div>
-                
-                <div id="pair-results" class="result-display">
-                    <div id="pair-content">
-                    </div>
-                </div>
-                
-                <button class="calc-button" onclick="showFinalEmbeddings()">Show Final Embeddings</button>
-                
-                <div id="final-embeddings" class="result-display">
-                    <h4>After processing all pairs:</h4>
-                    <div class="softmax-calc">
-                        <strong>Updated fox embedding:</strong>
-                        <p>Initial: [0.2, -0.1, 0.5]</p>
-                        <p>After (fox,quick): [0.2052, -0.1226, 0.5208]</p>
-                        <p>After (fox,brown): [0.2089, -0.1334, 0.5187]  </p>
-                        <p>After (fox,jumps): [0.2156, -0.1298, 0.5245]</p>
-                        <p>After (fox,over): [0.2203, -0.1401, 0.5312]</p>
-
-                        <strong>Interpretation:</strong>
-                        - The fox embedding is being adjusted to better predict its context words
-                        - Each training pair contributes to the embedding refinement
-                        - Similar words will eventually have similar embeddings
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Key Insights -->
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">✓</div>
-                Key Mathematical Insights
-            </div>
-            
-            <div class="computation">
-                <h4>What the algorithm learns:</h4>
-                <ul>
-                    <li><strong>Word embeddings (W_in):</strong> Dense representations capturing semantic similarity</li>
-                    <li><strong>Context mappings (W_out):</strong> How to predict context from embeddings</li>
-                    <li><strong>Distributional hypothesis:</strong> Words in similar contexts get similar embeddings</li>
-                </ul>
-                
-                <h4>Computational complexity per training step:</h4>
-                <ul>
-                    <li><strong>Forward pass:</strong> O(D × |V|) for matrix multiplications</li>
-                    <li><strong>Softmax:</strong> O(|V|) for normalization</li>
-                    <li><strong>Backward pass:</strong> O(D × |V|) for gradients</li>
-                    <li><strong>Total per pair:</strong> O(D × |V|) - expensive for large vocabularies!</li>
-                </ul>
-                
-                <div class="formula">
-                    <strong>This is why optimizations like negative sampling are crucial!</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="step-section">
-            <div class="step-title">
-                <div class="step-number">9</div>
-                Interactive Skip-gram Model
-            </div>
-            
-            <p>Interpretation: The Skip-gram model learns to predict context words from word embeddings.</p>
-            <br>
-            <p>Enter a sentence to compute word embeddings using the skip-gram model.</p>        
-            <div class="interactive-skipgram">
-                <input class="modern-input" type="text" id="sentence-input" placeholder="Enter a sentence">
-                <input type="number" id="epochs-input" class="custom-number-input" min="0" max="1000" step="1" placeholder="Epochs">
-                <button class="compute-embedding-button" onclick="runSkipGram()">Compute Embeddings</button>
-                <div id="embeddings-output">
-                    <div id="embeddingscontext"></div>
-                </div>
-            </div>
-            <br>
-            <div class="interactive-skipgram">
-                <input class="modern-input" type="text" id="predict-word" placeholder="Enter a word to predict context">
-                <button class="compute-embedding-button" onclick="predictContext()">Predict Context</button>
-                <div id="prediction-output">
-                    <div id="predictionscontext"></div>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="step-section">
-            <div class="step-title">
-                <div class="step-number">10</div>
-                Neural Network Equations
-            </div>
-
-            <div>
-                <a href="https://colab.research.google.com/drive/1mtfO4mDiKVAfGqxICQ0coTuvi3iOdwZ2#scrollTo=rtFNHvmNoEUD&line=9&uniqifier=1">Google Colab</a>
-            </div>
-            
-            <div class="section">
-                <h2>Declaration</h2>
-                <ol>
-                    <li class="equation">Data size reading: m, n = data.shape</li>
-                </ol>
-            </div>
-
-            <div class="section">
-                <h2>Forward Propagation</h2>
-                <ol>
-                    <li class="equation">First layer computation: \( Z^{[1]} = W^{[1]}X + b^{[1]} \)</li>
-                    <li class="equation">First layer activation (ReLU): \( A^{[1]} = g_{\text{ReLU}}(Z^{[1]}) \)</li>
-                    <li class="equation">Second layer computation: \( Z^{[2]} = W^{[2]}A^{[1]} + b^{[2]} \)</li>
-                    <li class="equation">Second layer activation (Softmax): \( A^{[2]} = g_{\text{softmax}}(Z^{[2]}) \)</li>
-                </ol>
-            </div>
-
-            <div class="section">
-                <h2>Backward Propagation</h2>
-                <ol>
-                    <li class="equation">Gradient of the second layer: \( dZ^{[2]} = A^{[2]} - Y \)</li>
-                    <li class="equation">Gradient of the second layer weights: \( dW^{[2]} = \frac{1}{m} dZ^{[2]} A^{[1]T} \)</li>
-                    <li class="equation">Gradient of the second layer bias: \( dB^{[2]} = \frac{1}{m} \sum dZ^{[2]} \)</li>
-                    <li class="equation">Gradient of the first layer: \( dZ^{[1]} = W^{[2]T} dZ^{[2]} \cdot * g^{[1]'}(Z^{[1]}) \)</li>
-                    <li class="equation">Gradient of the first layer weights: \( dW^{[1]} = \frac{1}{m} dZ^{[1]} A^{[0]T} \)</li>
-                    <li class="equation">Gradient of the first layer bias: \( dB^{[1]} = \frac{1}{m} \sum dZ^{[1]} \)</li>
-                </ol>
-            </div>
-
-            <div class="section">
-                <h2>Parameter Updates</h2>
-                <ol>
-                    <li class="equation">Update second layer weights: \( W^{[2]} := W^{[2]} - \alpha dW^{[2]} \)</li>
-                    <li class="equation">Update second layer bias: \( b^{[2]} := b^{[2]} - \alpha dB^{[2]} \)</li>
-                    <li class="equation">Update first layer weights: \( W^{[1]} := W^{[1]} - \alpha dW^{[1]} \)</li>
-                    <li class="equation">Update first layer bias: \( b^{[1]} := b^{[1]} - \alpha dB^{[1]} \)</li>
-                </ol>
-            </div>
-
-            <div class="section">
-                <h2>Variables and Shapes</h2>
-                <h3>Forward Propagation</h3>
-                <ul>
-                    <li>\( A^{[0]} = X \): \( (784, m) \)</li>
-                    <li>\( Z^{[1]} \sim A^{[1]} \): \( (10, m) \)</li>
-                    <li>\( W^{[1]} \): \( (10, 784) \) (since \( W^{[1]}A^{[0]} \sim Z^{[1]} \))</li>
-                    <li>\( B^{[1]} \): \( (10, 1) \)</li>
-                    <li>\( Z^{[2]} \sim A^{[2]} \): \( (10, m) \)</li>
-                    <li>\( W^{[2]} \): \( (10, 10) \) (since \( W^{[2]}A^{[1]} \sim Z^{[2]} \))</li>
-                    <li>\( B^{[2]} \): \( (10, 1) \)</li>
-                </ul>
-                <h3>Backward Propagation</h3>
-                <ul>
-                    <li>\( dZ^{[2]} \): \( (10, m) \) (same as \( A^{[2]} \))</li>
-                    <li>\( dW^{[2]} \): \( (10, 10) \)</li>
-                    <li>\( dB^{[2]} \): \( (10, 1) \)</li>
-                    <li>\( dZ^{[1]} \): \( (10, m) \) (same as \( A^{[1]} \))</li>
-                    <li>\( dW^{[1]} \): \( (10, 784) \)</li>
-                    <li>\( dB^{[1]} \): \( (10, 1) \)</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h3>Notes</h3>
-                <ul>
-                    <li>\( m \): Number of examples in the batch.</li>
-                    <li>\( \alpha \): Learning rate.</li>
-                    <li>\( \cdot * \): Element-wise multiplication.</li>
-                    <li>The shapes ensure compatibility in matrix operations (e.g., \( W^{[1]}A^{[0]} \) produces \( Z^{[1]} \)).</li>
-                    <li>The notation \( \sum dZ^{[i]} \) implies summing over the batch dimension to compute the average gradient for biases.</li>
-                </ul>
-            </div>
-        </div>
+    </div>
+    <div id="container">
+        <iframe id="contentFrame"></iframe>
     </div>
 
     <script>
-        const pairData = [
-            {
-                pair: "(fox, quick)",
-                loss: "1.760",
-                gradUpdate: "W_in[3] += [+0.0052, -0.0226, +0.0208]",
-                prob: "0.172"
-            },
-            {
-                pair: "(fox, brown)", 
-                loss: "1.897",
-                gradUpdate: "W_in[3] += [+0.0037, -0.0108, -0.0021]",
-                prob: "0.150"
-            },
-            {
-                pair: "(fox, jumps)",
-                loss: "1.765", 
-                gradUpdate: "W_in[3] += [+0.0067, +0.0036, +0.0058]",
-                prob: "0.171"
-            },
-            {
-                pair: "(fox, over)",
-                loss: "1.665",
-                gradUpdate: "W_in[3] += [+0.0047, -0.0103, +0.0067]", 
-                prob: "0.189"
+        function loadPage(page) {
+            if (page === 'index.html') {
+                page = 'you_caught_me.html';
             }
-        ];
-
-        function showPairCalc(index) {
-            const data = pairData[index];
-            const content = `
-                <h4>Training pair: ${data.pair}</h4>
-                <p><strong>Predicted probability:</strong> ${data.prob}</p>
-                <p><strong>Gradient update:</strong> ${data.gradUpdate}</p>
-                <p><strong>Loss:</strong> ${data.loss}</p>
-            `;
-            const pairResults = document.getElementById("pair-results");
-            const pairContent = document.getElementById("pair-content");
-            const finalEmbeddings = document.getElementById("final-embeddings");
-            pairResults.style.display = "block";
-            finalEmbeddings.style.display = "none";
-            pairContent.innerHTML = content;
+            const iframe = document.getElementById('contentFrame');
+            iframe.src = page;
+            localStorage.setItem('lastPage', page);
         }
 
-        function showFinalEmbeddings() {
-            const finalEmbeddings = document.getElementById("final-embeddings");
-            const pairResults = document.getElementById("pair-results");
-            finalEmbeddings.style.display = "block";
-            pairResults.style.display = "none";
-            console.log("Displayed final embeddings");
+        function toggleMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const menuToggleDisplay = window.getComputedStyle(menuToggle).display;
+            if (menuToggleDisplay === 'block') {
+                menuToggle.style.display = 'none';
+            } else {
+                menuToggle.style.display = 'block';
+            }
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
+            sidebar.classList.toggle('active', sidebar.style.display === 'block');
         }
 
-    </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
-    <script>
-        let globalEmbeddings = null;
-        let globalVocab = null;
-        let globalWOut = null;
-
-        async function loadPyodideAndRun() {
-            try {
-                let pyodide = await loadPyodide();
-                await pyodide.loadPackage("numpy");
-                console.log("Pyodide and NumPy loaded successfully");
-                return pyodide;
-            } catch (error) {
-                console.error("Failed to load Pyodide or NumPy:", error);
-                return null;
-            }
-        }
-
-        async function runSkipGram() {
-            console.log("runSkipGram started");
-            const outputDiv = document.getElementById("embeddingscontext");
-            if (!outputDiv) {
-                console.error("embeddings-output div not found");
-                return;
-            }
-            outputDiv.innerText = "Loading...";
-
-            let pyodide = await loadPyodideAndRun();
-            if (!pyodide) {
-                outputDiv.innerText = "Error: Failed to initialize Pyodide.";
-                return;
-            }
-
-            let sentence = document.getElementById("sentence-input").value.trim();
-            if (!sentence) {
-                outputDiv.innerText = "Error: Please enter a sentence.";
-                return;
-            }
-            let epochs = document.getElementById("epochs-input").value.trim();
-            if (!epochs) {
-                epochs = 10;
-            }
-            console.log("epochs: ", epochs);
-
-            let escapedSentence = sentence.replace(/"/g, '\\"');
-            let pythonCode = `
-import numpy as np
-import json
-
-def create_vocabulary(sentence):
-    words = sentence.lower().split()
-    if not words:
-        return [], {}
-    vocab = list(set(words))
-    word_to_idx = {word: idx for idx, word in enumerate(vocab)}
-    return vocab, word_to_idx
-
-def generate_training_pairs(sentence, window_size, word_to_idx):
-    words = sentence.lower().split()
-    pairs = []
-    for i, center_word in enumerate(words):
-        for j in range(max(0, i - window_size), min(len(words), i + window_size + 1)):
-            if i != j and center_word in word_to_idx and words[j] in word_to_idx:
-                pairs.append((word_to_idx[center_word], word_to_idx[words[j]]))
-    return pairs
-
-def softmax(x):
-    if x.size == 0:
-        return np.array([])
-    exp_x = np.exp(x - np.max(x, initial=-np.inf))
-    return exp_x / np.sum(exp_x, where=exp_x > 0)
-
-def skip_gram(sentence, embedding_dim=3, window_size=2, learning_rate=0.1, epochs=100):
-    vocab, word_to_idx = create_vocabulary(sentence)
-    if not vocab:
-        return {}
-    vocab_size = len(vocab)
-    W_in = np.random.uniform(-0.5, 0.5, (vocab_size, embedding_dim))
-    W_out = np.random.uniform(-0.5, 0.5, (embedding_dim, vocab_size))
-    pairs = generate_training_pairs(sentence, window_size, word_to_idx)
-    if not pairs:
-        return {word: W_in[i].tolist() for i, word in enumerate(vocab)}
-    
-    for _ in range(epochs):
-        for center_idx, context_idx in pairs:
-            x_c = np.zeros(vocab_size)
-            x_c[center_idx] = 1
-            h = W_in[center_idx]
-            u = np.dot(W_out.T, h)
-            y_pred = softmax(u)
-            if y_pred.size == 0:
-                continue
-            y_true = np.zeros(vocab_size)
-            y_true[context_idx] = 1
-            error = y_pred - y_true
-            dW_out = np.outer(h, error)
-            dW_in = np.dot(W_out, error)
-            W_out -= learning_rate * dW_out
-            W_in[center_idx] -= learning_rate * dW_in
-    
-    embeddings = {word: W_in[idx].tolist() for word, idx in word_to_idx.items()}
-    return embeddings, vocab, W_out.tolist()
-
-sentence = "${escapedSentence}"
-epochs = ${epochs}
-value = None
-try:
-    embeddings, vocab, W_out = skip_gram(sentence=sentence, epochs=epochs)
-    value = {"embeddings": embeddings, "vocab": vocab, "W_out": W_out}
-except Exception as e:
-    value = {"error": str(e)}
-json.dumps(value)
-`;
-
-            try {
-                let embeddingsoutput = document.getElementById("embeddings-output");
-                let result = await pyodide.runPythonAsync(pythonCode);
-                console.log("Raw result from Pyodide:", result);
-                let jsResult = JSON.parse(result); // Parse the JSON string returned by Python
-                if (jsResult.error) {
-                    outputDiv.innerText = `Error in Python code: ${jsResult.error}`;
-                    return;
-                }
-                console.log("Converted to JS:", jsResult.embeddings);
-                globalEmbeddings = jsResult.embeddings;
-                globalVocab = jsResult.vocab;
-                globalWOut = jsResult.W_out;
-                if (jsResult && typeof jsResult === 'object' && Object.keys(jsResult.embeddings).length > 0) {
-                    outputDiv.innerText = JSON.stringify(jsResult, null, 2);
-                    let outputHtml = '';
-                    for (const [word, embedding] of Object.entries(jsResult.embeddings)) {
-                        outputHtml = `
-                            <div class="word-embedding">
-                                <div class="word">${word}</div>
-                                <div class="embedding">[${embedding.join(', ')}]</div>
-                            </div>
-                        `+outputHtml;
-                    }
-                    outputDiv.innerHTML = outputHtml;
-                } else {
-                    outputDiv.innerText = "No embeddings computed (possibly due to insufficient data).";
-                }
-                embeddingsoutput.style.display = 'block';
-            } catch (error) {
-                console.error("Python execution error:", error);
-                const pyError = error.message || error.toString();
-                outputDiv.innerText = `Python execution error: ${pyError}`;
-            }
-        }
-
-        async function predictContext() {
-            const outputDiv = document.getElementById("predictionscontext");
-            if (!outputDiv) {
-                console.error("prediction-output div not found");
-                return;
-            }
-            if (!globalEmbeddings || !globalVocab || !globalWOut) {
-                outputDiv.innerText = "Error: Please compute embeddings first.";
-                return;
-            }
-
-            let word = document.getElementById("predict-word").value.trim().toLowerCase();
-            if (!word) {
-                outputDiv.innerText = "Error: Please enter a word to predict.";
-                return;
-            }
-
-            let pyodide = await loadPyodideAndRun();
-            if (!pyodide) {
-                outputDiv.innerText = "Error: Failed to initialize Pyodide.";
-                return;
-            }
-
-            let escapedWord = word.replace(/"/g, '\\"');
-            let pythonCode = `
-import numpy as np
-import json
-
-def softmax(x):
-    if x.size == 0:
-        return np.array([])
-    exp_x = np.exp(x - np.max(x, axis=0, keepdims=True))
-    return exp_x / np.sum(exp_x, axis=0, keepdims=True)
-
-def predict_context(word, embeddings, vocab, W_out):
-    if word not in embeddings:
-        return []
-    h = np.array(embeddings[word], dtype=np.float64)
-    W_out = np.array(W_out, dtype=np.float64)
-    u = np.dot(W_out.T, h)
-    probabilities = softmax(u)
-    context_probs = [(vocab[i], float(probabilities[i])) for i in range(len(vocab)) if probabilities[i] > 0]
-    context_probs.sort(key=lambda x: x[1], reverse=True)
-    return context_probs
-
-word = "${escapedWord}"
-embeddings = ${JSON.stringify(globalEmbeddings)}
-vocab = ${JSON.stringify(globalVocab)}
-W_out = ${JSON.stringify(globalWOut)}
-json.dumps(predict_context(word, embeddings, vocab, W_out))
-`;
-
-            try {
-                let predictionoutput = document.getElementById("prediction-output");
-                let result = await pyodide.runPythonAsync(pythonCode);
-                console.log("Prediction result:", result);
-                let jsResult = JSON.parse(result);
-                console.log("Converted prediction to JS:", jsResult);
-                if (jsResult && jsResult.length > 0) {
-                    let outputHtml = `
-                        <div class="prediction-result">
-                            <div class="context">Predicted context words for <b>${word}</b>:</div>
-                            <div class="context"> ${jsResult.map(([w, p]) => `<span style="color: rgba(255, 0, 0, ${p*3});">${w}</span> (${(p * 100).toFixed(2)}%)`).join('<br/>')}</div>
-                        </div>
-                    `;
-                    outputDiv.innerHTML = outputHtml;
-                } else {
-                    outputDiv.innerText = `No context predictions available for "${word}".`;
-                }
-                predictionoutput.style.display = 'block';
-            } catch (error) {
-                console.error("Python execution error:", error);
-                const pyError = error.message || error.toString();
-                outputDiv.innerText = `Python execution error: ${pyError}`;
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            console.log("DOM fully loaded");
+        window.addEventListener('resize', () => {
+            const iframe = document.getElementById('contentFrame');
+            iframe.style.width = window.innerWidth + 'px';
+            iframe.style.height = window.innerHeight + 'px';
         });
+
+        window.addEventListener('load', () => {
+            const iframe = document.getElementById('contentFrame');
+            iframe.style.width = window.innerWidth + 'px';
+            iframe.style.height = window.innerHeight + 'px';
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const iframe = document.getElementById('contentFrame');
+            iframe.style.width = window.innerWidth + 'px';
+            iframe.style.height = window.innerHeight + 'px';
+        });
+        window.onload = () => {
+            const lastPage = localStorage.getItem('lastPage') || 'Skipgram.html';
+            document.getElementById('contentFrame').src = lastPage;
+        };
     </script>
 </body>
 </html>
