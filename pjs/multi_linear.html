@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent: Multiple Linear Regression</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .step {
+            background-color: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background-color: #4ecdc4;
+            color: #fff;
+            font-size: 1.6em;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
+        }
+
+        .step h2 {
+            color: #34495e;
+            font-size: 2em;
+            margin-top: 0;
+            margin-bottom: 25px;
+            padding-left: 60px; /* Space for step number */
+        }
+
+        .step h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background-color: #ecf0f1;
+            padding: 18px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1.3em;
+            text-align: center;
+            margin: 25px 0;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            color: #2c3e50;
+        }
+
+        .math-section {
+            background-color: #f8fcfb;
+            border-left: 4px solid #4ecdc4;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .math-section h4 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95em;
+            background-color: #fafafa;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #4ecdc4;
+            color: white;
+            font-weight: bold;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .data-table tr:hover {
+            background-color: #e0f2f1;
+        }
+
+        .chart-container {
+            background-color: #fcfcfc;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        canvas {
+            background-color: #fff;
+            border-radius: 6px;
+        }
+
+        .interactive-controls {
+            background-color: #f7f7f7;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .interactive-controls h4 {
+            text-align: center;
+            color: #34495e;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(78, 205, 196, 0.5);
+        }
+
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(78, 205, 196, 0.5);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .metric-card {
+            background-color: #f0f8f7;
+            border: 1px solid #d4eeed;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-card h4 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .metric-card .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #e74c3c; /* A distinct color for values */
+        }
+        
+        .explanation-box {
+            background-color: #fefceb;
+            border-left: 4px solid #f9d423;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .explanation-box h4 {
+            color: #d1b100;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .gradient-visualization {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            gap: 20px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .gradient-arrow {
+            font-size: 2.5em;
+            color: #888;
+        }
+
+        .calculation-box {
+            background-color: #f4f7f6;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1em;
+        }
+
+        .calculation-box h4 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .calculation-step {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .calculation-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .algorithm-box {
+            background-color: #ebf5ff;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .algorithm-box h4 {
+            color: #2980b9;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .algorithm-step {
+            margin-bottom: 10px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .algorithm-step::before {
+            content: "•";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+        }
+
+        button {
+            background-color: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin: 5px;
+            box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
+        }
+
+        button:hover {
+            background-color: #3bb2aa;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .iteration-demo {
+            background-color: #ecf8f7;
+            border: 1px solid #d4eeed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .iteration-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .iteration-details {
+            text-align: left;
+            margin-top: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .final-solution {
+            text-align: center;
+            background-color: #e6ffee;
+            border: 2px solid #2ecc71;
+            border-radius: 12px;
+            padding: 35px;
+            margin-top: 50px;
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.2);
+        }
+
+        .final-solution h3 {
+            color: #27ae60;
+            font-size: 2.5em;
+            margin-top: 0;
+        }
+
+        .final-solution p {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .final-solution .formula {
+            background: #d0f0d0;
+            border: 1px dashed #2ecc71;
+            padding: 25px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Gradient Descent for Multiple Linear Regression</h1>
+            <p>Extending to Multiple Input Features: House Price Prediction</p>
+            <p><em>Predicting Price from Size and Number of Bedrooms</em></p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <h2>🏠 Problem Setup & Data: House Price Prediction</h2>
+            <p>Now, instead of just one feature, we'll use two features to predict house prices. Our model equation expands to include a weight for each feature:</p>
+            
+            <div class="formula">
+                ŷ = w₁x₁ + w₂x₂ + b
+            </div>
+            
+            <p>Where:</p>
+            <ul style="margin: 15px 0; padding-left: 30px;">
+                <li><strong>ŷ</strong> = predicted House Price</li>
+                <li><strong>x₁</strong> = House Size (sq ft)</li>
+                <li><strong>x₂</strong> = Number of Bedrooms</li>
+                <li><strong>w₁</strong> = weight for House Size</li>
+                <li><strong>w₂</strong> = weight for Number of Bedrooms</li>
+                <li><strong>b</strong> = bias (intercept)</li>
+            </ul>
+            
+            <h3>📊 Training Dataset</h3>
+            <p>Here's our dataset with two features and the corresponding house prices:</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Size (x₁) sq ft</th>
+                        <th>Bedrooms (x₂)</th>
+                        <th>Actual Price (y) $</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody">
+                    <tr><td>1</td><td>1000</td><td>2</td><td>200,000</td></tr>
+                    <tr><td>2</td><td>1200</td><td>3</td><td>250,000</td></tr>
+                    <tr><td>3</td><td>1500</td><td>3</td><td>300,000</td></tr>
+                    <tr><td>4</td><td>1800</td><td>4</td><td>380,000</td></tr>
+                    <tr><td>5</td><td>2000</td><td>4</td><td>420,000</td></tr>
+                    <tr><td>6</td><td>1100</td><td>2</td><td>220,000</td></tr>
+                    <tr><td>7</td><td>1600</td><td>3</td><td>330,000</td></tr>
+                </tbody>
+            </table>
+            
+            <div class="explanation-box">
+                <h4>⚠️ Data Scaling (Normalization) is Essential!</h4>
+                <p>When dealing with multiple features, especially if they have vastly different scales (like square footage vs. number of bedrooms), **normalization** is critical. We scale each feature (x₁ and x₂) and the target (y) to a common range (e.g., 0 to 1). Gradient Descent performs much more stably and efficiently with scaled data.</p>
+                <p>The calculations below and the training simulation will operate on these scaled values, and the final parameters will be the scaled weights (w₁, w₂) and bias (b).</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h2>📏 Cost Function (Mean Squared Error)</h2>
+            
+            <p>The Mean Squared Error (MSE) remains our chosen cost function, measuring the average squared difference between actual and predicted values:</p>
+            
+            <div class="formula">
+                J(w₁,w₂,b) = (1/2n) × Σ(yᵢ - ŷᵢ)²
+            </div>
+            
+            <div class="math-section">
+                <h4>🔍 Breaking Down the Cost Function</h4>
+                <p><strong>Step 1:</strong> Calculate prediction for each data point: ŷᵢ = w₁x₁ᵢ + w₂x₂ᵢ + b</p>
+                <p><strong>Step 2:</strong> Find the error: (yᵢ - ŷᵢ)</p>
+                <p><strong>Step 3:</strong> Square the error: (yᵢ - ŷᵢ)²</p>
+                <p><strong>Step 4:</strong> Sum all squared errors and average: (1/2n) × Σ(yᵢ - ŷᵢ)²</p>
+                <p><em>Note: All calculations are done using scaled feature and target values.</em></p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h2>∇ Partial Derivatives (Gradients)</h2>
+            
+            <p>To minimize J(w₁,w₂,b), we need to find the partial derivative with respect to each parameter (w₁, w₂, and b). Each derivative tells us how sensitive the cost is to a change in that specific parameter, holding others constant.</p>
+            
+            <div class="math-section">
+                <h4>📐 Derivative with respect to Weight w₁:</h4>
+                <div class="formula">
+                    ∂J/∂w₁ = (1/n) × Σ(ŷᵢ - yᵢ) × x₁ᵢ
+                </div>
+                
+                <h4>📐 Derivative with respect to Weight w₂:</h4>
+                <div class="formula">
+                    ∂J/∂w₂ = (1/n) × Σ(ŷᵢ - yᵢ) × x₂ᵢ
+                </div>
+
+                <h4>📐 Derivative with respect to Bias b:</h4>
+                <div class="formula">
+                    ∂J/∂b = (1/n) × Σ(ŷᵢ - yᵢ)
+                </div>
+            </div>
+            
+            <div class="explanation-box">
+                <h4>🧠 Intuitive Understanding</h4>
+                <p>The gradients tell us the direction of steepest increase in cost. Gradient Descent moves parameters in the opposite direction (downhill) to minimize the cost. For instance, if ∂J/∂w₁ is positive, it means increasing w₁ would increase the cost, so we need to decrease w₁ to reduce the cost.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <h2>📝 Manual Calculation Example (One Iteration)</h2>
+            
+            <p>Let's walk through one iteration with initial scaled parameters (w₁=0, w₂=0, b=0) for the first data point. This illustrates the process:</p>
+            <ul>
+                <li>Original Data Point 1: Size = 1000, Bedrooms = 2, Price = 200,000</li>
+                <li>After Min-Max Scaling (approx): x₁_scaled ≈ 0, x₂_scaled ≈ 0, y_scaled ≈ 0</li>
+            </ul>
+            <p><em>(Note: Actual scaled values are used in the simulation, this is for illustrative purposes.)</em></p>
+            
+            <div class="calculation-box">
+                <h4>Initial Parameters (Scaled): w₁ = 0, w₂ = 0, b = 0</h4>
+                <h4>Example for Data Point 1 (x₁_scaled ≈ 0, x₂_scaled ≈ 0, y_scaled ≈ 0)</h4>
+                <div class="calculation-step">
+                    <span>ŷ₁ (scaled) = w₁x₁ + w₂x₂ + b</span>
+                    <span>= 0 × 0 + 0 × 0 + 0 = 0</span>
+                </div>
+                <div class="calculation-step">
+                    <span>Error (scaled) = ŷ₁ - y₁ = 0 - 0</span>
+                    <span>= 0</span>
+                </div>
+            </div>
+
+            <div class="calculation-box">
+                <h4>Calculating Gradients (Simplified for single point for illustration)</h4>
+                <div class="calculation-step">
+                    <span>∂J/∂w₁ ≈ (1/1) × (0 - 0) × 0</span>
+                    <span>= 0</span>
+                </div>
+                <div class="calculation-step">
+                    <span>∂J/∂w₂ ≈ (1/1) × (0 - 0) × 0</span>
+                    <span>= 0</span>
+                </div>
+                <div class="calculation-step">
+                    <span>∂J/∂b ≈ (1/1) × (0 - 0)</span>
+                    <span>= 0</span>
+                </div>
+                <p style="text-align:center; font-style: italic; margin-top:15px;">
+                    (In real calculation, we sum for all 'n' data points before dividing by 'n')
+                </p>
+                <p style="text-align:center; font-style: italic; margin-top:15px;">
+                    (Initial prediction being zero when parameters are zero and scaled inputs are zero results in zero gradients, this will change as parameters are updated or if scaled inputs are non-zero.)
+                </p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <h2>🚀 Learning Rate & Parameter Updates</h2>
+            
+            <div class="algorithm-box">
+                <h4>🔄 Gradient Descent Algorithm for Multiple Linear Regression</h4>
+                <div class="algorithm-step">
+                    <strong>Step 1:</strong> Initialize parameters w₁, w₂, and b randomly (or to 0).
+                </div>
+                <div class="algorithm-step">
+                    <strong>Step 2:</strong> For each iteration, calculate predictions (ŷᵢ) and the cost J(w₁,w₂,b) using the current parameter values.
+                </div>
+                <div class="algorithm-step">
+                    <strong>Step 3:</strong> Calculate the partial derivatives (gradients) ∂J/∂w₁, ∂J/∂w₂, and ∂J/∂b.
+                </div>
+                <div class="algorithm-step">
+                    <strong>Step 4:</strong> Update each parameter simultaneously using the learning rate (α) and its respective gradient:
+                        <div class="formula" style="margin: 10px 0; font-size: 1.1em; padding: 10px;">
+                            w₁<sub>new</sub> = w₁<sub>old</sub> - α × ∂J/∂w₁<br>
+                            w₂<sub>new</sub> = w₂<sub>old</sub> - α × ∂J/∂w₂<br>
+                            b<sub>new</sub> = b<sub>old</sub> - α × ∂J/∂b
+                        </div>
+                </div>
+                <div class="algorithm-step">
+                    <strong>Step 5:</strong> Repeat steps 2-4 until convergence (cost change is minimal or max iterations reached).
+                </div>
+            </div>
+            
+            <div class="explanation-box">
+                <h4>🎛️ Learning Rate (α) Effects</h4>
+                <p>The learning rate determines the size of the step taken down the cost function's gradient.
+                <br><strong>Too Small:</strong> Very slow convergence.
+                <br><strong>Too Large:</strong> May overshoot the minimum, oscillate, or even diverge.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <h2>🎮 Interactive Training Simulation: Cost vs. Iterations</h2>
+            
+            <div class="interactive-controls">
+                <h4>🏃‍♂️ Watch Gradient Descent Optimize!</h4>
+                
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label>Learning Rate (α): <span id="learningRateValue">0.5</span></label>
+                        <input type="range" id="learningRateSlider" min="0.01" max="1.0" step="0.01" value="0.5" oninput="document.getElementById('learningRateValue').textContent = parseFloat(this.value).toFixed(2)">
+                    </div>
+                    <div class="control-group">
+                        <label>Initial w₁ (Scaled): <span id="initW1ScaledValue">0.0</span></label>
+                        <input type="range" id="initW1ScaledSlider" min="-1" max="1" step="0.01" value="0" oninput="document.getElementById('initW1ScaledValue').textContent = parseFloat(this.value).toFixed(2); resetTraining()">
+                    </div>
+                    <div class="control-group">
+                        <label>Initial w₂ (Scaled): <span id="initW2ScaledValue">0.0</span></label>
+                        <input type="range" id="initW2ScaledSlider" min="-1" max="1" step="0.01" value="0" oninput="document.getElementById('initW2ScaledValue').textContent = parseFloat(this.value).toFixed(2); resetTraining()">
+                    </div>
+                     <div class="control-group">
+                        <label>Initial b (Scaled): <span id="initBScaledValue">0.0</span></label>
+                        <input type="range" id="initBScaledSlider" min="-1" max="1" step="0.01" value="0" oninput="document.getElementById('initBScaledValue').textContent = parseFloat(this.value).toFixed(2); resetTraining()">
+                    </div>
+                    <div class="control-group">
+                        <label>Max Iterations: <span id="maxIterationsValue">10000</span></label>
+                        <input type="range" id="maxIterationsSlider" min="100" max="20000" step="100" value="10000" oninput="document.getElementById('maxIterationsValue').textContent = this.value">
+                    </div>
+                    <div class="control-group">
+                        <label>Convergence Threshold: <span id="convergenceThresholdValue">0.0000001</span></label>
+                        <input type="range" id="convergenceThresholdSlider" min="0.00000001" max="0.0001" step="0.00000001" value="0.0000001" oninput="document.getElementById('convergenceThresholdValue').textContent = parseFloat(this.value).toFixed(8)">
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button id="startBtn" onclick="startTraining()">🚀 Start Training</button>
+                    <button id="stopBtn" onclick="stopTraining()" disabled>⏸️ Stop Training</button>
+                    <button id="stepBtn" onclick="singleStep()">➡️ Single Step</button>
+                    <button id="resetBtn" onclick="resetTraining()">🔄 Reset</button>
+                </div>
+            </div>
+
+            <div class="iteration-demo" id="iterationInfo" style="display: none;">
+                <div class="iteration-header">Iteration <span id="iterationNumber">1</span></div>
+                <div class="calculation-box">
+                    <div id="iterationDetails"></div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="costCanvas" width="600" height="300"></canvas>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h4>Iteration</h4>
+                    <div class="value" id="currentIteration">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Current Cost (Scaled)</h4>
+                    <div class="value" id="trainingCost">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Scaled w₁</h4>
+                    <div class="value" id="currentW1Scaled">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Scaled w₂</h4>
+                    <div class="value" id="currentW2Scaled">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Scaled b</h4>
+                    <div class="value" id="currentBScaled">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>∂J/∂w₁ (Scaled)</h4>
+                    <div class="value" id="w1Gradient">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>∂J/∂w₂ (Scaled)</h4>
+                    <div class="value" id="w2Gradient">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>∂J/∂b (Scaled)</h4>
+                    <div class="value" id="bGradient">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="final-solution">
+            <h3>🎉 Training Complete!</h3>
+            <p>Gradient Descent has found the optimal parameters for the Multiple Linear Regression model.</p>
+            <div class="formula" style="background: rgba(255,255,255,0.2); margin: 20px 0;">
+                Optimal Scaled Parameters:<br>
+                w₁ = <span id="finalW1Scaled">w₁</span><br>
+                w₂ = <span id="finalW2Scaled">w₂</span><br>
+                b = <span id="finalBScaled">b</span>
+            </div>
+            <p>These parameters define the hyperplane that best fits our multi-dimensional data!</p>
+        </div>
+    </div>
+
+    <script>
+        // Original Training data: House Size (x1), Bedrooms (x2), Price (y)
+        const originalData = [
+            {x1: 1000, x2: 2, y: 200000},
+            {x1: 1200, x2: 3, y: 250000},
+            {x1: 1500, x2: 3, y: 300000},
+            {x1: 1800, x2: 4, y: 380000},
+            {x1: 2000, x2: 4, y: 420000},
+            {x1: 1100, x2: 2, y: 220000},
+            {x1: 1600, x2: 3, y: 330000}
+        ];
+
+        // --- Data Normalization Parameters (for each feature and target) ---
+        const x1Values = originalData.map(d => d.x1);
+        const x2Values = originalData.map(d => d.x2);
+        const yValues = originalData.map(d => d.y);
+
+        const minX1 = Math.min(...x1Values);
+        const maxX1 = Math.max(...x1Values);
+        const minX2 = Math.min(...x2Values);
+        const maxX2 = Math.max(...x2Values);
+        const minY = Math.min(...yValues);
+        const maxY = Math.max(...yValues);
+
+        // Scaled data points
+        const data_scaled = originalData.map(d => ({
+            x1: (d.x1 - minX1) / (maxX1 - minX1),
+            x2: (d.x2 - minX2) / (maxX2 - minX2),
+            y: (d.y - minY) / (maxY - minY)
+        }));
+
+        // --- Global variables for training (these will be in the scaled space) ---
+        let currentW1; // Scaled weight for x1 (Size)
+        let currentW2; // Scaled weight for x2 (Bedrooms)
+        let currentB;  // Scaled bias (intercept)
+        let iteration;
+        let trainingInterval = null;
+        let costHistory = []; // To plot Cost vs. Iteration
+
+        // Canvas elements
+        let costCanvasElement;
+
+        // Initialize canvases and controls on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            costCanvasElement = document.getElementById('costCanvas');
+            
+            // Set up oninput events for training simulation sliders
+            document.getElementById('learningRateSlider').oninput = () => {
+                document.getElementById('learningRateValue').textContent = parseFloat(document.getElementById('learningRateSlider').value).toFixed(2);
+            };
+            document.getElementById('maxIterationsSlider').oninput = () => {
+                document.getElementById('maxIterationsValue').textContent = document.getElementById('maxIterationsSlider').value;
+            };
+            document.getElementById('convergenceThresholdSlider').oninput = () => {
+                document.getElementById('convergenceThresholdValue').textContent = parseFloat(document.getElementById('convergenceThresholdSlider').value).toFixed(8);
+            };
+
+            // Set initial values and draw for training simulation
+            resetTraining(); 
+        });
+
+        // Calculate prediction for given w1, w2, b (on scaled data)
+        function predict(w1_scaled, w2_scaled, b_scaled, x1_scaled, x2_scaled) {
+            return w1_scaled * x1_scaled + w2_scaled * x2_scaled + b_scaled;
+        }
+
+        // Calculate cost function (MSE) (on scaled data)
+        function calculateCost(w1_scaled, w2_scaled, b_scaled) {
+            let totalError = 0;
+            for (let i = 0; i < data_scaled.length; i++) {
+                const prediction_scaled = predict(w1_scaled, w2_scaled, b_scaled, data_scaled[i].x1, data_scaled[i].x2);
+                const error_scaled = data_scaled[i].y - prediction_scaled; // y_actual_scaled - y_predicted_scaled
+                totalError += error_scaled * error_scaled;
+            }
+            return totalError / (2 * data_scaled.length);
+        }
+
+        // Calculate gradients (on scaled data)
+        function calculateGradients(w1_scaled, w2_scaled, b_scaled) {
+            let gradientW1_scaled = 0;
+            let gradientW2_scaled = 0;
+            let gradientB_scaled = 0;
+            
+            for (let i = 0; i < data_scaled.length; i++) {
+                const prediction_scaled = predict(w1_scaled, w2_scaled, b_scaled, data_scaled[i].x1, data_scaled[i].x2);
+                const error_scaled = data_scaled[i].y - prediction_scaled; // (y_actual - y_predicted)
+
+                // We negate the sum to align with param = param - alpha * gradient
+                gradientW1_scaled += error_scaled * data_scaled[i].x1;
+                gradientW2_scaled += error_scaled * data_scaled[i].x2;
+                gradientB_scaled += error_scaled;
+            }
+            
+            gradientW1_scaled /= -data_scaled.length; 
+            gradientW2_scaled /= -data_scaled.length; 
+            gradientB_scaled /= -data_scaled.length; 
+            
+            return { gradientW1: gradientW1_scaled, gradientW2: gradientW2_scaled, gradientB: gradientB_scaled };
+        }
+
+        // Draw Cost vs. Iteration Chart
+        function drawCostChart(canvas, costHistory) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (costHistory.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Start training to see cost reduction', width / 2, height / 2);
+                return;
+            }
+
+            // Determine min/max for scaling
+            const maxCost = Math.max(...costHistory);
+            const minCost = Math.min(...costHistory);
+            const numIterations = costHistory.length;
+
+            // Padding for chart axes
+            const padding = 50;
+            const plotWidth = width - 2 * padding;
+            const plotHeight = height - 2 * padding;
+
+            // Scale factors
+            const scaleX = plotWidth / (numIterations - 1 || 1); // Avoid division by zero for single point
+            const scaleY = plotHeight / (maxCost - minCost || 1);
+
+            // Draw axes
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding); // X-axis
+            ctx.lineTo(width - padding, height - padding);
+            ctx.moveTo(padding, padding);         // Y-axis
+            ctx.lineTo(padding, height - padding);
+            ctx.stroke();
+
+            // Draw labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // X-axis labels (iterations)
+            ctx.fillText('Iterations', width / 2, height - 10);
+            const xTickInterval = Math.max(1, Math.floor(numIterations / 5)); // Roughly 5 ticks
+            for (let i = 0; i < numIterations; i += xTickInterval) {
+                const xPos = padding + i * scaleX;
+                ctx.fillText(i.toLocaleString(), xPos, height - padding + 15);
+            }
+            if (numIterations > 1 && (numIterations - 1) % xTickInterval !== 0) { // Add last iteration label if not already covered
+                 const xPos = padding + (numIterations - 1) * scaleX;
+                 ctx.fillText((numIterations - 1).toLocaleString(), xPos, height - padding + 15);
+            }
+
+
+            // Y-axis labels (cost)
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Cost (J)', 0, 0);
+            ctx.restore();
+
+            const yTickInterval = (maxCost - minCost) / 4; // Roughly 5 ticks
+            for (let i = 0; i <= 4; i++) {
+                const yVal = minCost + i * yTickInterval;
+                const yPos = height - padding - (yVal - minCost) * scaleY;
+                ctx.textAlign = 'right';
+                ctx.fillText(yVal.toExponential(2), padding - 5, yPos); // Exponential for potentially small numbers
+            }
+            
+            // Draw cost line
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            costHistory.forEach((cost, index) => {
+                const x = padding + index * scaleX;
+                const y = height - padding - (cost - minCost) * scaleY;
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Draw last point
+            ctx.fillStyle = '#4ecdc4';
+            ctx.beginPath();
+            ctx.arc(padding + (numIterations - 1) * scaleX, height - padding - (costHistory[numIterations - 1] - minCost) * scaleY, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        // Single step of gradient descent
+        function singleStep() {
+            iteration++;
+            const learningRate = parseFloat(document.getElementById('learningRateSlider').value);
+            const maxIterations = parseInt(document.getElementById('maxIterationsSlider').value);
+            const convergenceThreshold = parseFloat(document.getElementById('convergenceThresholdSlider').value);
+
+            const prevCost = costHistory.length > 0 ? costHistory[costHistory.length - 1] : Infinity;
+
+            const { gradientW1, gradientW2, gradientB } = calculateGradients(currentW1, currentW2, currentB);
+            
+            // Update parameters in the scaled space
+            currentW1 -= learningRate * gradientW1;
+            currentW2 -= learningRate * gradientW2;
+            currentB -= learningRate * gradientB;
+
+            const currentCost = calculateCost(currentW1, currentW2, currentB);
+            costHistory.push(currentCost);
+
+            // Update UI metrics
+            document.getElementById('currentIteration').textContent = iteration;
+            document.getElementById('trainingCost').textContent = currentCost.toExponential(4); // Display cost in scientific notation
+            document.getElementById('currentW1Scaled').textContent = currentW1.toFixed(6);
+            document.getElementById('currentW2Scaled').textContent = currentW2.toFixed(6);
+            document.getElementById('currentBScaled').textContent = currentB.toFixed(6);
+            document.getElementById('w1Gradient').textContent = gradientW1.toExponential(4);
+            document.getElementById('w2Gradient').textContent = gradientW2.toExponential(4);
+            document.getElementById('bGradient').textContent = gradientB.toExponential(4);
+
+            // Update iteration details box
+            const iterationDetails = document.getElementById('iterationDetails');
+            iterationDetails.innerHTML = `
+                <div class="calculation-step"><span>New Scaled w₁ = ${currentW1.toFixed(6)}</span></div>
+                <div class="calculation-step"><span>New Scaled w₂ = ${currentW2.toFixed(6)}</span></div>
+                <div class="calculation-step"><span>New Scaled b = ${currentB.toFixed(6)}</span></div>
+                <div class="calculation-step"><span>Scaled Cost J = ${currentCost.toExponential(4)}</span></div>
+            `;
+            document.getElementById('iterationNumber').textContent = iteration;
+            document.getElementById('iterationInfo').style.display = 'block';
+
+            // Draw cost chart
+            drawCostChart(costCanvasElement, costHistory);
+
+            // Check for convergence or max iterations
+            if (iteration >= maxIterations || Math.abs(prevCost - currentCost) < convergenceThreshold) {
+                stopTraining();
+                // Display final scaled parameters
+                document.getElementById('finalW1Scaled').textContent = currentW1.toFixed(6);
+                document.getElementById('finalW2Scaled').textContent = currentW2.toFixed(6);
+                document.getElementById('finalBScaled').textContent = currentB.toFixed(6);
+                
+                if (Math.abs(prevCost - currentCost) < convergenceThreshold) {
+                    alert(`Training stopped due to convergence at iteration ${iteration}! Cost change (${Math.abs(prevCost - currentCost).toExponential(4)}) was less than threshold (${convergenceThreshold.toExponential(4)}).`);
+                } else {
+                    alert(`Training completed after ${iteration} iterations (max iterations reached).`);
+                }
+            }
+        }
+
+        // Start continuous training
+        function startTraining() {
+            stopTraining(); // Clear any existing interval
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stepBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            trainingInterval = setInterval(singleStep, 50); // Run every 50ms for smoother animation
+        }
+
+        // Stop continuous training
+        function stopTraining() {
+            clearInterval(trainingInterval);
+            trainingInterval = null;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stepBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+
+        // Reset training
+        function resetTraining() {
+            stopTraining();
+            // Get initial scaled values from sliders
+            currentW1 = parseFloat(document.getElementById('initW1ScaledSlider').value);
+            currentW2 = parseFloat(document.getElementById('initW2ScaledSlider').value);
+            currentB = parseFloat(document.getElementById('initBScaledSlider').value);
+            
+            iteration = 0;
+            costHistory = []; // Clear cost history for new training run
+
+            // Calculate initial cost and add to history
+            const initialCost = calculateCost(currentW1, currentW2, currentB);
+            costHistory.push(initialCost);
+
+            // Reset UI elements
+            document.getElementById('currentIteration').textContent = 0;
+            document.getElementById('trainingCost').textContent = initialCost.toExponential(4);
+            document.getElementById('currentW1Scaled').textContent = currentW1.toFixed(6);
+            document.getElementById('currentW2Scaled').textContent = currentW2.toFixed(6);
+            document.getElementById('currentBScaled').textContent = currentB.toFixed(6);
+            document.getElementById('w1Gradient').textContent = "0.00e+0";
+            document.getElementById('w2Gradient').textContent = "0.00e+0";
+            document.getElementById('bGradient').textContent = "0.00e+0";
+            document.getElementById('iterationInfo').style.display = 'none';
+            
+            document.getElementById('finalW1Scaled').textContent = "w₁";
+            document.getElementById('finalW2Scaled').textContent = "w₂";
+            document.getElementById('finalBScaled').textContent = "b";
+
+            // Draw initial cost chart
+            drawCostChart(costCanvasElement, costHistory);
+        }
+    </script>
+</body>
+</html>

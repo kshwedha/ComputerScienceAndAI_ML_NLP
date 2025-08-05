@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression with Gradient Descent & Loss Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            padding: 40px;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .section {
+            background-color: #f7f7f7;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .control-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .control-group input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 80px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin: 5px;
+            box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
+        }
+
+        button:hover {
+            background-color: #3bb2aa;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        canvas {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .info {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-left: 5px solid #1890ff;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Simple Linear Regression with Gradient Descent</h1>
+            <p>Visualize the best-fit line and the decrease in loss over iterations.</p>
+        </div>
+
+        <div class="section">
+            <h2>Data & Controls</h2>
+            <div class="info">
+                <p><strong>What is Linear Regression?</strong> It's a statistical method to model the relationship between a dependent variable and one or more independent variables by fitting a linear equation to observed data.</p>
+                <p><strong>What is Gradient Descent?</strong> It's an optimization algorithm used to minimize the cost function by iteratively moving in the direction of steepest descent (negative of the gradient).</p>
+                <p>Click 'Generate Data' to create random points. Click 'Start Gradient Descent' to see the line adjust and the loss decrease!</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label for="numPoints">Number of Data Points:</label>
+                    <input type="number" id="numPoints" value="50" min="10" max="200">
+                </div>
+                <div class="control-group">
+                    <label for="learningRate">Learning Rate:</label>
+                    <input type="number" id="learningRate" value="0.01" step="0.001" min="0.0001" max="0.1">
+                </div>
+                <div class="control-group">
+                    <label for="iterations">Iterations:</label>
+                    <input type="number" id="iterations" value="500" min="10" max="2000">
+                </div>
+            </div>
+            <div class="controls">
+                <button onclick="generateData()">Generate New Data</button>
+                <button onclick="startGradientDescent()">Start Gradient Descent</button>
+                <button onclick="resetRegression()">Reset Regression</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Regression Line Visualization</h2>
+            <canvas id="regressionChart" width="700" height="400"></canvas>
+            <div class="info">
+                <p><strong>Current Model:</strong> Slope (m) = <span id="slopeValue">0</span>, Intercept (b) = <span id="interceptValue">0</span></p>
+                <p><strong>Current Loss (MSE):</strong> <span id="lossValue">N/A</span></p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Loss Over Iterations</h2>
+            <canvas id="lossChart" width="700" height="400"></canvas>
+            <div class="info">
+                <p>This graph shows how the Mean Squared Error (MSE) loss decreases with each iteration of Gradient Descent. A successful training run will show the loss rapidly decreasing and then flattening out as the model converges to the best fit.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = [];
+        let m = 0; // Slope
+        let b = 0; // Intercept
+        let regressionChart;
+        let lossChart;
+        let lossHistory = [];
+        let iterationLabels = [];
+        let animationFrameId = null; // To store the requestAnimationFrame ID
+
+        // --- Chart Initialization ---
+        window.onload = function() {
+            const regressionCtx = document.getElementById('regressionChart').getContext('2d');
+            regressionChart = new Chart(regressionCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Data Points',
+                        data: [],
+                        backgroundColor: 'rgba(78, 205, 196, 0.8)'
+                    }, {
+                        label: 'Regression Line',
+                        data: [],
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0 // Hide points for the line
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    animation: {
+                        duration: 0 // Disable initial animation
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'X Value'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Y Value'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const lossCtx = document.getElementById('lossChart').getContext('2d');
+            lossChart = new Chart(lossCtx, {
+                type: 'line',
+                data: {
+                    labels: [], // Iterations
+                    datasets: [{
+                        label: 'Mean Squared Error (MSE) Loss',
+                        data: [], // Loss values
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 0, // Hide points
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    animation: {
+                        duration: 0 // Disable initial animation
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Iteration'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Loss (MSE)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            generateData(); // Generate initial data on load
+        };
+
+        // --- Data Generation ---
+        function generateData() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            const numPoints = parseInt(document.getElementById('numPoints').value);
+            data = [];
+            const trueM = Math.random() * 5 + 0.5; // Random slope between 0.5 and 5.5
+            const trueB = Math.random() * 20 + 5; // Random intercept between 5 and 25
+
+            for (let i = 0; i < numPoints; i++) {
+                const x = Math.random() * 100; // X from 0 to 100
+                const y = trueM * x + trueB + (Math.random() - 0.5) * 50; // Add some noise
+                data.push({ x: x, y: y });
+            }
+
+            // Reset m, b, and loss history for new data
+            resetRegression();
+            updateRegressionChart();
+            updateLossChart(); // Clear loss chart as well
+        }
+
+        // --- Regression Calculation (Prediction) ---
+        function predict(x) {
+            return m * x + b;
+        }
+
+        // --- Mean Squared Error (Loss Function) ---
+        function calculateLoss() {
+            let errorSum = 0;
+            for (let i = 0; i < data.length; i++) {
+                const actualY = data[i].y;
+                const predictedY = predict(data[i].x);
+                errorSum += Math.pow(actualY - predictedY, 2);
+            }
+            return errorSum / data.length; // Mean Squared Error
+        }
+
+        // --- Gradient Descent Step ---
+        function gradientDescentStep(learningRate) {
+            let dM = 0; // Derivative of loss with respect to m
+            let dB = 0; // Derivative of loss with respect to b
+            const N = data.length;
+
+            for (let i = 0; i < N; i++) {
+                const x_i = data[i].x;
+                const y_i = data[i].y;
+                const y_predicted = predict(x_i);
+
+                // d/dm MSE = -2/N * sum(xi * (yi - (m*xi + b)))
+                dM += -2 * x_i * (y_i - y_predicted);
+                // d/db MSE = -2/N * sum(yi - (m*xi + b))
+                dB += -2 * (y_i - y_predicted);
+            }
+
+            // Update m and b using the learning rate
+            m = m - learningRate * (dM / N);
+            b = b - learningRate * (dB / N);
+        }
+
+        // --- Update Charts ---
+        function updateRegressionChart() {
+            regressionChart.data.datasets[0].data = data; // Update data points
+
+            // Generate points for the regression line based on min/max X of data
+            const minX = Math.min(...data.map(p => p.x));
+            const maxX = Math.max(...data.map(p => p.x));
+
+            regressionChart.data.datasets[1].data = [
+                { x: minX, y: predict(minX) },
+                { x: maxX, y: predict(maxX) }
+            ];
+
+            regressionChart.update();
+
+            document.getElementById('slopeValue').textContent = m.toFixed(4);
+            document.getElementById('interceptValue').textContent = b.toFixed(4);
+            document.getElementById('lossValue').textContent = calculateLoss().toFixed(4);
+        }
+
+        function updateLossChart() {
+            lossChart.data.labels = iterationLabels;
+            lossChart.data.datasets[0].data = lossHistory;
+            lossChart.update();
+        }
+
+        // --- Main Gradient Descent Loop ---
+        let currentIteration = 0;
+        let maxIterations;
+        let learningRate;
+
+        function startGradientDescent() {
+            if (animationFrameId) { // If already running, stop it first
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+
+            maxIterations = parseInt(document.getElementById('iterations').value);
+            learningRate = parseFloat(document.getElementById('learningRate').value);
+
+            // Reset if starting fresh or re-running
+            if (currentIteration === 0 || lossHistory.length === 0) {
+                 resetRegression(); // Ensure m, b are 0 and history is clear
+            }
+
+            // Begin the animation loop
+            animationFrameId = requestAnimationFrame(animateGradientDescent);
+        }
+
+        function animateGradientDescent() {
+            if (currentIteration < maxIterations) {
+                gradientDescentStep(learningRate);
+                const currentLoss = calculateLoss();
+                lossHistory.push(currentLoss);
+                iterationLabels.push(currentIteration + 1); // +1 because iterations start from 0
+
+                updateRegressionChart();
+                updateLossChart();
+
+                currentIteration++;
+                animationFrameId = requestAnimationFrame(animateGradientDescent); // Continue animation
+            } else {
+                console.log("Gradient Descent finished.");
+                animationFrameId = null; // Clear animation ID when done
+            }
+        }
+
+        function resetRegression() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            m = 0;
+            b = 0;
+            currentIteration = 0;
+            lossHistory = [];
+            iterationLabels = [];
+            updateRegressionChart();
+            updateLossChart();
+        }
+
+        // Initial data generation and chart update on load
+        generateData();
+    </script>
+</body>
+</html>
