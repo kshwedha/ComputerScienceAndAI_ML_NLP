@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Transactions with Saga Pattern</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #374151;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #1f2937;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        .go-code {
+            background-color: #111827;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        .go-code span.comment { color: #6b7280; }
+        .go-code span.keyword { color: #818cf8; }
+        .go-code span.string { color: #d1d5db; }
+        .go-code span.type { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 class="text-3xl font-bold mb-4 text-center text-gray-800">Distributed Transactions with Saga Pattern</h1>
+        <p class="text-lg text-gray-600 mb-8 text-center">
+            A guide to the Saga pattern, a robust way to manage distributed transactions in microservices, along with runnable Go code examples.
+        </p>
+    </header>
+
+    <main>
+        <section>
+            <h2 class="text-2xl font-semibold mb-2 text-gray-700">What is a Distributed Transaction?</h2>
+            <p>
+                In a monolithic application, a transaction that involves multiple operations can be handled with a single database transaction. However, in a microservices architecture, operations are distributed across multiple services, each with its own database. A distributed transaction is a set of operations that are guaranteed to be atomic across these multiple services. The Saga pattern is one of the most popular ways to achieve this.
+            </p>
+            <p>
+                A <strong>Saga</strong> is a sequence of local transactions where each transaction updates the database of a single service. If any local transaction fails, the Saga executes a series of <strong>compensating transactions</strong> to undo the work done by the preceding successful transactions.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold mb-2 text-gray-700">Two Types of Saga Patterns</h2>
+            <p>The Saga pattern is primarily implemented in two ways: Choreography and Orchestration.</p>
+
+            <h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">1. Choreography</h3>
+            <p>
+                In a choreography-based Saga, each service produces and listens to events. There is no central orchestrator. Each service decides its own logic and when to trigger the next step of the Saga. It's a decentralized approach, which can be simpler for small Sagas but difficult to manage for complex ones.
+            </p>
+            <p>
+                <img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google_Cloud_Saga_Choreography_Pat.max-1000x1000.png" alt="Saga Choreography Pattern" class="mx-auto rounded-lg shadow-lg my-4" />
+            </p>
+
+            <h3 class="text-xl font-semibold mt-4 mb-2 text-gray-700">2. Orchestration</h3>
+            <p>
+                In an orchestration-based Saga, a central service (the orchestrator) manages the entire transaction. The orchestrator tells each service which local transaction to execute and what to do in case of failure. This approach is more complex to set up but provides better control and simplifies managing the flow of the Saga.
+            </p>
+            <p>
+                 <img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google_Cloud_Saga_Orchestration_Pa.max-1000x1000.png" alt="Saga Orchestration Pattern" class="mx-auto rounded-lg shadow-lg my-4" />
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold mb-2 text-gray-700">Go Code Examples</h2>
+            <p>
+                Below is a single Go program that simulates both Choreography and Orchestration Sagas for an e-commerce order process. To run this code, simply copy it into a <code>.go</code> file and execute it.
+            </p>
+            <div class="go-code">
+                <pre>
+<span class="comment">// This Go program demonstrates two types of Saga patterns: Choreography and Orchestration.
+// It simulates an e-commerce transaction involving three services: Order, Payment, and Inventory.
+// Each service has a "compensating transaction" to undo its work in case of failure.
+
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"sync"
+	"time"
+)
+
+//---------------------------------------------------------------------------------------
+// Service definitions
+//---------------------------------------------------------------------------------------
+
+<span class="comment">// OrderService handles order creation and its compensation (cancelling the order).</span>
+type <span class="type">OrderService</span> struct{}
+
+func (<span class="type">OrderService</span>) CreateOrder() error {
+	fmt.Println("Order Service: Creating order...")
+	// Simulate a successful operation.
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("Order Service: Order created.")
+	return nil
+}
+
+func (<span class="type">OrderService</span>) CancelOrder() {
+	fmt.Println("Order Service: Compensating transaction - Cancelling order...")
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("Order Service: Order cancelled.")
+}
+
+<span class="comment">// PaymentService handles payment processing and its compensation (refunding).</span>
+type <span class="type">PaymentService</span> struct{}
+
+func (<span class="type">PaymentService</span>) ProcessPayment() error {
+	fmt.Println("Payment Service: Processing payment...")
+	<span class="comment">// Simulate a random failure. 20% chance of failure.</span>
+	if rand.Intn(10) > 7 {
+		fmt.Println("Payment Service: Payment failed!")
+		return fmt.Errorf("payment failed")
+	}
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("Payment Service: Payment processed successfully.")
+	return nil
+}
+
+func (<span class="type">PaymentService</span>) RefundPayment() {
+	fmt.Println("Payment Service: Compensating transaction - Refunding payment...")
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("Payment Service: Payment refunded.")
+}
+
+<span class="comment">// InventoryService handles inventory updates and its compensation (reverting stock).</span>
+type <span class="type">InventoryService</span> struct{}
+
+func (<span class="type">InventoryService</span>) UpdateInventory() error {
+	fmt.Println("Inventory Service: Updating inventory...")
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("Inventory Service: Inventory updated.")
+	return nil
+}
+
+func (<span class="type">InventoryService</span>) RevertInventory() {
+	fmt.Println("Inventory Service: Compensating transaction - Reverting inventory...")
+	time.Sleep(100 * time.Millisecond)
+	fmt.Println("Inventory Service: Inventory reverted.")
+}
+
+//---------------------------------------------------------------------------------------
+// Saga Choreography Pattern
+//---------------------------------------------------------------------------------------
+
+func runChoreographySaga() {
+	fmt.Println("--- Starting Choreography Saga ---")
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	<span class="comment">// Channels act as our event bus.</span>
+	orderCreatedChan := make(chan bool, 1)
+	paymentProcessedChan := make(chan bool, 1)
+	inventoryUpdatedChan := make(chan bool, 1)
+	compensationChan := make(chan string, 1)
+
+	orderSvc := OrderService{}
+	paymentSvc := PaymentService{}
+	inventorySvc := InventoryService{}
+
+	<span class="comment">// Start the goroutines for each service.</span>
+	go func() {
+		defer wg.Done()
+		if err := orderSvc.CreateOrder(); err != nil {
+			compensationChan <- "order"
+			return
+		}
+		orderCreatedChan <- true
+	}()
+
+	go func() {
+		defer wg.Done()
+		<span class="comment">// This service waits for the previous event.</span>
+		<-orderCreatedChan
+		if err := paymentSvc.ProcessPayment(); err != nil {
+			compensationChan <- "payment"
+			orderSvc.CancelOrder() <span class="comment">// Compensate locally.</span>
+			return
+		}
+		paymentProcessedChan <- true
+	}()
+
+	go func() {
+		defer wg.Done()
+		<span class="comment">// This service waits for the previous event.</span>
+		<-paymentProcessedChan
+		if err := inventorySvc.UpdateInventory(); err != nil {
+			compensationChan <- "inventory"
+			paymentSvc.RefundPayment() <span class="comment">// Compensate locally.</span>
+			orderSvc.CancelOrder()     <span class="comment">// Compensate locally.</span>
+			return
+		}
+		inventoryUpdatedChan <- true
+	}()
+
+	<span class="comment">// Wait for the saga to complete or fail.</span>
+	wg.Wait()
+	select {
+	case <-compensationChan:
+		fmt.Println("Choreography Saga failed and was rolled back.")
+	default:
+		fmt.Println("Choreography Saga completed successfully.")
+	}
+	fmt.Println("------------------------------------")
+}
+
+//---------------------------------------------------------------------------------------
+// Saga Orchestration Pattern
+//---------------------------------------------------------------------------------------
+
+<span class="comment">// Orchestrator is the central manager of the Saga.</span>
+type <span class="type">Orchestrator</span> struct {
+	OrderService    OrderService
+	PaymentService  PaymentService
+	InventoryService InventoryService
+}
+
+func (<span class="type">Orchestrator</span>) RunSaga() {
+	fmt.Println("--- Starting Orchestration Saga ---")
+	<span class="comment">// Execute the steps sequentially.</span>
+	if err := orchestrator.OrderService.CreateOrder(); err != nil {
+		fmt.Println("Orchestration Saga failed: Cannot create order.")
+		return
+	}
+	if err := orchestrator.PaymentService.ProcessPayment(); err != nil {
+		fmt.Println("Orchestration Saga failed: Cannot process payment. Initiating compensation.")
+		<span class="comment">// The orchestrator explicitly calls the compensating transactions.</span>
+		orchestrator.OrderService.CancelOrder()
+		return
+	}
+	if err := orchestrator.InventoryService.UpdateInventory(); err != nil {
+		fmt.Println("Orchestration Saga failed: Cannot update inventory. Initiating compensation.")
+		orchestrator.PaymentService.RefundPayment()
+		orchestrator.OrderService.CancelOrder()
+		return
+	}
+	fmt.Println("Orchestration Saga completed successfully.")
+	fmt.Println("------------------------------------")
+}
+
+var orchestrator = Orchestrator{
+	OrderService:    OrderService{},
+	PaymentService:  PaymentService{},
+	InventoryService: InventoryService{},
+}
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+
+	<span class="comment">// Run the Choreography Saga simulation.</span>
+	runChoreographySaga()
+
+	fmt.Println("\n--- New Transaction ---\n")
+
+	<span class="comment">// Run the Orchestration Saga simulation.</span>
+	orchestrator.RunSaga()
+}
+</pre>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center mt-8 text-gray-500 text-sm">
+        <p>This document provides a conceptual overview and code examples for the Saga pattern.</p>
+    </footer>
+</div>
+
+</body>
+</html>

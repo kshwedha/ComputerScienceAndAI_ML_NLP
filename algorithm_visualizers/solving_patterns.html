@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Patterns & Problems</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #34495e;
+            color: #ecf0f1;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Category Row Styling */
+        .category-row {
+            background-color: #2980b9 !important; /* Override hover for categories */
+            color: #fff;
+            font-size: 1.4em;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+        }
+        .category-row:hover {
+            background-color: #3498db !important;
+        }
+        .category-row td {
+            padding: 18px 15px;
+        }
+
+        /* Pattern Row Styling */
+        .pattern-row {
+            background-color: #ecf0f1;
+            font-weight: 600;
+            cursor: pointer; /* Indicate it's clickable */
+        }
+        .pattern-row:hover {
+            background-color: #dbe4eb;
+        }
+        .pattern-row td:first-child {
+            padding-left: 30px; /* Indent pattern names */
+        }
+
+        /* Problem List Styling */
+        .problems-list {
+            padding-left: 40px;
+            list-style-type: disc;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .problems-list li {
+            margin-bottom: 5px;
+        }
+
+        /* Collapsible content */
+        .collapsible-content {
+            display: table-row-group; /* Default to visible for patterns/problems */
+        }
+        .category-collapsible-content {
+            display: table-row-group; /* Default to visible for patterns/problems */
+        }
+        .collapsed-content {
+            display: none;
+        }
+        .toggle-icon {
+            float: right;
+            margin-right: 10px;
+            font-size: 0.8em;
+            color: #ecf0f1;
+        }
+        .pattern-row .toggle-icon {
+            color: #333; /* Darker for pattern rows */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Algorithm Patterns & Problem Tracker</h1>
+        <p>A structured overview of common algorithm patterns and associated LeetCode problems.</p>
+    </header>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Pattern Name</th>
+                    <th>Problems (LeetCode ID. Title)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="category-row" data-category="two-pointers">
+                    <td colspan="3">
+                        I. Two Pointer Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="two-pointers-content">
+                    <tr class="pattern-row" data-pattern="two-pointers-converging">
+                        <td>Two Pointers - Converging (Sorted Array Target Sum) </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-converging-problems">
+                                <li>1. Two Sum</li>
+                                <li>11. Container With Most Water</li>
+                                <li>15. 3Sum</li>
+                                <li>16. 3Sum Closest</li>
+                                <li>18. 4Sum</li>
+                                <li>167. Two Sum II - Input Array Is Sorted</li>
+                                <li>349. Intersection of Two Arrays</li>
+                                <li>392. Is Subsequence</li>
+                                <li>881. Boats to Save People</li>
+                                <li>977. Squares of a Sorted Array</li>
+                                <li>259. 3Sum Smaller</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="two-pointers-fast-slow">
+                        <td>Two Pointers - Fast & Slow (Cycle Detection) </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-fast-slow-problems">
+                                <li>141. Linked List Cycle</li>
+                                <li>202. Happy Number</li>
+                                <li>287. Find the Duplicate Number</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="two-pointers-fixed-separation">
+                        
+                        <td>Two Pointers - Fixed Separation (Nth Node from End) </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-fixed-separation-problems">
+                                <li>19. Remove Nth Node From End of List</li>
+                                <li>876. Middle of the Linked List</li>
+                                <li>2095. Delete the Middle Node of a Linked List</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="two-pointers-in-place-modification">
+                        
+                        <td>Two Pointers - In-place Array Modification </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-in-place-modification-problems">
+                                <li>26. Remove Duplicates from Sorted Array</li>
+                                <li>27. Remove Element</li>
+                                <li>75. Sort Colors</li>
+                                <li>80. Remove Duplicates from Sorted Array II</li>
+                                <li>283. Move Zeroes</li>
+                                <li>443. String Compression</li>
+                                <li>905. Sort Array By Parity</li>
+                                <li>2337. Move Pieces to Obtain a String</li>
+                                <li>2938. Separate Black and White Balls</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="two-pointers-string-backspaces">
+                        
+                        <td>Two Pointers - String Comparison with Backspaces </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-string-backspaces-problems">
+                                <li>844. Backspace String Compare</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="two-pointers-expanding-from-center">
+                        
+                        <td>Two Pointers - Expanding From Center (Palindromes) </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-expanding-from-center-problems">
+                                <li>5. Longest Palindromic Substring</li>
+                                <li>647. Palindromic Substrings</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="two-pointers-string-reversal">
+                        
+                        <td>Two Pointers - String Reversal </td>
+                        <td>
+                            <ul class="problems-list" id="two-pointers-string-reversal-problems">
+                                <li>151. Reverse Words in a String</li>
+                                <li>344. Reverse String</li>
+                                <li>345. Reverse Vowels of a String</li>
+                                <li>541. Reverse String II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="sliding-window">
+                    <td colspan="3">
+                        II. Sliding Window Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="sliding-window-content">
+                    <tr class="pattern-row" data-pattern="sliding-window-fixed-size">
+                        
+                        <td>Sliding Window - Fixed Size (Subarray Calculation) </td>
+                        <td>
+                            <ul class="problems-list" id="sliding-window-fixed-size-problems">
+                                <li>346. Moving Average from Data Stream</li>
+                                <li>643. Maximum Average Subarray I</li>
+                                <li>2985. Calculate Compressed Mean</li>
+                                <li>3254. Find the Power of K-Size Subarrays I</li>
+                                <li>3318. Find X-Sum of All K-Long Subarrays I</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="sliding-window-variable-size">
+                        
+                        <td>Sliding Window - Variable Size (Condition-Based) </td>
+                        <td>
+                            <ul class="problems-list" id="sliding-window-variable-size-problems">
+                                <li>3. Longest Substring Without Repeating Characters</li>
+                                <li>76. Minimum Window Substring</li>
+                                <li>209. Minimum Size Subarray Sum</li>
+                                <li>219. Contains Duplicate II</li>
+                                <li>424. Longest Repeating Character Replacement</li>
+                                <li>713. Subarray Product Less Than K</li>
+                                <li>904. Fruit Into Baskets</li>
+                                <li>1004. Max Consecutive Ones III</li>
+                                <li>1438. Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit</li>
+                                <li>1493. Longest Subarray of 1's After Deleting One Element</li>
+                                <li>1658. Minimum Operations to Reduce X to Zero</li>
+                                <li>1838. Frequency of the Most Frequent Element</li>
+                                <li>2461. Maximum Sum of Distinct Subarrays With Length K</li>
+                                <li>2516. Take K of Each Character From Left and Right</li>
+                                <li>2762. Continuous Subarrays</li>
+                                <li>2779. Maximum Beauty of an Array After Applying Operation</li>
+                                <li>2981. Find Longest Special Substring That Occurs Thrice I</li>
+                                <li>3026. Maximum Good Subarray Sum</li>
+                                <li>3346. Maximum Frequency of an Element After Performing Operations I</li>
+                                <li>3347. Maximum Frequency of an Element After Performing Operations II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="sliding-window-monotonic-queue">
+                        
+                        <td>Sliding Window - Monotonic Queue for Max/Min </td>
+                        <td>
+                            <ul class="problems-list" id="sliding-window-monotonic-queue-problems">
+                                <li>239. Sliding Window Maximum</li>
+                                <li>862. Shortest Subarray with Sum at Least K</li>
+                                <li>1696. Jump Game VI</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="sliding-window-character-frequency">
+                        
+                        <td>Sliding Window - Character Frequency Matching </td>
+                        <td>
+                            <ul class="problems-list" id="sliding-window-character-frequency-problems">
+                                <li>438. Find All Anagrams in a String</li>
+                                <li>567. Permutation in String</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="tree-traversal">
+                    <td colspan="3">
+                        III. Tree Traversal Patterns (DFS & BFS) <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="tree-traversal-content">
+                    <tr class="pattern-row" data-pattern="tree-bfs-level-order">
+                        
+                        <td>Tree BFS - Level Order Traversal </td>
+                        <td>
+                            <ul class="problems-list" id="tree-bfs-level-order-problems">
+                                <li>102. Binary Tree Level Order Traversal</li>
+                                <li>103. Binary Tree Zigzag Level Order Traversal</li>
+                                <li>199. Binary Tree Right Side View</li>
+                                <li>515. Find Largest Value in Each Tree Row</li>
+                                <li>1161. Maximum Level Sum of a Binary Tree</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="tree-dfs-preorder">
+                        
+                        <td>Tree DFS - Recursive Preorder Traversal </td>
+                        <td>
+                            <ul class="problems-list" id="tree-dfs-preorder-problems">
+                                <li>100. Same Tree</li>
+                                <li>101. Symmetric Tree</li>
+                                <li>105. Construct Binary Tree from Preorder and Inorder Traversal</li>
+                                <li>114. Flatten Binary Tree to Linked List</li>
+                                <li>226. Invert Binary Tree</li>
+                                <li>257. Binary Tree Paths</li>
+                                <li>988. Smallest String Starting From Leaf</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="tree-dfs-inorder">
+                        
+                        <td>Tree DFS - Recursive Inorder Traversal </td>
+                        <td>
+                            <ul class="problems-list" id="tree-dfs-inorder-problems">
+                                <li>94. Binary Tree Inorder Traversal</li>
+                                <li>98. Validate Binary Search Tree</li>
+                                <li>173. Binary Search Tree Iterator</li>
+                                <li>230. Kth Smallest Element in a BST</li>
+                                <li>501. Find Mode in Binary Search Tree</li>
+                                <li>530. Minimum Absolute Difference in BST</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="tree-dfs-postorder">
+                        
+                        <td>Tree DFS - Recursive Postorder Traversal </td>
+                        <td>
+                            <ul class="problems-list" id="tree-dfs-postorder-problems">
+                                <li>104. Maximum Depth of Binary Tree</li>
+                                <li>110. Balanced Binary Tree</li>
+                                <li>124. Binary Tree Maximum Path Sum</li>
+                                <li>145. Binary Tree Postorder Traversal</li>
+                                <li>337. House Robber III</li>
+                                <li>366. Find Leaves of Binary Tree</li>
+                                <li>543. Diameter of Binary Tree</li>
+                                <li>863. All Nodes Distance K in Binary Tree</li>
+                                <li>1110. Delete Nodes And Return Forest</li>
+                                <li>2458. Height of Binary Tree After Subtree Removal Queries</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="tree-lca">
+                        
+                        <td>Tree - Lowest Common Ancestor (LCA) Finding </td>
+                        <td>
+                            <ul class="problems-list" id="tree-lca-problems">
+                                <li>235. Lowest Common Ancestor of a Binary Search Tree</li>
+                                <li>236. Lowest Common Ancestor of a Binary Tree</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="tree-serialization">
+                        
+                        <td>Tree - Serialization and Deserialization </td>
+                        <td>
+                            <ul class="problems-list" id="tree-serialization-problems">
+                                <li>297. Serialize and Deserialize Binary Tree</li>
+                                <li>572. Subtree of Another Tree</li>
+                                <li>652. Find Duplicate Subtrees</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="graph-traversal">
+                    <td colspan="3">
+                        IV. Graph Traversal Patterns (DFS & BFS) <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="graph-traversal-content">
+                    <tr class="pattern-row" data-pattern="graph-dfs-connected-components">
+                        
+                        <td>Graph DFS - Connected Components / Island Counting </td>
+                        <td>
+                            <ul class="problems-list" id="graph-dfs-connected-components-problems">
+                                <li>130. Surrounded Regions</li>
+                                <li>200. Number of Islands</li>
+                                <li>417. Pacific Atlantic Water Flow</li>
+                                <li>547. Number of Provinces</li>
+                                <li>695. Max Area of Island</li>
+                                <li>733. Flood Fill</li>
+                                <li>841. Keys and Rooms</li>
+                                <li>1020. Number of Enclaves</li>
+                                <li>1254. Number of Closed Islands</li>
+                                <li>1905. Count Sub Islands</li>
+                                <li>2101. Detonate the Maximum Bombs</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-bfs-connected-components">
+                        
+                        <td>Graph BFS - Connected Components / Island Counting </td>
+                        <td>
+                            <ul class="problems-list" id="graph-bfs-connected-components-problems">
+                                <li>127. Word Ladder</li>
+                                <li>542. 01 Matrix</li>
+                                <li>994. Rotting Oranges</li>
+                                <li>1091. Shortest Path in Binary Matrix</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-dfs-cycle-detection">
+                        
+                        <td>Graph DFS - Cycle Detection (Directed Graph) </td>
+                        <td>
+                            <ul class="problems-list" id="graph-dfs-cycle-detection-problems">
+                                <li>207. Course Schedule</li>
+                                <li>210. Course Schedule II</li>
+                                <li>802. Find Eventual Safe States</li>
+                                <li>1059. All Paths from Source Lead to Destination</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-bfs-topological-sort">
+                        
+                        <td>Graph BFS - Topological Sort (Kahn's Algorithm) </td>
+                        <td>
+                            <ul class="problems-list" id="graph-bfs-topological-sort-problems">
+                                <li>207. Course Schedule</li>
+                                <li>210. Course Schedule II</li>
+                                <li>269. Alien Dictionary</li>
+                                <li>310. Minimum Height Trees</li>
+                                <li>444. Sequence Reconstruction</li>
+                                <li>1136. Parallel Courses</li>
+                                <li>1857. Largest Color Value in a Directed Graph</li>
+                                <li>2050. Parallel Courses III</li>
+                                <li>2115. Find All Possible Recipes from Given Supplies</li>
+                                <li>2392. Build a Matrix With Conditions</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-deep-copy">
+                        
+                        <td>Graph - Deep Copy / Cloning </td>
+                        <td>
+                            <ul class="problems-list" id="graph-deep-copy-problems">
+                                <li>133. Clone Graph</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-dijkstra">
+                        
+                        <td>Graph - Shortest Path (Dijkstra's Algorithm) </td>
+                        <td>
+                            <ul class="problems-list" id="graph-dijkstra-problems">
+                                <li>743. Network Delay Time</li>
+                                <li>778. Swim in Rising Water</li>
+                                <li>1514. Path with Maximum Probability</li>
+                                <li>1631. Path With Minimum Effort</li>
+                                <li>1976. Number of Ways to Arrive at Destination</li>
+                                <li>2045. Second Minimum Time to Reach Destination</li>
+                                <li>2203. Minimum Weighted Subgraph With the Required Paths</li>
+                                <li>2290. Minimum Obstacle Removal to Reach Corner</li>
+                                <li>2577. Minimum Time to Visit a Cell In a Grid</li>
+                                <li>2812. Find the Safest Path in a Grid</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-bellman-ford">
+                        
+                        <td>Graph - Shortest Path (Bellman-Ford / BFS+K) </td>
+                        <td>
+                            <ul class="problems-list" id="graph-bellman-ford-problems">
+                                <li>787. Cheapest Flights Within K Stops</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="graph-union-find">
+                        
+                        <td>Graph - Union-Find (Disjoint Set Union - DSU) </td>
+                        <td>
+                            <ul class="problems-list" id="graph-union-find-problems">
+                                <li>200. Number of Islands</li>
+                                <li>261. Graph Valid Tree</li>
+                                <li>305. Number of Islands II</li>
+                                <li>323. Number of Connected Components in an Undirected Graph</li>
+                                <li>547. Number of Provinces</li>
+                                <li>684. Redundant Connection</li>
+                                <li>721. Accounts Merge</li>
+                                <li>737. Sentence Similarity II</li>
+                                <li>947. Most Stones Removed with Same Row or Column</li>
+                                <li>952. Largest Component Size by Common Factor</li>
+                                <li>959. Regions Cut By Slashes</li>
+                                <li>1101. The Earliest Moment When Everyone Become Friends</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="dynamic-programming">
+                    <td colspan="3">
+                        V. Dynamic Programming (DP) Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="dynamic-programming-content">
+                    <tr class="pattern-row" data-pattern="dp-1d-fibonacci">
+                        
+                        <td>DP - 1D Array (Fibonacci Style) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-1d-fibonacci-problems">
+                                <li>70. Climbing Stairs</li>
+                                <li>91. Decode Ways</li>
+                                <li>198. House Robber</li>
+                                <li>213. House Robber II</li>
+                                <li>337. House Robber III</li>
+                                <li>509. Fibonacci Number</li>
+                                <li>740. Delete and Earn</li>
+                                <li>746. Min Cost Climbing Stairs</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-1d-kadane">
+                        
+                        <td>DP - 1D Array (Kadane's Algorithm for Max/Min Subarray) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-1d-kadane-problems">
+                                <li>53. Maximum Subarray</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-1d-coin-change">
+                        
+                        <td>DP - 1D Array (Coin Change / Unbounded Knapsack Style) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-1d-coin-change-problems">
+                                <li>322. Coin Change</li>
+                                <li>377. Combination Sum IV</li>
+                                <li>518. Coin Change II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-1d-knapsack-subset-sum">
+                        
+                        <td>DP - 1D Array (0/1 Knapsack Subset Sum Style) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-1d-knapsack-subset-sum-problems">
+                                <li>416. Partition Equal Subset Sum</li>
+                                <li>494. Target Sum</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-1d-word-break">
+                        
+                        <td>DP - 1D Array (Word Break Style) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-1d-word-break-problems">
+                                <li>139. Word Break</li>
+                                <li>140. Word Break II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-2d-lcs">
+                        
+                        <td>DP - 2D Array (Longest Common Subsequence - LCS) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-2d-lcs-problems">
+                                <li>583. Delete Operation for Two Strings</li>
+                                <li>1143. Longest Common Subsequence</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-2d-edit-distance">
+                        
+                        <td>DP - 2D Array (Edit Distance / Levenshtein Distance) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-2d-edit-distance-problems">
+                                <li>72. Edit Distance</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-2d-unique-paths">
+                        
+                        <td>DP - 2D Array (Unique Paths on Grid) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-2d-unique-paths-problems">
+                                <li>62. Unique Paths</li>
+                                <li>63. Unique Paths II</li>
+                                <li>64. Minimum Path Sum</li>
+                                <li>120. Triangle</li>
+                                <li>221. Maximal Square</li>
+                                <li>931. Minimum Falling Path Sum</li>
+                                <li>1277. Count Square Submatrices with All Ones</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-interval">
+                        
+                        <td>DP - Interval DP </td>
+                        <td>
+                            <ul class="problems-list" id="dp-interval-problems">
+                                <li>312. Burst Balloons</li>
+                                <li>546. Remove Boxes</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-catalan-numbers">
+                        
+                        <td>DP - Catalan Numbers </td>
+                        <td>
+                            <ul class="problems-list" id="dp-catalan-numbers-problems">
+                                <li>95. Unique Binary Search Trees II</li>
+                                <li>96. Unique Binary Search Trees</li>
+                                <li>241. Different Ways to Add Parentheses</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="dp-lis">
+                        
+                        <td>DP - Longest Increasing Subsequence (LIS) </td>
+                        <td>
+                            <ul class="problems-list" id="dp-lis-problems">
+                                <li>300. Longest Increasing Subsequence</li>
+                                <li>354. Russian Doll Envelopes</li>
+                                <li>1671. Minimum Number of Removals to Make Mountain Array</li>
+                                <li>2407. Longest Increasing Subsequence II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="heap">
+                    <td colspan="3">
+                        VI. Heap (Priority Queue) Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="heap-content">
+                    <tr class="pattern-row" data-pattern="heap-top-k">
+                        
+                        <td>Heap - Top K Elements (Selection/Frequency) </td>
+                        <td>
+                            <ul class="problems-list" id="heap-top-k-problems">
+                                <li>215. Kth Largest Element in an Array</li>
+                                <li>347. Top K Frequent Elements</li>
+                                <li>451. Sort Characters By Frequency</li>
+                                <li>506. Relative Ranks</li>
+                                <li>703. Kth Largest Element in a Stream</li>
+                                <li>973. K Closest Points to Origin</li>
+                                <li>1046. Last Stone Weight</li>
+                                <li>2558. Take Gifts From the Richest Pile</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="heap-two-heaps-median">
+                        
+                        <td>Heap - Two Heaps for Median Finding </td>
+                        <td>
+                            <ul class="problems-list" id="heap-two-heaps-median-problems">
+                                <li>295. Find Median from Data Stream</li>
+                                <li>1825. Finding MK Average</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="heap-k-way-merge">
+                        
+                        <td>Heap - K-way Merge </td>
+                        <td>
+                            <ul class="problems-list" id="heap-k-way-merge-problems">
+                                <li>23. Merge k Sorted Lists</li>
+                                <li>373. Find K Pairs with Smallest Sums</li>
+                                <li>378. Kth Smallest Element in a Sorted Matrix</li>
+                                <li>632. Smallest Range Covering Elements from K Lists</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="heap-scheduling-min-cost">
+                        
+                        <td>Heap - Scheduling / Minimum Cost (Greedy with Priority Queue) </td>
+                        <td>
+                            <ul class="problems-list" id="heap-scheduling-min-cost-problems">
+                                <li>253. Meeting Rooms II</li>
+                                <li>767. Reorganize String</li>
+                                <li>857. Minimum Cost to Hire K Workers</li>
+                                <li>1642. Furthest Building You Can Reach</li>
+                                <li>1792. Maximum Average Pass Ratio</li>
+                                <li>1834. Single-Threaded CPU</li>
+                                <li>1942. The Number of the Smallest Unoccupied Chair</li>
+                                <li>2402. Meeting Rooms III</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="backtracking">
+                    <td colspan="3">
+                        VII. Backtracking Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="backtracking-content">
+                    <tr class="pattern-row" data-pattern="backtracking-subsets">
+                        
+                        <td>Backtracking - Subsets (Include/Exclude) </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-subsets-problems">
+                                <li>17. Letter Combinations of a Phone Number</li>
+                                <li>77. Combinations</li>
+                                <li>78. Subsets</li>
+                                <li>90. Subsets II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="backtracking-permutations">
+                        
+                        <td>Backtracking - Permutations </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-permutations-problems">
+                                <li>31. Next Permutation</li>
+                                <li>46. Permutations</li>
+                                <li>60. Permutation Sequence</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="backtracking-combination-sum">
+                        
+                        <td>Backtracking - Combination Sum </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-combination-sum-problems">
+                                <li>39. Combination Sum</li>
+                                <li>40. Combination Sum II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="backtracking-parentheses">
+                        
+                        <td>Backtracking - Parentheses Generation </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-parentheses-problems">
+                                <li>22. Generate Parentheses</li>
+                                <li>301. Remove Invalid Parentheses</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="backtracking-word-search">
+                        
+                        <td>Backtracking - Word Search / Path Finding in Grid </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-word-search-problems">
+                                <li>79. Word Search</li>
+                                <li>212. Word Search II</li>
+                                <li>2018. Check if Word Can Be Placed In Crossword</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="backtracking-n-queens">
+                        
+                        <td>Backtracking - N-Queens / Constraint Satisfaction </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-n-queens-problems">
+                                <li>37. Sudoku Solver</li>
+                                <li>51. N-Queens</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="backtracking-palindrome-partitioning">
+                        
+                        <td>Backtracking - Palindrome Partitioning </td>
+                        <td>
+                            <ul class="problems-list" id="backtracking-palindrome-partitioning-problems">
+                                <li>131. Palindrome Partitioning</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="greedy">
+                    <td colspan="3">
+                        VIII. Greedy Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="greedy-content">
+                    <tr class="pattern-row" data-pattern="greedy-interval-merging">
+                        
+                        <td>Greedy - Interval Merging/Scheduling </td>
+                        <td>
+                            <ul class="problems-list" id="greedy-interval-merging-problems">
+                                <li>56. Merge Intervals</li>
+                                <li>57. Insert Interval</li>
+                                <li>759. Employee Free Time</li>
+                                <li>986. Interval List Intersections</li>
+                                <li>2406. Divide Intervals Into Minimum Number of Groups</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="greedy-jump-game">
+                        
+                        <td>Greedy - Jump Game Reachability/Minimization </td>
+                        <td>
+                            <ul class="problems-list" id="greedy-jump-game-problems">
+                                <li>45. Jump Game II</li>
+                                <li>55. Jump Game</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="greedy-buy-sell-stock">
+                        
+                        <td>Greedy - Buy/Sell Stock </td>
+                        <td>
+                            <ul class="problems-list" id="greedy-buy-sell-stock-problems">
+                                <li>121. Best Time to Buy and Sell Stock</li>
+                                <li>122. Best Time to Buy and Sell Stock II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="greedy-gas-station">
+                        
+                        <td>Greedy - Gas Station Circuit </td>
+                        <td>
+                            <ul class="problems-list" id="greedy-gas-station-problems">
+                                <li>134. Gas Station</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="greedy-task-scheduling">
+                        
+                        <td>Greedy - Task Scheduling (Frequency Based) </td>
+                        <td>
+                            <ul class="problems-list" id="greedy-task-scheduling-problems">
+                                <li>621. Task Scheduler</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="binary-search">
+                    <td colspan="3">
+                        IX. Binary Search Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="binary-search-content">
+                    <tr class="pattern-row" data-pattern="binary-search-sorted-array">
+                        
+                        <td>Binary Search - On Sorted Array/List </td>
+                        <td>
+                            <ul class="problems-list" id="binary-search-sorted-array-problems">
+                                <li>35. Search Insert Position</li>
+                                <li>69. Sqrt(x)</li>
+                                <li>74. Search a 2D Matrix</li>
+                                <li>278. First Bad Version</li>
+                                <li>374. Guess Number Higher or Lower</li>
+                                <li>540. Single Element in a Sorted Array</li>
+                                <li>704. Binary Search</li>
+                                <li>1539. Kth Missing Positive Number</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="binary-search-rotated-array">
+                        
+                        <td>Binary Search - Find Min/Max in Rotated Sorted Array </td>
+                        <td>
+                            <ul class="problems-list" id="binary-search-rotated-array-problems">
+                                <li>33. Search in Rotated Sorted Array</li>
+                                <li>81. Search in Rotated Sorted Array II</li>
+                                <li>153. Find Minimum in Rotated Sorted Array</li>
+                                <li>162. Find Peak Element</li>
+                                <li>852. Peak Index in a Mountain Array</li>
+                                <li>1095. Find in Mountain Array</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="binary-search-on-answer">
+                        
+                        <td>Binary Search - On Answer / Condition Function </td>
+                        <td>
+                            <ul class="problems-list" id="binary-search-on-answer-problems">
+                                <li>410. Split Array Largest Sum</li>
+                                <li>774. Minimize Max Distance to Gas Station</li>
+                                <li>875. Koko Eating Bananas</li>
+                                <li>1011. Capacity To Ship Packages Within D Days</li>
+                                <li>1482. Minimum Number of Days to Make m Bouquets</li>
+                                <li>1760. Minimum Limit of Balls in a Bag</li>
+                                <li>2064. Minimized Maximum of Products Distributed to Any Store</li>
+                                <li>2226. Maximum Candies Allocated to K Children</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="binary-search-first-last-occurrence">
+                        
+                        <td>Binary Search - Find First/Last Occurrence </td>
+                        <td>
+                            <ul class="problems-list" id="binary-search-first-last-occurrence-problems">
+                                <li>34. Find First and Last Position of Element in Sorted Array</li>
+                                <li>658. Find K Closest Elements</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="binary-search-median-two-sorted-arrays">
+                        
+                        <td>Binary Search - Median of Two Sorted Arrays </td>
+                        <td>
+                            <ul class="problems-list" id="binary-search-median-two-sorted-arrays-problems">
+                                <li>4. Median of Two Sorted Arrays</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="stack">
+                    <td colspan="3">
+                        X. Stack Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="stack-content">
+                    <tr class="pattern-row" data-pattern="stack-valid-parentheses">
+                        
+                        <td>Stack - Valid Parentheses Matching </td>
+                        <td>
+                            <ul class="problems-list" id="stack-valid-parentheses-problems">
+                                <li>20. Valid Parentheses</li>
+                                <li>32. Longest Valid Parentheses</li>
+                                <li>921. Minimum Add to Make Parentheses Valid</li>
+                                <li>1249. Minimum Remove to Make Valid Parentheses</li>
+                                <li>1963. Minimum Number of Swaps to Make the String Balanced</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="stack-monotonic-stack">
+                        
+                        <td>Stack - Monotonic Stack </td>
+                        <td>
+                            <ul class="problems-list" id="stack-monotonic-stack-problems">
+                                <li>402. Remove K Digits</li>
+                                <li>496. Next Greater Element I</li>
+                                <li>503. Next Greater Element II</li>
+                                <li>739. Daily Temperatures</li>
+                                <li>901. Online Stock Span</li>
+                                <li>907. Sum of Subarray Minimums</li>
+                                <li>962. Maximum Width Ramp</li>
+                                <li>1475. Final Prices With a Special Discount in a Shop</li>
+                                <li>1673. Find the Most Competitive Subsequence</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="stack-expression-evaluation">
+                        
+                        <td>Stack - Expression Evaluation (RPN/Infix) </td>
+                        <td>
+                            <ul class="problems-list" id="stack-expression-evaluation-problems">
+                                <li>150. Evaluate Reverse Polish Notation</li>
+                                <li>224. Basic Calculator</li>
+                                <li>227. Basic Calculator II</li>
+                                <li>772. Basic Calculator III</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="stack-simulation">
+                        
+                        <td>Stack - Simulation / Backtracking Helper </td>
+                        <td>
+                            <ul class="problems-list" id="stack-simulation-problems">
+                                <li>71. Simplify Path</li>
+                                <li>394. Decode String</li>
+                                <li>735. Asteroid Collision</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="stack-min-stack-design">
+                        
+                        <td>Stack - Min Stack Design </td>
+                        <td>
+                            <ul class="problems-list" id="stack-min-stack-design-problems">
+                                <li>155. Min Stack</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="stack-largest-rectangle">
+                        
+                        <td>Stack - Largest Rectangle in Histogram </td>
+                        <td>
+                            <ul class="problems-list" id="stack-largest-rectangle-problems">
+                                <li>84. Largest Rectangle in Histogram</li>
+                                <li>85. Maximal Rectangle</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="bit-manipulation">
+                    <td colspan="3">
+                        XI. Bit Manipulation Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="bit-manipulation-content">
+                    <tr class="pattern-row" data-pattern="bitwise-xor-single-missing">
+                        
+                        <td>Bitwise XOR - Finding Single/Missing Number </td>
+                        <td>
+                            <ul class="problems-list" id="bitwise-xor-single-missing-problems">
+                                <li>136. Single Number</li>
+                                <li>137. Single Number II</li>
+                                <li>268. Missing Number</li>
+                                <li>389. Find the Difference</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="bitwise-and-counting-set-bits">
+                        
+                        <td>Bitwise AND - Counting Set Bits (Hamming Weight) </td>
+                        <td>
+                            <ul class="problems-list" id="bitwise-and-counting-set-bits-problems">
+                                <li>191. Number of 1 Bits</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="bitwise-dp-counting-bits">
+                        
+                        <td>Bitwise DP - Counting Bits Optimization </td>
+                        <td>
+                            <ul class="problems-list" id="bitwise-dp-counting-bits-problems">
+                                <li>338. Counting Bits</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="bitwise-operations-power-of-two-four">
+                        
+                        <td>Bitwise Operations - Power of Two/Four Check </td>
+                        <td>
+                            <ul class="problems-list" id="bitwise-operations-power-of-two-four-problems">
+                                <li>231. Power of Two</li>
+                                <li>342. Power of Four</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="linked-list">
+                    <td colspan="3">
+                        XII. Linked List Manipulation Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="linked-list-content">
+                    <tr class="pattern-row" data-pattern="linked-list-in-place-reversal">
+                        
+                        <td>Linked List - In-place Reversal </td>
+                        <td>
+                            <ul class="problems-list" id="linked-list-in-place-reversal-problems">
+                                <li>83. Remove Duplicates from Sorted List</li>
+                                <li>92. Reverse Linked List II</li>
+                                <li>206. Reverse Linked List</li>
+                                <li>25. Reverse Nodes in k-Group</li>
+                                <li>234. Palindrome Linked List</li>
+                                <li>82. Remove Duplicates from Sorted List II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="linked-list-merging-sorted">
+                        
+                        <td>Linked List - Merging Two Sorted Lists </td>
+                        <td>
+                            <ul class="problems-list" id="linked-list-merging-sorted-problems">
+                                <li>21. Merge Two Sorted Lists</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="linked-list-addition">
+                        
+                        <td>Linked List - Addition of Numbers </td>
+                        <td>
+                            <ul class="problems-list" id="linked-list-addition-problems">
+                                <li>2. Add Two Numbers</li>
+                                <li>369. Plus One Linked List</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="linked-list-intersection">
+                        
+                        <td>Linked List - Intersection Detection </td>
+                        <td>
+                            <ul class="problems-list" id="linked-list-intersection-problems">
+                                <li>160. Intersection of Two Linked Lists</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="linked-list-reordering">
+                        
+                        <td>Linked List - Reordering / Partitioning </td>
+                        <td>
+                            <ul class="problems-list" id="linked-list-reordering-problems">
+                                <li>24. Swap Nodes in Pairs</li>
+                                <li>61. Rotate List</li>
+                                <li>86. Partition List</li>
+                                <li>143. Reorder List</li>
+                                <li>328. Odd Even Linked List</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="array-matrix">
+                    <td colspan="3">
+                        XIII. Array/Matrix Manipulation Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="array-matrix-content">
+                    <tr class="pattern-row" data-pattern="array-matrix-in-place-rotation">
+                        
+                        <td>Array/Matrix - In-place Rotation </td>
+                        <td>
+                            <ul class="problems-list" id="array-matrix-in-place-rotation-problems">
+                                <li>48. Rotate Image</li>
+                                <li>189. Rotate Array</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-matrix-spiral-traversal">
+                        
+                        <td>Array/Matrix - Spiral Traversal </td>
+                        <td>
+                            <ul class="problems-list" id="array-matrix-spiral-traversal-problems">
+                                <li>54. Spiral Matrix</li>
+                                <li>885. Spiral Matrix III</li>
+                                <li>2326. Spiral Matrix IV</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-matrix-set-zeroes">
+                        
+                        <td>Array/Matrix - Set Matrix Zeroes (In-place Marking) </td>
+                        <td>
+                            <ul class="problems-list" id="array-matrix-set-zeroes-problems">
+                                <li>73. Set Matrix Zeroes</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-product-except-self">
+                        
+                        <td>Array - Product Except Self (Prefix/Suffix Products) </td>
+                        <td>
+                            <ul class="problems-list" id="array-product-except-self-problems">
+                                <li>238. Product of Array Except Self</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-plus-one">
+                        
+                        <td>Array - Plus One (Handling Carry) </td>
+                        <td>
+                            <ul class="problems-list" id="array-plus-one-problems">
+                                <li>66. Plus One</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-merge-sorted">
+                        
+                        <td>Array - Merge Sorted Array (In-place from End) </td>
+                        <td>
+                            <ul class="problems-list" id="array-merge-sorted-problems">
+                                <li>88. Merge Sorted Array</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-cyclic-sort">
+                        
+                        <td>Array - Cyclic Sort </td>
+                        <td>
+                            <ul class="problems-list" id="array-cyclic-sort-problems">
+                                <li>41. First Missing Positive</li>
+                                <li>268. Missing Number</li>
+                                <li>287. Find the Duplicate Number</li>
+                                <li>442. Find All Duplicates in an Array</li>
+                                <li>448. Find All Numbers Disappeared in an Array</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="array-kadane-variant-max-product">
+                        
+                        <td>Array - Kadane's Variant for Maximum Product </td>
+                        <td>
+                            <ul class="problems-list" id="array-kadane-variant-max-product-problems">
+                                <li>152. Maximum Product Subarray</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="string-manipulation">
+                    <td colspan="3">
+                        XIV. String Manipulation Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="string-manipulation-content">
+                    <tr class="pattern-row" data-pattern="string-palindrome-check">
+                        
+                        <td>String - Palindrome Check (Two Pointers / Reverse) </td>
+                        <td>
+                            <ul class="problems-list" id="string-palindrome-check-problems">
+                                <li>9. Palindrome Number</li>
+                                <li>125. Valid Palindrome</li>
+                                <li>680. Valid Palindrome II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="string-anagram-check">
+                        
+                        <td>String - Anagram Check (Frequency Count/Sort) </td>
+                        <td>
+                            <ul class="problems-list" id="string-anagram-check-problems">
+                                <li>49. Group Anagrams</li>
+                                <li>242. Valid Anagram</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="string-roman-to-integer">
+                        
+                        <td>String - Roman to Integer Conversion </td>
+                        <td>
+                            <ul class="problems-list" id="string-roman-to-integer-problems">
+                                <li>13. Roman to Integer</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="string-to-integer-atoi">
+                        
+                        <td>String - String to Integer (atoi) </td>
+                        <td>
+                            <ul class="problems-list" id="string-to-integer-atoi-problems">
+                                <li>8. String to Integer (atoi)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="string-multiply-strings">
+                        
+                        <td>String - Multiply Strings (Manual Simulation) </td>
+                        <td>
+                            <ul class="problems-list" id="string-multiply-strings-problems">
+                                <li>43. Multiply Strings</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="string-matching">
+                        
+                        <td>String Matching - Naive / KMP / Rabin-Karp </td>
+                        <td>
+                            <ul class="problems-list" id="string-matching-problems">
+                                <li>28. Find the Index of the First Occurrence in a String</li>
+                                <li>214. Shortest Palindrome</li>
+                                <li>686. Repeated String Match</li>
+                                <li>796. Rotate String</li>
+                                <li>3008. Find Beautiful Indices in the Given Array II</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="pattern-row" data-pattern="string-repeated-substring-pattern">
+                        
+                        <td>String - Repeated Substring Pattern Detection </td>
+                        <td>
+                            <ul class="problems-list" id="string-repeated-substring-pattern-problems">
+                                <li>459. Repeated Substring Pattern</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tr class="category-row" data-category="design">
+                    <td colspan="3">
+                        XV. Design Patterns <span class="toggle-icon">[ - ]</span>
+                    </td>
+                </tr>
+                <tbody class="category-collapsible-content" id="design-content">
+                    <tr class="pattern-row" data-pattern="design-general-specific">
+                        
+                        <td>Design (General/Specific) </td>
+                        <td>
+                            <ul class="problems-list" id="design-general-specific-problems">
+                                <li>146. LRU Cache</li>
+                                <li>155. Min Stack</li>
+                                <li>208. Implement Trie (Prefix Tree)</li>
+                                <li>211. Design Add and Search Words Data Structure</li>
+                                <li>225. Implement Stack using Queues</li>
+                                <li>232. Implement Queue using Stacks</li>
+                                <li>251. Flatten 2D Vector</li>
+                                <li>271. Encode and Decode Strings</li>
+                                <li>295. Find Median from Data Stream</li>
+                                <li>341. Flatten Nested List Iterator</li>
+                                <li>346. Moving Average from Data Stream</li>
+                                <li>353. Design Snake Game</li>
+                                <li>359. Logger Rate Limiter</li>
+                                <li>362. Design Hit Counter</li>
+                                <li>379. Design Phone Directory</li>
+                                <li>380. Insert Delete GetRandom O(1)</li>
+                                <li>432. All O`one Data Structure</li>
+                                <li>460. LFU Cache</li>
+                                <li>604. Design Compressed String Iterator</li>
+                                <li>622. Design Circular Queue</li>
+                                <li>641. Design Circular Deque</li>
+                                <li>642. Design Search Autocomplete System</li>
+                                <li>706. Design HashMap</li>
+                                <li>715. Range Module</li>
+                                <li>900. RLE Iterator</li>
+                                <li>981. Time Based Key-Value Store</li>
+                                <li>1146. Snapshot Array</li>
+                                <li>1348. Tweet Counts Per Frequency</li>
+                                <li>1352. Product of the Last K Numbers</li>
+                                <li>1381. Design a Stack With Increment Operation</li>
+                                <li>1756. Design Most Recently Used Queue</li>
+                                <li>2013. Detect Squares</li>
+                                <li>2034. Stock Price Fluctuation</li>
+                                <li>2296. Design a Text Editor</li>
+                                <li>2336. Smallest Number in Infinite Set</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Algorithm Patterns & Problems. Data current as of July 28, 2025.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make category rows collapsible
+            const categoryRows = document.querySelectorAll('.category-row');
+            categoryRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const categoryId = this.dataset.category + '-content';
+                    const content = document.getElementById(categoryId);
+                    const icon = this.querySelector('.toggle-icon');
+
+                    if (content.classList.contains('collapsed-content')) {
+                        content.classList.remove('collapsed-content');
+                        icon.textContent = '[ - ]'; // Change to minus
+                    } else {
+                        content.classList.add('collapsed-content');
+                        icon.textContent = '[ + ]'; // Change to plus
+                    }
+                });
+            });
+
+            // Make pattern rows collapsible (optional, un-comment to enable)
+            // const patternRows = document.querySelectorAll('.pattern-row');
+            // patternRows.forEach(row => {
+            //     row.addEventListener('click', function() {
+            //         const patternId = this.dataset.pattern + '-problems';
+            //         const problemList = document.getElementById(patternId);
+            //         const icon = this.querySelector('.toggle-icon');
+
+            //         if (problemList.classList.contains('collapsed-content')) {
+            //             problemList.classList.remove('collapsed-content');
+            //             icon.textContent = '[ - ]';
+            //         } else {
+            //             problemList.classList.add('collapsed-content');
+            //             icon.textContent = '[ + ]';
+            //         }
+            //     });
+            // });
+        });
+    </script>
+</body>
+</html>

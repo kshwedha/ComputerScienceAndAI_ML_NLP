@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>DSA Patterns - Complete Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+        h3 {
+            margin-top: 20px;
+        }
+        .pattern, .guide {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        pre {
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>DSA Patterns - Complete Guide</h1>
+
+    <div class="guide">
+        <h2>Mapping & Usage Guide</h2>
+        <p>This section helps you decide when to apply each pattern based on problem structure and constraints.</p>
+        <table>
+            <tr>
+                <th>Pattern</th>
+                <th>When to Use</th>
+            </tr>
+            <tr><td>Sliding Window</td><td>For subarray/substring problems requiring max/min/fixed-length analysis.</td></tr>
+            <tr><td>Two Pointers</td><td>For pairs, sorted arrays, palindromes, or merging scenarios.</td></tr>
+            <tr><td>Fast & Slow Pointers</td><td>For cycle detection, finding midpoints, or optimizing traversals.</td></tr>
+            <tr><td>Merge Intervals</td><td>For scheduling or merging overlapping ranges.</td></tr>
+            <tr><td>Cyclic Sort</td><td>For arrays with elements in a known range to find missing/duplicate elements.</td></tr>
+            <tr><td>In-place Reversal</td><td>For reversing arrays or linked lists efficiently without extra space.</td></tr>
+            <tr><td>DFS</td><td>For exploring paths deeply, solving puzzles, or traversing graphs/trees.</td></tr>
+            <tr><td>BFS</td><td>For exploring level-by-level to find shortest paths or reachability.</td></tr>
+            <tr><td>Backtracking</td><td>For exploring all possible choices and pruning invalid ones.</td></tr>
+            <tr><td>Dynamic Programming</td><td>For problems with overlapping subproblems and recursive optimal structure.</td></tr>
+            <tr><td>Greedy</td><td>For making locally optimal choices that lead to global solutions.</td></tr>
+            <tr><td>Binary Search</td><td>For efficient searching or optimizing by narrowing down possibilities.</td></tr>
+            <tr><td>Bit Manipulation</td><td>For solving problems based on binary representation, toggling, or counting bits.</td></tr>
+            <tr><td>Topological Sort</td><td>For scheduling with dependencies and detecting cycles in directed graphs.</td></tr>
+            <tr><td>Trie</td><td>For fast prefix lookups, auto-completion, and storing strings efficiently.</td></tr>
+        </table>
+    </div>
+
+    <!-- Pattern Sections -->
+
+    <div class="pattern">
+        <h2>1. Sliding Window</h2>
+        <p><strong>Explanation:</strong> Efficiently process continuous subarrays by maintaining a dynamic window.</p>
+        <p><strong>Use Case:</strong> Find maximum/minimum in a range, longest substring without repeating characters, etc.</p>
+        <pre>
+def sliding_window(arr, k):
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+    for i in range(len(arr) - k):
+        window_sum = window_sum - arr[i] + arr[i + k]
+        max_sum = max(max_sum, window_sum)
+    return max_sum
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/maximum-sum-of-k-consecutive-elements/" target="_blank">2461 - Maximum Sum of K Consecutive Elements</a></li>
+            <li><a href="https://leetcode.com/problems/fruit-into-baskets/" target="_blank">904 - Fruits into Baskets</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>2. Two Pointers</h2>
+        <p><strong>Explanation:</strong> Use two indices to traverse and find relations such as sums or palindromes.</p>
+        <p><strong>Use Case:</strong> Sorted arrays, merging two lists, checking pairs that meet criteria.</p>
+        <pre>
+def two_pointers(arr, target):
+    left, right = 0, len(arr) - 1
+    while left &lt; right:
+        current_sum = arr[left] + arr[right]
+        if current_sum == target:
+            return [left, right]
+        elif current_sum &lt; target:
+            left += 1
+        else:
+            right -= 1
+    return []
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank">11 - Container With Most Water</a></li>
+            <li><a href="https://leetcode.com/problems/3sum/" target="_blank">15 - 3Sum</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>3. Fast & Slow Pointers</h2>
+        <p><strong>Explanation:</strong> Two pointers at different speeds are used for cycle detection or finding midpoints.</p>
+        <p><strong>Use Case:</strong> Detecting cycles, finding intersection, identifying palindrome lists.</p>
+        <pre>
+def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+    return False
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">141 - Linked List Cycle</a></li>
+            <li><a href="https://leetcode.com/problems/happy-number/" target="_blank">202 - Happy Number</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>4. Merge Intervals</h2>
+        <p><strong>Explanation:</strong> Sort intervals and merge overlapping ranges to optimize schedules or combine segments.</p>
+        <p><strong>Use Case:</strong> Time management, reservation systems, merging overlapping intervals.</p>
+        <pre>
+def merge_intervals(intervals):
+    intervals.sort(key=lambda x: x[0])
+    merged = []
+    for interval in intervals:
+        if not merged or merged[-1][1] &lt; interval[0]:
+            merged.append(interval)
+        else:
+            merged[-1][1] = max(merged[-1][1], interval[1])
+    return merged
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">56 - Merge Intervals</a></li>
+            <li><a href="https://leetcode.com/problems/insert-interval/" target="_blank">57 - Insert Interval</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>5. Cyclic Sort</h2>
+        <p><strong>Explanation:</strong> Sort elements by placing them at correct indices, optimizing space and time when the range is known.</p>
+        <p><strong>Use Case:</strong> Find missing or duplicate numbers efficiently without extra space.</p>
+        <pre>
+def cyclic_sort(arr):
+    i = 0
+    while i &lt; len(arr):
+        correct = arr[i] - 1
+        if arr[i] != arr[correct]:
+            arr[i], arr[correct] = arr[correct], arr[i]
+        else:
+            i += 1
+    return arr
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/first-missing-positive/" target="_blank">41 - First Missing Positive</a></li>
+            <li><a href="https://leetcode.com/problems/set-mismatch/" target="_blank">645 - Set Mismatch</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>6. In-place Reversal</h2>
+        <p><strong>Explanation:</strong> Reverse or reorder sequences directly within the structure to save space.</p>
+        <p><strong>Use Case:</strong> Rotating arrays, reversing linked lists, checking for palindromes.</p>
+        <pre>
+def reverse_list(head):
+    prev = None
+    current = head
+    while current:
+        nxt = current.next
+        current.next = prev
+        prev = current
+        current = nxt
+    return prev
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">206 - Reverse Linked List</a></li>
+            <li><a href="https://leetcode.com/problems/rotate-image/" target="_blank">48 - Rotate Image</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>7. Depth-First Search (DFS)</h2>
+        <p><strong>Explanation:</strong> Explore paths deeply before backtracking, solving recursive structures in trees or graphs.</p>
+        <p><strong>Use Case:</strong> Maze navigation, puzzle solving, connected components.</p>
+        <pre>
+def dfs(node, visited):
+    if node in visited:
+        return
+    visited.add(node)
+    for neighbor in node.neighbors:
+        dfs(neighbor, visited)
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">200 - Number of Islands</a></li>
+            <li><a href="https://leetcode.com/problems/word-search/" target="_blank">79 - Word Search</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>8. Breadth-First Search (BFS)</h2>
+        <p><strong>Explanation:</strong> Explore neighbor nodes level-by-level using a queue to find shortest paths or explore connectivity.</p>
+        <p><strong>Use Case:</strong> Shortest path problems, traversal with minimal steps.</p>
+        <pre>
+from collections import deque
+
+def bfs(start_node):
+    queue = deque([start_node])
+    visited = set([start_node])
+    while queue:
+        node = queue.popleft()
+        for neighbor in node.neighbors:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/word-ladder/" target="_blank">127 - Word Ladder</a></li>
+            <li><a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" target="_blank">1091 - Shortest Path in Binary Matrix</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>9. Backtracking</h2>
+        <p><strong>Explanation:</strong> Try all possibilities recursively and undo choices to explore different paths.</p>
+        <p><strong>Use Case:</strong> Generating permutations, combinations, or solving constraint-based puzzles.</p>
+        <pre>
+def backtrack(path, choices):
+    if done(path):
+        result.append(path.copy())
+        return
+    for choice in choices:
+        path.append(choice)
+        backtrack(path, choices)
+        path.pop()
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/permutations/" target="_blank">46 - Permutations</a></li>
+            <li><a href="https://leetcode.com/problems/combination-sum/" target="_blank">39 - Combination Sum</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>10. Dynamic Programming (DP)</h2>
+        <p><strong>Explanation:</strong> Solve problems by breaking them into overlapping subproblems and caching results.</p>
+        <p><strong>Use Case:</strong> Optimization problems, sequence alignment, count-based problems.</p>
+        <pre>
+def dp(n):
+    memo = {}
+    def helper(x):
+        if x in memo:
+            return memo[x]
+        if base_case(x):
+            return base_value
+        result = ...
+        memo[x] = result
+        return result
+    return helper(n)
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">70 - Climbing Stairs</a></li>
+            <li><a href="https://leetcode.com/problems/coin-change/" target="_blank">322 - Coin Change</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>11. Greedy</h2>
+        <p><strong>Explanation:</strong> Make the best local choice at each step with the hope of finding the global optimum.</p>
+        <p><strong>Use Case:</strong> Interval scheduling, resource allocation, cost minimization.</p>
+        <pre>
+def greedy(tasks):
+    tasks.sort(key=lambda x: x.end_time)
+    count = 0
+    last_end = float('-inf')
+    for task in tasks:
+        if task.start &gt;= last_end:
+            count += 1
+            last_end = task.end
+    return count
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/jump-game-ii/" target="_blank">45 - Jump Game II</a></li>
+            <li><a href="https://leetcode.com/problems/assign-cookies/" target="_blank">455 - Assign Cookies</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>12. Binary Search</h2>
+        <p><strong>Explanation:</strong> Divide search space in half iteratively to efficiently find a target value.</p>
+        <p><strong>Use Case:</strong> Sorted arrays, optimization problems, finding boundaries.</p>
+        <pre>
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left &lt;= right:
+        mid = left + (right - left) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] &lt; target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/binary-search/" target="_blank">704 - Binary Search</a></li>
+            <li><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank">153 - Find Minimum in Rotated Sorted Array</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>13. Bit Manipulation</h2>
+        <p><strong>Explanation:</strong> Use bit operations like AND, OR, XOR to solve problems involving bits.</p>
+        <p><strong>Use Case:</strong> Single occurrences, counting bits, flipping bits efficiently.</p>
+        <pre>
+def single_number(nums):
+    result = 0
+    for num in nums:
+        result ^= num
+    return result
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/single-number/" target="_blank">136 - Single Number</a></li>
+            <li><a href="https://leetcode.com/problems/counting-bits/" target="_blank">338 - Counting Bits</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>14. Topological Sort</h2>
+        <p><strong>Explanation:</strong> Order nodes so that every directed edge UV means U comes before V.</p>
+        <p><strong>Use Case:</strong> Course scheduling, task dependencies, cycle detection.</p>
+        <pre>
+from collections import deque
+
+def topological_sort(graph):
+    in_degree = {u: 0 for u in graph}
+    for u in graph:
+        for v in graph[u]:
+            in_degree[v] += 1
+    queue = deque([u for u in graph if in_degree[u] == 0])
+    order = []
+    while queue:
+        u = queue.popleft()
+        order.append(u)
+        for v in graph[u]:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+    return order
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">210 - Course Schedule II</a></li>
+            <li><a href="https://leetcode.com/problems/alien-dictionary/" target="_blank">269 - Alien Dictionary</a></li>
+        </ul>
+    </div>
+
+    <div class="pattern">
+        <h2>15. Trie (Prefix Tree)</h2>
+        <p><strong>Explanation:</strong> Store strings efficiently for quick prefix searches or auto-complete operations.</p>
+        <p><strong>Use Case:</strong> Searching dictionary words, prefix-based lookups, text prediction.</p>
+        <pre>
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_word = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            node = node.children.setdefault(char, TrieNode())
+        node.is_word = True
+        </pre>
+        <p><strong>Example Problems:</strong></p>
+        <ul>
+            <li><a href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank">208 - Implement Trie (Prefix Tree)</a></li>
+            <li><a href="https://leetcode.com/problems/add-and-search-word-data-structure-design/" target="_blank">211 - Add and Search Word</a></li>
+        </ul>
+    </div>
+
+</body>
+</html>

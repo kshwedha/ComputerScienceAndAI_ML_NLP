@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Distance Algorithm Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-group input {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-play {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-play:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+        }
+
+        .btn-next:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e1e5e9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .table-container {
+            overflow: auto;
+            max-height: 400px;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #333;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: 600;
+            font-size: 14px;
+            position: relative;
+        }
+
+        th {
+            background: #6c757d;
+            color: white;
+            font-size: 16px;
+        }
+
+        .cell-base {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .cell-current {
+            background: #ffeb3b;
+            color: #f57c00;
+            animation: pulse 1.5s infinite;
+        }
+
+        .cell-computed {
+            background: #c8e6c9;
+            color: #388e3c;
+        }
+
+        .cell-empty {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .explanation {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+
+        .explanation-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .operation-match { color: #4CAF50; font-weight: 600; }
+        .operation-delete { color: #f44336; font-weight: 600; }
+        .operation-insert { color: #2196F3; font-weight: 600; }
+        .operation-substitute { color: #ff9800; font-weight: 600; }
+        .operation-initialization { color: #6c757d; font-weight: 600; }
+
+        .details {
+            font-size: 14px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .details-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .options-list {
+            list-style: none;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .options-list li {
+            margin: 5px 0;
+            padding: 5px 0;
+        }
+
+        .legend {
+            margin-top: 25px;
+        }
+
+        .legend h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 3px;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .result-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Edit Distance Algorithm Visualizer</h1>
+            <p>Interactive visualization of the dynamic programming solution for Levenshtein distance</p>
+        </div>
+        
+        <div class="content">
+            <div class="controls">
+                <div class="input-group">
+                    <label for="word1">Word 1:</label>
+                    <input type="text" id="word1" value="cat" placeholder="Enter first word">
+                </div>
+                <div class="input-group">
+                    <label for="word2">Word 2:</label>
+                    <input type="text" id="word2" value="bat" placeholder="Enter second word">
+                </div>
+                <div class="button-group">
+                    <button class="btn-play" id="playBtn">▶ Play</button>
+                    <button class="btn-reset" id="resetBtn">↻ Reset</button>
+                    <button class="btn-next" id="nextBtn">→ Next</button>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span id="stepInfo">Step 1 of 1</span>
+                    <span id="speedControl">Speed: <input type="range" id="speed" min="500" max="3000" value="1500" style="width: 100px;"> ms</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="section">
+                    <h2>DP Table</h2>
+                    <div class="table-container">
+                        <table id="dpTable"></table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Step Explanation</h2>
+                    <div class="explanation">
+                        <div class="explanation-text" id="explanationText">
+                            Click Play to start the visualization
+                        </div>
+                        <div class="details" id="details" style="display: none;"></div>
+                    </div>
+
+                    <div class="legend">
+                        <h3>Legend</h3>
+                        <div class="legend-item">
+                            <div class="legend-color cell-base"></div>
+                            <span>Base cases (initialization)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color cell-current"></div>
+                            <span>Currently processing</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color cell-computed"></div>
+                            <span>Already computed</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color cell-empty"></div>
+                            <span>Not yet computed</span>
+                        </div>
+                    </div>
+
+                    <div id="result" class="result" style="display: none;">
+                        <h3>Final Result</h3>
+                        <div>Minimum edit distance: <span class="result-value" id="resultValue">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class EditDistanceVisualizer {
+            constructor() {
+                this.word1 = "cat";
+                this.word2 = "bat";
+                this.operations = [];
+                this.currentStep = 0;
+                this.isPlaying = false;
+                this.intervalId = null;
+                this.speed = 1500;
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.generateOperations();
+                this.render();
+            }
+
+            initializeElements() {
+                this.word1Input = document.getElementById('word1');
+                this.word2Input = document.getElementById('word2');
+                this.playBtn = document.getElementById('playBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.stepInfo = document.getElementById('stepInfo');
+                this.progressFill = document.getElementById('progressFill');
+                this.dpTable = document.getElementById('dpTable');
+                this.explanationText = document.getElementById('explanationText');
+                this.details = document.getElementById('details');
+                this.result = document.getElementById('result');
+                this.resultValue = document.getElementById('resultValue');
+                this.speedSlider = document.getElementById('speed');
+            }
+
+            bindEvents() {
+                this.word1Input.addEventListener('input', () => {
+                    this.word1 = this.word1Input.value || "a";
+                    this.generateOperations();
+                    this.currentStep = 0;
+                    this.render();
+                });
+
+                this.word2Input.addEventListener('input', () => {
+                    this.word2 = this.word2Input.value || "b";
+                    this.generateOperations();
+                    this.currentStep = 0;
+                    this.render();
+                });
+
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+                this.resetBtn.addEventListener('click', () => this.reset());
+                this.nextBtn.addEventListener('click', () => this.nextStep());
+                this.speedSlider.addEventListener('input', () => {
+                    this.speed = parseInt(this.speedSlider.value);
+                    if (this.isPlaying) {
+                        this.stopAnimation();
+                        this.startAnimation();
+                    }
+                });
+            }
+
+            generateOperations() {
+                this.operations = [];
+                const rows = this.word1.length + 1;
+                const cols = this.word2.length + 1;
+                
+                // Initialize DP table
+                const dp = Array(rows).fill(null).map(() => Array(cols).fill(null));
+                
+                // Base cases
+                for (let i = 0; i <= this.word1.length; i++) {
+                    dp[i][0] = i;
+                }
+                for (let j = 0; j <= this.word2.length; j++) {
+                    dp[0][j] = j;
+                }
+
+                // Initial state
+                this.operations.push({
+                    dp: this.deepCopy(dp),
+                    i: -1, j: -1,
+                    explanation: "Initialize DP table: First row represents insertions into empty string, first column represents deletions to empty string",
+                    operation: "initialization"
+                });
+
+                // Fill DP table
+                for (let i = 1; i < rows; i++) {
+                    for (let j = 1; j < cols; j++) {
+                        if (this.word1[i-1] === this.word2[j-1]) {
+                            dp[i][j] = dp[i-1][j-1];
+                            this.operations.push({
+                                dp: this.deepCopy(dp),
+                                i, j,
+                                explanation: `Characters match ('${this.word1[i-1]}' == '${this.word2[j-1]}'): No operation needed, copy diagonal value`,
+                                operation: "match"
+                            });
+                        } else {
+                            const deletion = dp[i-1][j] + 1;
+                            const insertion = dp[i][j-1] + 1;
+                            const substitution = dp[i-1][j-1] + 1;
+                            const minVal = Math.min(deletion, insertion, substitution);
+                            
+                            dp[i][j] = minVal;
+                            
+                            let operation = "";
+                            if (minVal === deletion) operation = "delete";
+                            else if (minVal === insertion) operation = "insert";
+                            else operation = "substitute";
+                            
+                            this.operations.push({
+                                dp: this.deepCopy(dp),
+                                i, j,
+                                explanation: `Characters differ ('${this.word1[i-1]}' != '${this.word2[j-1]}'): min(delete=${deletion}, insert=${insertion}, substitute=${substitution}) = ${minVal}`,
+                                operation,
+                                details: { deletion, insertion, substitution, minVal }
+                            });
+                        }
+                    }
+                }
+            }
+
+            deepCopy(arr) {
+                return arr.map(row => [...row]);
+            }
+
+            render() {
+                this.updateProgress();
+                this.renderTable();
+                this.updateExplanation();
+                this.updateResult();
+            }
+
+            updateProgress() {
+                this.stepInfo.textContent = `Step ${this.currentStep + 1} of ${this.operations.length}`;
+                const progress = ((this.currentStep + 1) / this.operations.length) * 100;
+                this.progressFill.style.width = `${progress}%`;
+            }
+
+            renderTable() {
+                const operation = this.operations[this.currentStep];
+                if (!operation) return;
+
+                const dp = operation.dp;
+                let html = '<thead><tr><th></th><th>ε</th>';
+                
+                for (let j = 0; j < this.word2.length; j++) {
+                    html += `<th>${this.word2[j]}</th>`;
+                }
+                html += '</tr></thead><tbody>';
+
+                // Empty string row
+                html += '<tr><th>ε</th>';
+                for (let j = 0; j < dp[0].length; j++) {
+                    const cellClass = this.getCellClass(0, j, dp[0][j], operation);
+                    html += `<td class="${cellClass}">${dp[0][j] !== null ? dp[0][j] : ''}</td>`;
+                }
+                html += '</tr>';
+
+                // Character rows
+                for (let i = 0; i < this.word1.length; i++) {
+                    html += `<tr><th>${this.word1[i]}</th>`;
+                    for (let j = 0; j < dp[i + 1].length; j++) {
+                        const cellClass = this.getCellClass(i + 1, j, dp[i + 1][j], operation);
+                        html += `<td class="${cellClass}">${dp[i + 1][j] !== null ? dp[i + 1][j] : ''}</td>`;
+                    }
+                    html += '</tr>';
+                }
+                
+                html += '</tbody>';
+                this.dpTable.innerHTML = html;
+            }
+
+            getCellClass(i, j, value, operation) {
+                if (value === null) return 'cell-empty';
+                if (i === 0 || j === 0) return 'cell-base';
+                if (i === operation.i && j === operation.j) return 'cell-current';
+                if (value !== null) return 'cell-computed';
+                return 'cell-empty';
+            }
+
+            updateExplanation() {
+                const operation = this.operations[this.currentStep];
+                if (!operation) return;
+
+                const operationClass = `operation-${operation.operation}`;
+                this.explanationText.innerHTML = `<span class="${operationClass}">${operation.explanation}</span>`;
+
+                if (operation.details && operation.i > 0 && operation.j > 0) {
+                    const { deletion, insertion, substitution } = operation.details;
+                    this.details.innerHTML = `
+                        <div class="details-title">Current position: dp[${operation.i}][${operation.j}]</div>
+                        <div>Comparing: '${this.word1[operation.i-1]}' vs '${this.word2[operation.j-1]}'</div>
+                        <div style="margin-top: 10px;">Options:</div>
+                        <ul class="options-list">
+                            <li class="operation-delete">Delete '${this.word1[operation.i-1]}': ${deletion}</li>
+                            <li class="operation-insert">Insert '${this.word2[operation.j-1]}': ${insertion}</li>
+                            <li class="operation-substitute">Substitute '${this.word1[operation.i-1]}' → '${this.word2[operation.j-1]}': ${substitution}</li>
+                        </ul>
+                    `;
+                    this.details.style.display = 'block';
+                } else {
+                    this.details.style.display = 'none';
+                }
+            }
+
+            updateResult() {
+                if (this.currentStep === this.operations.length - 1) {
+                    const finalDp = this.operations[this.currentStep].dp;
+                    const distance = finalDp[this.word1.length][this.word2.length];
+                    this.resultValue.textContent = distance;
+                    this.result.style.display = 'block';
+                } else {
+                    this.result.style.display = 'none';
+                }
+            }
+
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.stopAnimation();
+                } else {
+                    if (this.currentStep >= this.operations.length - 1) {
+                        this.reset();
+                    }
+                    this.startAnimation();
+                }
+            }
+
+            startAnimation() {
+                this.isPlaying = true;
+                this.playBtn.innerHTML = '⏸ Pause';
+                this.intervalId = setInterval(() => {
+                    if (this.currentStep < this.operations.length - 1) {
+                        this.nextStep();
+                    } else {
+                        this.stopAnimation();
+                    }
+                }, this.speed);
+            }
+
+            stopAnimation() {
+                this.isPlaying = false;
+                this.playBtn.innerHTML = '▶ Play';
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = null;
+                }
+            }
+
+            nextStep() {
+                if (this.currentStep < this.operations.length - 1) {
+                    this.currentStep++;
+                    this.render();
+                }
+                
+                this.nextBtn.disabled = this.currentStep >= this.operations.length - 1;
+            }
+
+            reset() {
+                this.stopAnimation();
+                this.currentStep = 0;
+                this.nextBtn.disabled = false;
+                this.render();
+            }
+        }
+
+        // Initialize the visualizer when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new EditDistanceVisualizer();
+        });
+    </script>
+</body>
+</html>
